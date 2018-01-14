@@ -11,7 +11,7 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Dumping structure for table novabot.geocoding
-CREATE TABLE IF NOT EXISTS `geocoding` (
+CREATE TABLE IF NOT EXISTS `spawninfo` (
   `lat` double NOT NULL,
   `lon` double NOT NULL,
   `suburb` varchar(30) DEFAULT NULL,
@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `geocoding` (
   `neighbourhood` varchar(50) DEFAULT NULL,
   `sublocality` varchar(50) DEFAULT NULL,
   `country` varchar(50) DEFAULT NULL,
+  `timezone` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`lat`,`lon`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -33,7 +34,11 @@ CREATE TABLE IF NOT EXISTS `pokemon` (
   `max_iv` float DEFAULT 100,
   `min_iv` float DEFAULT 0,
   `location` varchar(30) DEFAULT NULL,
-  UNIQUE KEY `pokemon_user_id_id_channel_max_iv_min_iv_pk` (`user_id`,`id`,`location`,`max_iv`,`min_iv`),
+  `max_lvl` TINYINT DEFAULT 40,
+  `min_lvl` TINYINT DEFAULT 0,
+  `max_cp` INT DEFAULT 2147483647,
+  `min_cp` INT DEFAULT 0,
+  UNIQUE KEY `pokemon_user_id_id_channel_max_iv_min_iv_pk` (`user_id`,`id`,`location`,`max_iv`,`min_iv`,`max_lvl`,`min_lvl`,`max_cp`,`min_cp`),
   CONSTRAINT `pokemon_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
