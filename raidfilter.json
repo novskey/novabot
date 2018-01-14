@@ -1,7 +1,16 @@
 {
-  "Level1": "True",
-  "Level2": "True",
-  "Level3": "True",
-  "Level4": "True",
-  "Level5": "True"
+  "Default": {
+    "Level5": "True"
+  },
+  "O'Connor Sportsground": {
+    "Level4": "True",
+    "Level5": "True"
+  },
+  "320b71a7691c4148a90e764c6e34440f.16": {
+    "Level1": "True",
+    "Level2": "True",
+    "Level3": "True",
+    "Level4": "True",
+    "Level5": "True"
+  }
 }
