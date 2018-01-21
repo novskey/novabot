@@ -94,7 +94,7 @@
         <appender-ref ref="ERROR"/>
         <!-- enable this appender to see novabots debug logs in your console / IDE
              if you enable it in the root logger further below you will see the debug logs of all the other libraries too -->
-        <!--<appender-ref ref="NB_STDOUT_DEBUG"/>-->
+        <appender-ref ref="NB_STDOUT_DEBUG"/>
     </logger>
 
     <!-- Gives us a nice JDA log with only JDA output -->
@@ -102,7 +102,7 @@
         <appender-ref ref="JDA"/>
     </logger>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>
