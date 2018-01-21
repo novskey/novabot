@@ -102,11 +102,11 @@ public class NovaBot {
         }
     }
 
+
     public void loadConfig() {
         try {
             config = new Config(
-                    new Ini(new File(testing ? "config.example.ini" : configName)),
-                    this
+                    new Ini(new File(testing ? "config.example.ini" : configName))
             );
         } catch (IOException e) {
             novabotLog.error(String.format("Couldn't find config file %s, aborting", configName));

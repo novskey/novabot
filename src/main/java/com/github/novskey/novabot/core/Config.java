@@ -60,7 +60,7 @@ public class Config {
     private boolean allowAllLocation = true;
     private String token = null;
     private ZoneId timeZone = ZoneId.systemDefault();
-    private int minSecondsLeft = 60;
+    private Integer minSecondsLeft = 60;
     private String footerText = null;
     private String googleSuburbField = "city";
     private String adminRole = null;

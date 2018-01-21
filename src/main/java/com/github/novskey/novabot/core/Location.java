@@ -45,7 +45,7 @@ public class Location {
     }
 
     public static Location fromDbString(String str, NovaBot novaBot) {
-        if (novaBot.config.getAllowAllLocation() && str.equals("all")) return Location.ALL;
+        if (novaBot.config.isAllowAllLocation() && str.equals("all")) return Location.ALL;
 
         if (novaBot.config.useGeofences()) {
             ArrayList<GeofenceIdentifier> identifiers = GeofenceIdentifier.fromString(str);
@@ -67,7 +67,7 @@ public class Location {
 
     public static Location fromString(final String str, NovaBot novaBot) {
 
-        if (novaBot.config.getAllowAllLocation() && str.equalsIgnoreCase(novaBot.getLocalString("All"))) return Location.ALL;
+        if (novaBot.config.isAllowAllLocation() && str.equalsIgnoreCase(novaBot.getLocalString("All"))) return Location.ALL;
 
         if (novaBot.config.useGeofences()) {
             ArrayList<GeofenceIdentifier> identifiers = GeofenceIdentifier.fromString(str);

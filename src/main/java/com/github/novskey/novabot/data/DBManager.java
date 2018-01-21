@@ -1020,7 +1020,7 @@ public class DBManager implements IDataBase {
             if (novaBot.config.getScanProtocol().equals("mysql")) {
                 statement.setString(novaBot.config.getBlacklist().size() +
                                 (novaBot.config.getScannerType() == ScannerType.Monocle ? 1 : 2),
-                        novaBot.config.getMinSecondsLeft());
+                        novaBot.config.getMinSecondsLeft().toString());
             }
 
             dbLog.info("Executing query:" + statement);
