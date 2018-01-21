@@ -41,7 +41,7 @@ public class Config {
     public final HashMap<String, JsonObject> raidFilters = new HashMap<>();
     private final HashMap<String, NotificationLimit> roleLimits = new HashMap<>();
     private final HashMap<String, Format> formats = new HashMap<>();
-    private final AlertChannels pokeChannels = new AlertChannels();
+    private AlertChannels pokeChannels;
     private final AlertChannels raidChannels = new AlertChannels();
     public HashMap<String, String> presets = new HashMap<>();
     public ArrayList<Integer> raidBosses = new ArrayList<>(Arrays.asList(2, 5, 8, 11, 28, 31, 34, 38, 62, 65, 68, 71, 73, 76, 82, 91, 94, 105, 123, 129, 131, 137, 139, 143, 144, 145, 146, 150, 243, 244, 245, 248, 249, 302, 303, 359));
@@ -146,12 +146,14 @@ public class Config {
 
         if (pokemonEnabled()) {
             log.info(String.format("Loading %s...", novaBot.pokeChannels));
-            loadPokemonChannels();
+            pokeChannels = loadPokemonChannels(novaBot.pokeChannels);
             log.info("Finished loading " + novaBot.pokeChannels);
+        } else {
+            pokeChannels = new AlertChannels();
         }
 
         log.info(String.format("Loading %s...", novaBot.presets));
-        loadPresets();
+        loadPresets(novaBot.presets);
         log.info("Finished loading " + novaBot.presets);
 
         log.info("Finished configuring");
@@ -799,10 +801,12 @@ public class Config {
         return keys;
     }
 
-    private void loadPokemonChannels() {
+    private AlertChannels loadPokemonChannels(String pokeChannelsFile) {
         if (novaBot.geofencing == null || !novaBot.geofencing.loaded) novaBot.loadGeofences();
 
-        File file = new File(novaBot.pokeChannels);
+        AlertChannels pokeChannelsRet = new AlertChannels();
+
+        File file = new File(pokeChannelsFile);
 
         try (Scanner in = new Scanner(file)) {
 
@@ -827,13 +831,13 @@ public class Config {
                         channel = new AlertChannel(channelId);
 
                         if (filterName != null) {
-                            channel.filterName = filterName;
+                            channel.setFilterName(filterName);
 
-                            channel.geofences = geofenceIdentifiers;
+                            channel.setGeofences(geofenceIdentifiers);
 
-                            channel.formattingName = formattingName;
+                            channel.setFormattingName(formattingName);
 
-                            pokeChannels.add(channel);
+                            pokeChannelsRet.add(channel);
                         } else {
                             System.out.println("couldn't find filter name");
                         }
@@ -898,13 +902,13 @@ public class Config {
                 channel = new AlertChannel(channelId);
 
                 if (filterName != null) {
-                    channel.filterName = filterName;
+                    channel.setFilterName(filterName);
 
-                    channel.formattingName = formattingName;
+                    channel.setFormattingName(formattingName);
 
-                    channel.geofences = geofenceIdentifiers;
+                    channel.setGeofences(geofenceIdentifiers);
 
-                    pokeChannels.add(channel);
+                    pokeChannelsRet.add(channel);
                 } else {
                     System.out.println("couldn't find filter name");
                 }
@@ -916,10 +920,11 @@ public class Config {
         } catch (FileNotFoundException e) {
             log.warn(String.format("Couldn't find pokechannels file: %s, ignoring.", novaBot.pokeChannels));
         }
+        return pokeChannelsRet;
     }
 
-    private void loadPresets() {
-        File file = new File(novaBot.presets);
+    private void loadPresets(String novaBotPresetsFile) {
+        File file = new File(novaBotPresetsFile);
 
         try (Scanner in = new Scanner(file)) {
 
@@ -1008,11 +1013,11 @@ public class Config {
                         channel = new RaidChannel(channelId);
 
                         if (filterName != null) {
-                            channel.filterName = filterName;
+                            channel.setFilterName(filterName);
 
-                            channel.geofences = geofenceIdentifiers;
+                            channel.setGeofences(geofenceIdentifiers);
 
-                            channel.formattingName = formattingName;
+                            channel.setFormattingName(formattingName);
 
                             channel.chatId = chatId;
 
@@ -1090,11 +1095,11 @@ public class Config {
                 channel = new RaidChannel(channelId);
 
                 if (filterName != null) {
-                    channel.filterName = filterName;
+                    channel.setFilterName(filterName);
 
-                    channel.formattingName = formattingName;
+                    channel.setFormattingName(formattingName);
 
-                    channel.geofences = geofenceIdentifiers;
+                    channel.setGeofences(geofenceIdentifiers);
 
                     channel.chatId = chatId;
 

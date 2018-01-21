@@ -10,7 +10,7 @@ public class AlertChannels extends ArrayList<AlertChannel> {
         AlertChannels channels = null;
 
         for (AlertChannel alertChannel : this) {
-            if (alertChannel.geofences != null && alertChannel.geofences.contains(identifier)) {
+            if (alertChannel.getGeofences() != null && alertChannel.getGeofences().contains(identifier)) {
                 if (channels == null) channels = new AlertChannels();
                 channels.add(alertChannel);
             }
@@ -22,7 +22,7 @@ public class AlertChannels extends ArrayList<AlertChannel> {
         AlertChannels channels = null;
 
         for (AlertChannel alertChannel : this) {
-            if (alertChannel.geofences == null) {
+            if (alertChannel.getGeofences() == null) {
                 if (channels == null) channels = new AlertChannels();
                 channels.add(alertChannel);
             }
