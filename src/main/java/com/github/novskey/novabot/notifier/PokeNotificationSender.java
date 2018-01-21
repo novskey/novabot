@@ -60,9 +60,13 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                 if (toNotify.size() == 0) {
                     localLog.info("no-one wants this pokemon");
                 } else {
-                    final Message message = pokeSpawn.buildMessage("formatting.ini");
+                	//For weirdo notifications that only one person wants, minimize API calls to reduce costs:
+                	boolean minimizeAPICalls = toNotify.size() <= 1;
+                		
+                    final Message message = pokeSpawn.buildMessage("formatting.ini", minimizeAPICalls);
                     localLog.info("Built message for pokespawn");
 
+                    localLog.info("Notifying " + String.join(", ", toNotify));
                     toNotify.forEach(userID -> this.notifyUser(userID, message));
                 }
 

@@ -72,7 +72,6 @@ public class PokeSpawn extends Spawn
 
         getProperties().put("pkmn",Pokemon.getFilterName(id));
 
-
         if (novaBot.suburbsEnabled()) {
             this.setGeocodedLocation(novaBot.reverseGeocoder.geocodedLocation(lat, lon));
             getGeocodedLocation().getProperties().forEach(getProperties()::put);
@@ -198,8 +197,12 @@ public class PokeSpawn extends Spawn
             getProperties().replace("weather_icon", w.getEmote());
         }
     }
-
+    
     public Message buildMessage(String formatFile) {
+    	return buildMessage(formatFile, false);
+    }
+    
+    public Message buildMessage(String formatFile, boolean minimizeAPICalls) {
         if(builtMessages.get(formatFile) == null) {
 
             getProperties().put("time_left",timeLeft());
@@ -208,7 +211,6 @@ public class PokeSpawn extends Spawn
                 this.setGeocodedLocation(novaBot.reverseGeocoder.geocodedLocation(lat, lon));
                 getGeocodedLocation().getProperties().forEach(getProperties()::put);
             }
-
             if (!getProperties().containsKey("24h_time")){
                 this.setTimeZone(novaBot.getConfig().useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.getConfig().getTimeZone());
                 if(getTimeZone() == null){
@@ -226,7 +228,7 @@ public class PokeSpawn extends Spawn
             embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterBodyFormatting(formatFile) : novaBot.getConfig().getBodyFormatting(formatFile, "pokemon")));
             embedBuilder.setThumbnail(Pokemon.getIcon(this.id));
             if (novaBot.getConfig().showMap(formatFile, "pokemon")) {
-                embedBuilder.setImage(this.getImage(formatFile));
+                embedBuilder.setImage(this.getImage(formatFile, minimizeAPICalls));
             }
             embedBuilder.setFooter(novaBot.getConfig().getFooterText(), null);
             embedBuilder.setTimestamp(ZonedDateTime.now(UtilityFunctions.UTC));

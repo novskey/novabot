@@ -72,12 +72,16 @@ public class Spawn {
     public ArrayList<GeofenceIdentifier> getGeofences() {
         return geofenceIdentifiers;
     }
-
+    
     public String getImage(String formatFile) {
-        if (this.imageUrl == null) {
+    	return getImage(formatFile, false);
+    }
+
+    public String getImage(String formatFile, boolean minimizeAPIRequests) {
+        if (this.imageUrl == null && !minimizeAPIRequests) {
             if(novaBot.getConfig().getStaticMapKeys().size() == 0){
                 return "https://raw.githubusercontent.com/novskey/novabot/dev/static/no-api-keys-remaining.png";
-            }else {
+            } else {
                 incRequests();
                 return this.imageUrl = "https://maps.googleapis.com/maps/api/staticmap?" + String.format("zoom=%s&size=%sx%s&markers=color:red|%s,%s&key=%s", novaBot.getConfig().getMapZoom(formatFile, formatKey), novaBot.getConfig().getMapWidth(formatFile, formatKey), novaBot.getConfig().getMapHeight(formatFile, formatKey), this.lat, this.lon, getNextKey());
             }
