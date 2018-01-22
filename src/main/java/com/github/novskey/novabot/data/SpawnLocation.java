@@ -44,7 +44,7 @@ public class SpawnLocation {
                 }
                 return false;
             case Suburb:
-                return novaBot.config.suburbsEnabled() && geocodedLocation != null && geocodedLocation.getProperties().get(novaBot.config.getGoogleSuburbField()).equalsIgnoreCase(location.getSuburb());
+                return novaBot.suburbsEnabled() && geocodedLocation != null && geocodedLocation.getProperties().get(novaBot.config.getGoogleSuburbField()).equalsIgnoreCase(location.getSuburb());
         }
 
         return false;

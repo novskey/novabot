@@ -13,10 +13,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.maps.GeoApiContext;
-import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.entities.Icon;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.*;
 import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,25 +94,34 @@ public class Config {
     private ArrayList<String> staticMapKeys = new ArrayList<>();
     private HashMap<GeofenceIdentifier, String> raidChats = new HashMap<>();
     private HashMap<String, GeoApiContext> geoApis = new HashMap<>();
-    private NovaBot novaBot;
     private int nbMaxConnections = 8;
     private int scanMaxConnections = 8;
 
-    public Config(Ini configIni) {
+    public Config(String configName, String gkeys, String formatting, String raidChannelFile, String pokeChannelFile,
+                  String supporterLevelFile, String presetsFile, Guild guild, JDA jda) {
+
+        Ini configIni = null;
+        try {
+            configIni = new Ini(new File(configName));
+        } catch (IOException e) {
+            log.error(String.format("Couldn't find config file %s, aborting", configName));
+            System.exit(1);
+        }
+
         log.info("Configuring...");
 
-        log.info(String.format("Loading %s...", novaBot.configName));
+        log.info(String.format("Loading %s...", configName));
 
-        loadBaseConfig(novaBot, configIni);
+        loadBaseConfig(configName, configIni);
 
         loadScannerDbConfig(configIni);
 
         loadNovaBotDbConfig(configIni);
 
-        log.info("Finished loading " + novaBot.configName);
+        log.info("Finished loading " + configName);
 
-        log.info(String.format("Loading %s...", novaBot.gkeys));
-        geocodingKeys = loadKeys(new File(novaBot.gkeys));
+        log.info(String.format("Loading %s...", gkeys));
+        geocodingKeys = loadKeys(new File(gkeys));
 
         geoApis.clear();
         for (String s : geocodingKeys) {
@@ -127,34 +134,34 @@ public class Config {
         timeZoneKeys.addAll(geocodingKeys);
         staticMapKeys.clear();
         staticMapKeys.addAll(geocodingKeys);
-        log.info("Finished loading " + novaBot.gkeys);
+        log.info("Finished loading " + gkeys);
 
-        log.info(String.format("Loading %s...", novaBot.formatting));
-        loadFormatting(novaBot.formatting);
-        log.info("Finished loading " + novaBot.formatting);
+        log.info(String.format("Loading %s...", formatting));
+        loadFormatting(formatting);
+        log.info("Finished loading " + formatting);
 
 
         if (raidsEnabled()) {
-            log.info(String.format("Loading %s...", novaBot.raidChannels));
-            loadRaidChannels();
-            log.info("Finished loading " + novaBot.raidChannels);
+            log.info(String.format("Loading %s...", raidChannelFile));
+            loadRaidChannels(raidChannelFile, formatting);
+            log.info("Finished loading " + raidChannelFile);
         }
 
-        log.info(String.format("Loading %s...", novaBot.supporterLevels));
-        loadSupporterRoles();
-        log.info("Finished loading " + novaBot.supporterLevels);
+        log.info(String.format("Loading %s...", supporterLevelFile));
+        loadSupporterRoles(supporterLevelFile);
+        log.info("Finished loading " + supporterLevelFile);
 
         if (pokemonEnabled()) {
-            log.info(String.format("Loading %s...", novaBot.pokeChannels));
-            pokeChannels = loadPokemonChannels(novaBot.pokeChannels);
-            log.info("Finished loading " + novaBot.pokeChannels);
+            log.info(String.format("Loading %s...", pokeChannelFile));
+            pokeChannels = loadPokemonChannels(pokeChannelFile, formatting);
+            log.info("Finished loading " + pokeChannelFile);
         } else {
             pokeChannels = new AlertChannels();
         }
 
-        log.info(String.format("Loading %s...", novaBot.presets));
-        loadPresets(novaBot.presets);
-        log.info("Finished loading " + novaBot.presets);
+        log.info(String.format("Loading %s...", presetsFile));
+        loadPresets(presetsFile);
+        log.info("Finished loading " + presetsFile);
 
         log.info("Finished configuring");
     }
@@ -184,14 +191,13 @@ public class Config {
 
     }
 
-    private void loadBaseConfig(NovaBot novaBot, Ini configIni) {
+    private void loadBaseConfig(String configName, Ini configIni) {
         Ini.Section config = configIni.get("config");
 
         token = config.get("token", token);
 
         if (token == null) {
-            log.error(String.format("Couldn't find token in %s. novabot can't run without a bot token.", novaBot.configName));
-            novaBot.shutDown();
+            log.error(String.format("Couldn't find token in %s. novabot can't run without a bot token.", configName));
             System.exit(1);
         }
 
@@ -265,16 +271,15 @@ public class Config {
         adminRole = config.get("adminRole", adminRole);
 
         if (adminRole == null) {
-            log.warn(String.format("Couldn't find adminRole in %s. !reload command won't work unless an adminRole is specified.", novaBot.configName));
+            log.warn(String.format("Couldn't find adminRole in %s. !reload command won't work unless an adminRole is specified.", configName));
         }
 
         novabotRoleId = config.get("novabotRole", novabotRoleId);
 
         if (novabotRoleId == null) {
-            log.warn(String.format("Couldn't find novabotRoleId in %s. A novabotRoleId must be specified in order to use raid organisation.", novaBot.configName));
+            log.warn(String.format("Couldn't find novabotRoleId in %s. A novabotRoleId must be specified in order to use raid organisation.", configName));
             if (!raidOrganisationEnabled) {
                 log.error("Raid organisation enabled with no novabotRoleId");
-                novaBot.shutDown();
                 System.exit(1);
             }
         }
@@ -282,7 +287,7 @@ public class Config {
         commandChannelId = config.get("commandChannel", commandChannelId);
 
         if (commandChannelId == null) {
-            log.warn("Couldn't find commandChannel in %s. novabot will only be able to accept commands in DM.", novaBot.configName);
+            log.warn("Couldn't find commandChannel in %s. novabot will only be able to accept commands in DM.", configName);
         }
 
         raidLobbyCategory = config.get("raidLobbyCategory",raidLobbyCategory);
@@ -449,14 +454,15 @@ public class Config {
         return raidChannels.size() > 0;
     }
 
-    public void loadEmotes() {
+    public void loadEmotes(Guild guild, JDA jda) {
+        // TODO - Seperation of concerns indicates this shouldn't be here.
         for (String type : Types.TYPES) {
-            List<Emote> found = novaBot.jda.getEmotesByName(type, true);
+            List<Emote> found = jda.getEmotesByName(type, true);
             String path = null;
             if (found.size() == 0) try {
                 path = "static/icons/" + type + ".png";
 
-                novaBot.guild.getController().createEmote(type, Icon.from(new File(path))).queue(emote ->
+                guild.getController().createEmote(type, Icon.from(new File(path))).queue(emote ->
                         Types.emotes.put(type, emote));
             } catch (IOException e) {
                 log.warn(String.format("Couldn't find emote file: %s, ignoring.", path));
@@ -468,11 +474,11 @@ public class Config {
         log.info(String.format("Finished loading type emojis: %s", Types.emotes.toString()));
 
         for (Team team : Team.values()) {
-            List<Emote> found = novaBot.jda.getEmotesByName(team.toString().toLowerCase(), true);
+            List<Emote> found = jda.getEmotesByName(team.toString().toLowerCase(), true);
             String path = null;
             if (found.size() == 0) try {
                 path = "static/icons/" + team.toString().toLowerCase() + ".png";
-                novaBot.guild.getController().createEmote(team.toString().toLowerCase(), Icon.from(new File(path))).queue(emote ->
+                guild.getController().createEmote(team.toString().toLowerCase(), Icon.from(new File(path))).queue(emote ->
                         Team.emotes.put(team, emote));
             } catch (IOException e) {
                 log.warn(String.format("Couldn't find emote file: %s, ignoring.", path));
@@ -694,9 +700,6 @@ public class Config {
         return stats;
     }
 
-    public boolean suburbsEnabled() {
-        return novaBot.suburbs.notEmpty();
-    }
 
     public boolean useGeofences() {
         return Geofencing.notEmpty();
@@ -801,8 +804,7 @@ public class Config {
         return keys;
     }
 
-    private AlertChannels loadPokemonChannels(String pokeChannelsFile) {
-        if (novaBot.geofencing == null || !novaBot.geofencing.loaded) novaBot.loadGeofences();
+    private AlertChannels loadPokemonChannels(String pokeChannelsFile, String formatting) {
 
         AlertChannels pokeChannelsRet = new AlertChannels();
 
@@ -812,7 +814,7 @@ public class Config {
 
             String                      channelId           = null;
             String                      filterName          = null;
-            String                      formattingName      = novaBot.formatting;
+            String                      formattingName      = formatting;
             HashSet<GeofenceIdentifier> geofenceIdentifiers = null;
 
             boolean first = true;
@@ -918,7 +920,7 @@ public class Config {
             }
 
         } catch (FileNotFoundException e) {
-            log.warn(String.format("Couldn't find pokechannels file: %s, ignoring.", novaBot.pokeChannels));
+            log.warn(String.format("Couldn't find pokechannels file: %s, ignoring.", pokeChannelsFile));
         }
         return pokeChannelsRet;
     }
@@ -980,20 +982,19 @@ public class Config {
             }
 
         } catch (FileNotFoundException e) {
-            log.warn(String.format("Couldn't find %s, ignoring", novaBot.presets));
+            log.warn(String.format("Couldn't find %s, ignoring", novaBotPresetsFile));
         }
     }
 
-    private void loadRaidChannels() {
-        if (novaBot.geofencing == null || !novaBot.geofencing.loaded) novaBot.loadGeofences();
+    private void loadRaidChannels(String raidChannelsFile, String formatting) {
 
-        File file = new File(novaBot.raidChannels);
+        File file = new File(raidChannelsFile);
 
         try (Scanner in = new Scanner(file)) {
 
             String                      channelId           = null;
             String                      filterName          = null;
-            String                      formattingName      = novaBot.formatting;
+            String                      formattingName      = formatting;
             String                      chatId              = null;
             HashSet<GeofenceIdentifier> geofenceIdentifiers = null;
 
@@ -1119,12 +1120,12 @@ public class Config {
             }
 
         } catch (FileNotFoundException e) {
-            log.warn(String.format("Couldn't find raidchannels file: %s, ignoring.", novaBot.pokeChannels));
+            log.warn(String.format("Couldn't find raidchannels file: %s, ignoring.", raidChannelsFile));
         }
     }
 
-    private void loadSupporterRoles() {
-        File file = new File(novaBot.supporterLevels);
+    private void loadSupporterRoles(String supporterLevelsFile) {
+        File file = new File(supporterLevelsFile);
 
         try {
             Scanner sc = new Scanner(file);
@@ -1139,7 +1140,7 @@ public class Config {
                 roleLimits.put(roleId, NotificationLimit.fromString(line));
             }
         } catch (FileNotFoundException e) {
-            log.warn(String.format("Couldn't find %s, ignoring", novaBot.supporterLevels));
+            log.warn(String.format("Couldn't find %s, ignoring", supporterLevelsFile));
         }
     }
 

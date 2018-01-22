@@ -1175,7 +1175,7 @@ public class DBManager implements IDataBase {
                         "FROM raid " +
                         "WHERE (SELECT paused FROM users WHERE users.id = raid.user_id) = FALSE " +
                         "AND LOWER(location) IN (%s%s'all') " +
-                        "AND boss_id=?;", geofenceQMarks.toString(), (novaBot.config.suburbsEnabled() ? "?, " : "")
+                        "AND boss_id=?;", geofenceQMarks.toString(), (novaBot.suburbsEnabled() ? "?, " : "")
         );
 
         try (Connection connection = getNbConnection();
@@ -1185,7 +1185,7 @@ public class DBManager implements IDataBase {
                 statement.setString(i + 1, raidSpawn.getGeofences().get(i).name.toLowerCase());
             }
             int offset = 1;
-            if (novaBot.config.suburbsEnabled()) {
+            if (novaBot.suburbsEnabled()) {
                 statement.setString(geofences + offset, raidSpawn.properties.get(novaBot.config.getGoogleSuburbField()).toLowerCase());
                 offset++;
             }
@@ -1223,7 +1223,7 @@ public class DBManager implements IDataBase {
                         "FROM preset " +
                         "WHERE (SELECT paused FROM users WHERE users.id = preset.user_id) = FALSE " +
                         "AND (LOWER(location) IN (%s%s'all'))" +
-                        "AND (preset_name = ?)", geofenceQMarks.toString(), novaBot.config.suburbsEnabled() ? "?," : ""
+                        "AND (preset_name = ?)", geofenceQMarks.toString(), novaBot.suburbsEnabled() ? "?," : ""
         );
 
         try (Connection connection = getNbConnection();
@@ -1234,7 +1234,7 @@ public class DBManager implements IDataBase {
                 statement.setString(i + 1, spawn.getGeofences().get(i).name.toLowerCase());
             }
             int offset = 1;
-            if (novaBot.config.suburbsEnabled()) {
+            if (novaBot.suburbsEnabled()) {
                 statement.setString(geofences + offset, spawn.properties.get(novaBot.config.getGoogleSuburbField()).toLowerCase());
                 offset++;
             }
@@ -1271,7 +1271,7 @@ public class DBManager implements IDataBase {
                 "SELECT DISTINCT(user_id) " +
                         "FROM pokemon " +
                         "WHERE (SELECT paused FROM users WHERE users.id = pokemon.user_id) = FALSE " +
-                        "AND ((LOWER(location) IN (%s" + (novaBot.config.suburbsEnabled() ? "?," : "") + "'all')) " +
+                        "AND ((LOWER(location) IN (%s" + (novaBot.suburbsEnabled() ? "?," : "") + "'all')) " +
                         "AND (id=? OR id=?) " +
                         "AND (min_iv <= ?) " +
                         "AND (max_iv >= ?) " +
@@ -1290,7 +1290,7 @@ public class DBManager implements IDataBase {
 
             int offset = 1;
 
-            if (novaBot.config.suburbsEnabled()) {
+            if (novaBot.suburbsEnabled()) {
                 statement.setString(geofences + offset, pokeSpawn.properties.get(novaBot.config.getGoogleSuburbField()).toLowerCase());
                 offset++;
             }

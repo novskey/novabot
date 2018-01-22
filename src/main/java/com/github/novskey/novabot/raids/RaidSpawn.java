@@ -66,7 +66,7 @@ public class RaidSpawn extends Spawn {
 
         properties.put("team_icon", team.getEmote());
 
-        if (novaBot.config.suburbsEnabled()) {
+        if (novaBot.suburbsEnabled()) {
             this.geocodedLocation = novaBot.reverseGeocoder.geocodedLocation(lat, lon);
             geocodedLocation.getProperties().forEach(properties::put);
         }
