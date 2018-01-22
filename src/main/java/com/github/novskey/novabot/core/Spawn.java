@@ -4,6 +4,7 @@ import com.github.novskey.novabot.Util.UtilityFunctions;
 import com.github.novskey.novabot.data.SpawnLocation;
 import com.github.novskey.novabot.maps.GeocodedLocation;
 import com.github.novskey.novabot.maps.GeofenceIdentifier;
+import lombok.*;
 import net.dv8tion.jda.core.entities.Message;
 
 import java.time.ZoneId;
@@ -11,30 +12,33 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@Data
 public class Spawn {
     protected static final DateTimeFormatter printFormat24hr = DateTimeFormatter.ofPattern("HH:mm:ss");
     protected static final DateTimeFormatter printFormat12hr = DateTimeFormatter.ofPattern("hh:mm:ss a");
+    @Setter
     public static NovaBot novaBot = null;
     private static int lastKey;
 
+    @Getter
     private static int requests = 0;
 
     static {
         lastKey = 0;
     }
 
-    public final HashMap<String, String> properties = new HashMap<>();
+    private final HashMap<String, String> properties = new HashMap<>();
     protected final HashMap<String, Message> builtMessages = new HashMap<>();
-    public Integer move_1;
-    public Integer move_2;
+    private Integer move_1;
+    private Integer move_2;
     protected double lat;
     protected double lon;
     protected String formatKey = "pokemon";
     protected ArrayList<GeofenceIdentifier> geofenceIdentifiers = new ArrayList<>();
     private String imageUrl;
-    public ZoneId timeZone;
-    public SpawnLocation spawnLocation;
-    public GeocodedLocation geocodedLocation = null;
+    private ZoneId timeZone;
+    private SpawnLocation spawnLocation;
+    private GeocodedLocation geocodedLocation = null;
 
     private synchronized static void incRequests(){
         requests++;
@@ -63,10 +67,6 @@ public class Spawn {
         }
     }
 
-    public static int getRequests() {
-        return requests;
-    }
-
     public ArrayList<GeofenceIdentifier> getGeofences() {
         return geofenceIdentifiers;
     }
@@ -84,7 +84,7 @@ public class Spawn {
     }
 
     public String getSuburb() {
-        return properties.get("city");
+        return getProperties().get("city");
     }
 
     public static void main(String[] args) {
@@ -99,10 +99,6 @@ public class Spawn {
         return String.format("https://www.google.com/maps?q=loc:%s,%s", this.lat, this.lon);
     }
 
-    public static void setNovaBot(NovaBot novaBot) {
-        Spawn.novaBot = novaBot;
-    }
-
     private synchronized static String getNextKey() {
         if (lastKey >= novaBot.config.getStaticMapKeys().size() - 1) {
             lastKey = 0;
@@ -113,6 +109,6 @@ public class Spawn {
     }
 
     public SpawnLocation getLocation() {
-        return spawnLocation;
+        return getSpawnLocation();
     }
 }

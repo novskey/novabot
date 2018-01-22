@@ -52,62 +52,62 @@ public class RaidSpawn extends Spawn {
 
     public RaidSpawn(String name, String gymId, double lat, double lon, Team team, ZonedDateTime raidEnd, ZonedDateTime battleStart, int bossId, int bossCp, int move_1, int move_2, int raidLevel) {
         this.name = name;
-        properties.put("gym_name", name);
+        getProperties().put("gym_name", name);
 
         this.gymId = gymId;
 
         this.lat = lat;
-        properties.put("lat", String.valueOf(lat));
+        getProperties().put("lat", String.valueOf(lat));
 
         this.lon = lon;
-        properties.put("lng", String.valueOf(lon));
+        getProperties().put("lng", String.valueOf(lon));
 
-        properties.put("team_name", team.toString());
+        getProperties().put("team_name", team.toString());
 
-        properties.put("team_icon", team.getEmote());
+        getProperties().put("team_icon", team.getEmote());
 
         if (novaBot.suburbsEnabled()) {
-            this.geocodedLocation = novaBot.reverseGeocoder.geocodedLocation(lat, lon);
-            geocodedLocation.getProperties().forEach(properties::put);
+            this.setGeocodedLocation(novaBot.reverseGeocoder.geocodedLocation(lat, lon));
+            getGeocodedLocation().getProperties().forEach(getProperties()::put);
         }
 
         this.geofenceIdentifiers = getGeofence(lat, lon);
 
-        this.spawnLocation = new SpawnLocation(geocodedLocation, geofenceIdentifiers);
+        this.setSpawnLocation(new SpawnLocation(getGeocodedLocation(), geofenceIdentifiers));
 
-        properties.put("geofence", GeofenceIdentifier.listToString(geofenceIdentifiers));
+        getProperties().put("geofence", GeofenceIdentifier.listToString(geofenceIdentifiers));
 
-        properties.put("gmaps", getGmapsLink());
-        properties.put("applemaps", getAppleMapsLink());
+        getProperties().put("gmaps", getGmapsLink());
+        getProperties().put("applemaps", getAppleMapsLink());
 
         this.raidEnd = raidEnd;
 
-        properties.put("time_left", timeLeft(raidEnd));
+        getProperties().put("time_left", timeLeft(raidEnd));
 
         this.battleStart = battleStart;
-        properties.put("time_left_start", timeLeft(battleStart));
+        getProperties().put("time_left_start", timeLeft(battleStart));
 
 
         this.bossId = bossId;
         this.bossCp = bossCp;
-        this.move_1 = move_1;
-        this.move_2 = move_2;
+        this.setMove_1(move_1);
+        this.setMove_2(move_2);
 
         if (bossId != 0) {
-            properties.put("pkmn", Pokemon.getFilterName(bossId));
-            properties.put("cp", String.valueOf(bossCp));
-            properties.put("lvl20cp", String.valueOf(Pokemon.maxCpAtLevel(bossId, 20)));
-            properties.put("lvl25cp", String.valueOf(Pokemon.maxCpAtLevel(bossId, 25)));
-            properties.put("quick_move",(move_1 == 0) ? "unkn" : Pokemon.moveName(move_1));
-            properties.put("quick_move_type_icon",(move_1 == 0) ? "unkn" : Types.getEmote(Pokemon.getMoveType(move_1)));
-            properties.put("charge_move", (move_2 == 0) ? "unkn" : Pokemon.moveName(move_2));
-            properties.put("charge_move_type_icon",(move_2 == 0) ? "unkn" : Types.getEmote(Pokemon.getMoveType(move_2)));
+            getProperties().put("pkmn", Pokemon.getFilterName(bossId));
+            getProperties().put("cp", String.valueOf(bossCp));
+            getProperties().put("lvl20cp", String.valueOf(Pokemon.maxCpAtLevel(bossId, 20)));
+            getProperties().put("lvl25cp", String.valueOf(Pokemon.maxCpAtLevel(bossId, 25)));
+            getProperties().put("quick_move",(move_1 == 0) ? "unkn" : Pokemon.moveName(move_1));
+            getProperties().put("quick_move_type_icon",(move_1 == 0) ? "unkn" : Types.getEmote(Pokemon.getMoveType(move_1)));
+            getProperties().put("charge_move", (move_2 == 0) ? "unkn" : Pokemon.moveName(move_2));
+            getProperties().put("charge_move_type_icon",(move_2 == 0) ? "unkn" : Types.getEmote(Pokemon.getMoveType(move_2)));
         }
 
         this.raidLevel = raidLevel;
-        properties.put("level", String.valueOf(raidLevel));
+        getProperties().put("level", String.valueOf(raidLevel));
 
-        properties.put("lobbycode", "unkn");
+        getProperties().put("lobbycode", "unkn");
     }
 
     public String timeLeft(ZonedDateTime until) {
@@ -145,20 +145,20 @@ public class RaidSpawn extends Spawn {
 
         if (builtMessages.get(formatFile) == null) {
 
-            if (!properties.containsKey("city")) {
-                novaBot.reverseGeocoder.geocodedLocation(lat, lon).getProperties().forEach(properties::put);
+            if (!getProperties().containsKey("city")) {
+                novaBot.reverseGeocoder.geocodedLocation(lat, lon).getProperties().forEach(getProperties()::put);
             }
 
-            if (!properties.containsKey("24h_start")){
-                this.timeZone = novaBot.config.useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.config.getTimeZone();
-                if(timeZone == null){
-                    timeZone = novaBot.timeZones.getTimeZone(lat,lon);
+            if (!getProperties().containsKey("24h_start")){
+                this.setTimeZone(novaBot.config.useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.config.getTimeZone());
+                if(getTimeZone() == null){
+                    setTimeZone(novaBot.timeZones.getTimeZone(lat,lon));
                 }
-                properties.put("24h_end", getDisappearTime(printFormat24hr));
-                properties.put("12h_end", getDisappearTime(printFormat12hr));
+                getProperties().put("24h_end", getDisappearTime(printFormat24hr));
+                getProperties().put("12h_end", getDisappearTime(printFormat12hr));
 
-                properties.put("24h_start", getStartTime(printFormat24hr));
-                properties.put("12h_start", getStartTime(printFormat12hr));
+                getProperties().put("24h_start", getStartTime(printFormat24hr));
+                getProperties().put("12h_start", getStartTime(printFormat12hr));
             }
 
             final MessageBuilder messageBuilder = new MessageBuilder();
@@ -167,18 +167,18 @@ public class RaidSpawn extends Spawn {
 
             if (bossId == 0) {
                 formatKey = "raidEgg";
-                embedBuilder.setDescription(novaBot.config.formatStr(properties, novaBot.config.getBodyFormatting(formatFile, formatKey) + (
+                embedBuilder.setDescription(novaBot.config.formatStr(getProperties(), novaBot.config.getBodyFormatting(formatFile, formatKey) + (
                         raidLevel >= 3 && novaBot.config.isRaidOrganisationEnabled()
                                 ? "\n\nJoin the discord lobby to coordinate with other players, and be alerted when this egg hatches. Join by clicking the ✅ emoji below this post, or by typing `!joinraid <lobbycode>` in any novabot channel."
                                 : "")));
             } else {
                 formatKey = "raidBoss";
-                embedBuilder.setDescription(novaBot.config.formatStr(properties, novaBot.config.getBodyFormatting(formatFile, formatKey) + (
+                embedBuilder.setDescription(novaBot.config.formatStr(getProperties(), novaBot.config.getBodyFormatting(formatFile, formatKey) + (
                         raidLevel >= 3 && novaBot.config.isRaidOrganisationEnabled()
                                 ? "\n\nJoin the discord lobby to coordinate with other players by clicking the ✅ emoji below this post, or by typing `!joinraid <lobbycode>` in any novabot channel."
                                 : "")));
             }
-            embedBuilder.setTitle(novaBot.config.formatStr(properties, novaBot.config.getTitleFormatting(formatFile, formatKey)), novaBot.config.formatStr(properties, novaBot.config.getTitleUrl(formatFile, formatKey)));
+            embedBuilder.setTitle(novaBot.config.formatStr(getProperties(), novaBot.config.getTitleFormatting(formatFile, formatKey)), novaBot.config.formatStr(getProperties(), novaBot.config.getTitleUrl(formatFile, formatKey)));
             embedBuilder.setThumbnail(getIcon());
             if (novaBot.config.showMap(formatFile, formatKey)) {
                 embedBuilder.setImage(getImage(formatFile));
@@ -190,7 +190,7 @@ public class RaidSpawn extends Spawn {
             String contentFormatting = novaBot.config.getContentFormatting(formatFile, formatKey);
 
             if (contentFormatting != null && !contentFormatting.isEmpty()) {
-                messageBuilder.append(novaBot.config.formatStr(properties, novaBot.config.getContentFormatting(formatFile, formatKey)));
+                messageBuilder.append(novaBot.config.formatStr(getProperties(), novaBot.config.getContentFormatting(formatFile, formatKey)));
             }
 
             builtMessages.put(formatFile, messageBuilder.build());
@@ -199,7 +199,7 @@ public class RaidSpawn extends Spawn {
     }
 
     public String getDisappearTime(DateTimeFormatter printFormat) {
-        return printFormat.format(raidEnd.withZoneSameInstant(timeZone));
+        return printFormat.format(raidEnd.withZoneSameInstant(getTimeZone()));
     }
 
     public String getIcon() {
@@ -225,16 +225,16 @@ public class RaidSpawn extends Spawn {
     public void setLobbyCode(int id) {
         this.lobbyCode = id;
 
-        properties.put("lobbycode", getLobbyCode());
+        getProperties().put("lobbycode", getLobbyCode());
     }
 
     public String getStartTime(DateTimeFormatter printFormat) {
-        return printFormat.format(battleStart.withZoneSameInstant(timeZone));
+        return printFormat.format(battleStart.withZoneSameInstant(getTimeZone()));
     }
 
     public void setLobbyCode(String lobbyCode) {
         this.lobbyCode = Integer.parseInt(lobbyCode);
-        properties.put("lobbycode", getLobbyCode());
+        getProperties().put("lobbycode", getLobbyCode());
     }
 
     public String timeLeft(Instant untilTime) {
@@ -266,7 +266,7 @@ public class RaidSpawn extends Spawn {
 
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", name, gymId, lat, lon, raidEnd, battleStart, bossId, bossCp, raidLevel, move_1, move_2);
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", name, gymId, lat, lon, raidEnd, battleStart, bossId, bossCp, raidLevel, getMove_1(), getMove_2());
     }
 
     private Color getColor() {

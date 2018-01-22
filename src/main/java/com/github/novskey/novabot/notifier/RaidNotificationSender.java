@@ -66,7 +66,7 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
                 RaidSpawn raidSpawn = novaBot.notificationsManager.raidQueue.take();
                 localLog.info("Checking " + raidSpawn);
 
-                if (raidSpawn.properties.get("time_left_start").startsWith("-") && raidSpawn.bossId == 0) {
+                if (raidSpawn.getProperties().get("time_left_start").startsWith("-") && raidSpawn.bossId == 0) {
                     localLog.info("Raid started but no boss Id, not posting");
                     continue;
                 }

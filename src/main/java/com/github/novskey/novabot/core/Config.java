@@ -13,10 +13,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.maps.GeoApiContext;
+import lombok.extern.slf4j.Slf4j;
+import lombok.Data;
 import net.dv8tion.jda.core.entities.*;
 import org.ini4j.Ini;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,10 +29,10 @@ import java.util.*;
 /**
  * Created by Owner on 13/05/2017.
  */
-@lombok.Data
+@Data
+@Slf4j
 public class Config {
 
-    private static final Logger log = LoggerFactory.getLogger(Config.class);
     private static final String[] formatKeys = new String[]{"pokemon", "raidEgg", "raidBoss"};
     private static final String[] formattingVars = new String[]{"title", "titleUrl", "body", "content", "showMap", "mapZoom", "mapWidth", "mapHeight"};
     public final HashMap<String, JsonObject> pokeFilters = new HashMap<>();
@@ -320,7 +321,9 @@ public class Config {
     }
 
     public String formatStr(HashMap<String, String> properties, String toFormat) {
-        if (toFormat == null) return toFormat;
+        if (toFormat == null) {
+            return null;
+        }
 
         final String[] str = {toFormat};
 
@@ -477,7 +480,7 @@ public class Config {
 
         if (raidFilter == null) {
             RaidNotificationSender.notificationLog.info(String.format("couldn't find filter for '%s'",searchStr));
-            searchStr = raidSpawn.properties.get("gym_name");
+            searchStr = raidSpawn.getProperties().get("gym_name");
             raidFilter = searchFilter(filter, searchStr);
             RaidNotificationSender.notificationLog.info(searchStr + ": " + raidFilter);
 
@@ -535,7 +538,7 @@ public class Config {
     public boolean matchesFilter(JsonObject filter, PokeSpawn pokeSpawn, String filterName) {
         JsonElement pokeFilter = searchFilter(filter, UtilityFunctions.capitaliseFirst(Pokemon.getFilterName(pokeSpawn.getFilterId())));
         if (pokeFilter == null) {
-            PokeNotificationSender.notificationLog.info(String.format("pokeFilter %s is null for %s", filterName, pokeSpawn.properties.get("pkmn")));
+            PokeNotificationSender.notificationLog.info(String.format("pokeFilter %s is null for %s", filterName, pokeSpawn.getProperties().get("pkmn")));
             pokeFilter = searchFilter(filter, "Default");
 
             if (pokeFilter == null) {
@@ -598,7 +601,7 @@ public class Config {
             JsonArray sizes = obj.getAsJsonArray("size");
 
             if (sizes != null) {
-                String  spawnSize = pokeSpawn.properties.get("size");
+                String  spawnSize = pokeSpawn.getProperties().get("size");
                 boolean passed    = false;
 
                 for (JsonElement size : sizes) {

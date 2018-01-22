@@ -1,5 +1,6 @@
 package com.github.novskey.novabot.core;
 
+import com.github.novskey.novabot.Util.CommandLineOptions;
 import com.github.novskey.novabot.Util.UtilityFunctions;
 import com.github.novskey.novabot.data.DataManager;
 import com.github.novskey.novabot.data.SpawnLocation;
@@ -48,6 +49,7 @@ public class NovaBot {
     public TextChannel roleLog;
     public Guild guild = null;
     public boolean testing = false;
+    private CommandLineOptions cliopt;
     public Config config;
     public SuburbManager suburbs;
     public ArrayList<Invite> invites = new ArrayList<>();
@@ -67,30 +69,22 @@ public class NovaBot {
     private ArrayList<JDA> notificationBots = new ArrayList<>();
     private int lastNotificationBot = 0;
     public DataManager dataManager;
-
-    public NovaBot(String config, String geofences, String supporterLevels, String suburbs, String gkeys,
-                   String formatting, String raidChannels, String pokeChannels, String presets) {
-        this.configName = config;
-        this.geofences = geofences;
-        this.supporterLevels = supporterLevels;
-        this.suburbsName = suburbs;
-        this.gkeys = gkeys;
-        this.formatting = formatting;
-        this.raidChannels = raidChannels;
-        this.pokeChannels = pokeChannels;
-        this.presets = presets;
+    
+    public NovaBot(CommandLineOptions cliopt) {
+        this.configName = cliopt.getConfig();
+        this.geofences = cliopt.getGeofences();
+        this.supporterLevels = cliopt.getSupporterLevels();
+        this.suburbsName = cliopt.getSuburbs();
+        this.gkeys = cliopt.getGkeys();
+        this.formatting = cliopt.getFormatting();
+        this.raidChannels = cliopt.getRaidChannels();
+        this.pokeChannels = cliopt.getPokeChannels();
+        this.presets = cliopt.getPresets();
+        this.cliopt = cliopt;
     }
 
     public NovaBot() {
-        this.configName = "config.ini";
-        this.geofences = "geofences.txt";
-        this.supporterLevels = "supporterlevels.txt";
-        this.suburbsName = "suburbs.txt";
-        this.gkeys = "gkeys.txt";
-        this.formatting = "formatting.ini";
-        this.raidChannels = "raidchannels.ini";
-        this.pokeChannels = "pokechannels.ini";
-        this.presets = "presets.ini";
+        this(new CommandLineOptions());
     }
 
 
@@ -124,53 +118,10 @@ public class NovaBot {
             return;
         }
 
-        String config = "config.ini";
-        String geofences = "geofences.txt";
-        String supporterLevels = "supporterlevels.txt";
-        String suburbs = "suburbs.txt";
-        String gkeys = "gkeys.txt";
-        String formatting = "formatting.ini";
-        String raidChannels = "raidchannels.ini";
-        String pokeChannels = "pokechannels.ini";
-        String presets = "presets.ini";
-        String locale = "en";
+        CommandLineOptions cliopt = CommandLineOptions.parse(args);
 
-        for (int i = 0; i < args.length; i += 2) {
-            switch (args[i]) {
-                case "-cf":
-                    config = args[i + 1];
-                    break;
-                case "-gf":
-                    geofences = args[i + 1];
-                    break;
-                case "-sl":
-                    supporterLevels = args[i + 1];
-                    break;
-                case "-s":
-                    suburbs = args[i + 1];
-                    break;
-                case "-gk":
-                    gkeys = args[i + 1];
-                    break;
-                case "-f":
-                    formatting = args[i + 1];
-                    break;
-                case "-rc":
-                    raidChannels = args[i + 1];
-                    break;
-                case "-pc":
-                    pokeChannels = args[i + 1];
-                    break;
-                case "-p":
-                    presets = args[i + 1];
-                    break;
-                case "-l":
-                    locale = args[i + 1];
-            }
-        }
-
-        NovaBot novaBot = new NovaBot(config, geofences, supporterLevels, suburbs, gkeys, formatting, raidChannels, pokeChannels, presets);
-        novaBot.setLocale(locale);
+        NovaBot novaBot = new NovaBot(cliopt);
+        novaBot.setLocale(cliopt.getLocale());
         novaBot.setup();
         novaBot.start();
     }
@@ -248,7 +199,7 @@ public class NovaBot {
 
                 String alertMsg = getLocalString("AlertRaidChatsMessage");
                 alertMsg = alertMsg.replaceAll("<user>", author.getAsMention());
-                alertMsg = alertMsg.replaceAll("<boss-or-egg>", (lobby.spawn.bossId == 0 ? String.format("%s %s %s", getLocalString("Level"), lobby.spawn.raidLevel, getLocalString("Egg")) : lobby.spawn.properties.get("pkmn")));
+                alertMsg = alertMsg.replaceAll("<boss-or-egg>", (lobby.spawn.bossId == 0 ? String.format("%s %s %s", getLocalString("Level"), lobby.spawn.raidLevel, getLocalString("Egg")) : lobby.spawn.getProperties().get("pkmn")));
                 alertMsg = alertMsg.replaceAll("<channel>", lobby.getChannel().getAsMention());
                 alertMsg = alertMsg.replaceAll("<membercount>", String.valueOf(lobby.memberCount()));
                 alertMsg = alertMsg.replaceAll("<lobbycode>", groupCode);
@@ -849,7 +800,7 @@ public class NovaBot {
                 alertRaidChats(config.getRaidChats(lobby.spawn.getGeofences()), String.format(
                         "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the ✅ or by typing `!joinraid %s`.",
                         author.getAsMention(),
-                        (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.properties.get("pkmn")),
+                        (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
                         lobby.getChannel().getAsMention(),
                         lobby.memberCount(),
                         lobby.lobbyCode
@@ -926,7 +877,7 @@ public class NovaBot {
         }
 
         if (msg.equals(getLocalString("MapCommand"))) {
-            textChannel.sendMessage(lobby.spawn.properties.get("gmaps")).queue();
+            textChannel.sendMessage(lobby.spawn.getProperties().get("gmaps")).queue();
             return;
         }
 
@@ -957,7 +908,7 @@ public class NovaBot {
             if (lobby.spawn.bossId == 0) {
                 textChannel.sendMessageFormat("%s %s",
                         getLocalString("BossNotSpawnedYet"),
-                        lobby.spawn.properties.get("24h_start")).queue();
+                        lobby.spawn.getProperties().get("24h_start")).queue();
             } else {
                 textChannel.sendMessage(lobby.getBossInfoMessage()).queue();
             }
@@ -968,7 +919,7 @@ public class NovaBot {
             if (lobby.spawn.bossId == 0) {
                 textChannel.sendMessageFormat("%s %s",
                         getLocalString("BossNotSpawnedYet"),
-                        lobby.spawn.properties.get("24h_start")).queue();
+                        lobby.spawn.getProperties().get("24h_start")).queue();
             } else {
                 textChannel.sendMessage(lobby.getMaxCpMessage()).queue();
             }

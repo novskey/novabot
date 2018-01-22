@@ -168,7 +168,7 @@ public class MessageListener extends ListenerAdapter {
             novaBot.alertRaidChats(novaBot.config.getRaidChats(lobby.spawn.getGeofences()), String.format(
                     "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the ✅ or by typing `!joinraid %s`.",
                     novaBot.guild.getMember(event.getUser()).getAsMention(),
-                    (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.properties.get("pkmn")),
+                    (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
                     lobby.getChannel().getAsMention(),
                     lobby.memberCount(),
                     lobby.lobbyCode

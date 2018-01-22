@@ -1186,7 +1186,7 @@ public class DBManager implements IDataBase {
             }
             int offset = 1;
             if (novaBot.suburbsEnabled()) {
-                statement.setString(geofences + offset, raidSpawn.properties.get(novaBot.config.getGoogleSuburbField()).toLowerCase());
+                statement.setString(geofences + offset, raidSpawn.getProperties().get(novaBot.config.getGoogleSuburbField()).toLowerCase());
                 offset++;
             }
             statement.setInt(geofences + offset, raidSpawn.bossId);
@@ -1235,7 +1235,7 @@ public class DBManager implements IDataBase {
             }
             int offset = 1;
             if (novaBot.suburbsEnabled()) {
-                statement.setString(geofences + offset, spawn.properties.get(novaBot.config.getGoogleSuburbField()).toLowerCase());
+                statement.setString(geofences + offset, spawn.getProperties().get(novaBot.config.getGoogleSuburbField()).toLowerCase());
                 offset++;
             }
             statement.setString(geofences + offset, preset);
@@ -1291,7 +1291,7 @@ public class DBManager implements IDataBase {
             int offset = 1;
 
             if (novaBot.suburbsEnabled()) {
-                statement.setString(geofences + offset, pokeSpawn.properties.get(novaBot.config.getGoogleSuburbField()).toLowerCase());
+                statement.setString(geofences + offset, pokeSpawn.getProperties().get(novaBot.config.getGoogleSuburbField()).toLowerCase());
                 offset++;
             }
             statement.setInt(geofences + offset, pokeSpawn.id);
