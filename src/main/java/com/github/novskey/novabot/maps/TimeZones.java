@@ -45,7 +45,7 @@ public class TimeZones {
 
         String key = getNextKey();
 
-        GeoApiContext context = novaBot.config.getGeoApis().get(key);
+        GeoApiContext context = novaBot.getConfig().getGeoApis().get(key);
         try {
             TimeZone timeZone = TimeZoneApi.getTimeZone(context, new LatLng(lat, lon)).await();
             incRequests();
@@ -55,10 +55,10 @@ public class TimeZones {
 
         } catch (OverDailyLimitException e) {
             novaBot.novabotLog.info(String.format("Exceeded daily time zone limit with key %s, removing from rotation. Enable key again with !reload.", key));
-            novaBot.config.getTimeZoneKeys().remove(key);
+            novaBot.getConfig().getTimeZoneKeys().remove(key);
         }catch (RequestDeniedException e){
                 novaBot.novabotLog.info(String.format("API key %s is not authorised to use the timezone api, removing from rotation. Enable key again with !reload.", key));
-                novaBot.config.getTimeZoneKeys().remove(key);
+                novaBot.getConfig().getTimeZoneKeys().remove(key);
         } catch (ApiException | InterruptedException | IOException e) {
             novaBot.novabotLog.error("Error executing getTimeZone",e);
         }
@@ -66,12 +66,12 @@ public class TimeZones {
     }
 
     private synchronized String getNextKey() {
-        if (TimeZones.lastKey >= novaBot.config.getTimeZoneKeys().size() - 1) {
+        if (TimeZones.lastKey >= novaBot.getConfig().getTimeZoneKeys().size() - 1) {
             TimeZones.lastKey = 0;
-            return novaBot.config.getTimeZoneKeys().get(TimeZones.lastKey);
+            return novaBot.getConfig().getTimeZoneKeys().get(TimeZones.lastKey);
         }
         ++TimeZones.lastKey;
-        return novaBot.config.getTimeZoneKeys().get(TimeZones.lastKey);
+        return novaBot.getConfig().getTimeZoneKeys().get(TimeZones.lastKey);
     }
 
     public int getRequests() {

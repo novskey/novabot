@@ -31,7 +31,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
     @Override
     public void run() {
         try {
-            while (novaBot.config.pokemonEnabled()) {
+            while (novaBot.getConfig().pokemonEnabled()) {
                 PokeSpawn pokeSpawn = novaBot.notificationsManager.pokeQueue.take();
                 this.jdaInstance = novaBot.getNextNotificationBot();
                 localLog.info("Checking if anyone wants: " + Pokemon.idToName(pokeSpawn.id));
@@ -43,7 +43,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
 
                 HashSet<String> toNotify = new HashSet<>(novaBot.dataManager.getUserIDsToNotify(pokeSpawn));
 
-                ArrayList<String> matchingPresets = novaBot.config.findMatchingPresets(pokeSpawn);
+                ArrayList<String> matchingPresets = novaBot.getConfig().findMatchingPresets(pokeSpawn);
 
                 for (String preset : matchingPresets) {
                     toNotify.addAll(novaBot.dataManager.getUserIDsToNotify(preset, pokeSpawn));
@@ -59,7 +59,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                 }
 
                 for (GeofenceIdentifier geofenceIdentifier : pokeSpawn.getGeofences()) {
-                    ArrayList<AlertChannel> channels = novaBot.config.getPokeChannels(geofenceIdentifier);
+                    ArrayList<AlertChannel> channels = novaBot.getConfig().getPokeChannels(geofenceIdentifier);
                     if (channels == null) continue;
                     for (AlertChannel channel : channels) {
                         if (channel != null) {
@@ -67,7 +67,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                         }
                     }
                 }
-                ArrayList<AlertChannel> noGeofences = novaBot.config.getNonGeofencedPokeChannels();
+                ArrayList<AlertChannel> noGeofences = novaBot.getConfig().getNonGeofencedPokeChannels();
 
                 if (noGeofences != null) {
                     for (AlertChannel channel : noGeofences) {
@@ -84,7 +84,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
     }
 
     private void checkAndPost(AlertChannel channel, PokeSpawn pokeSpawn) {
-        if (novaBot.config.matchesFilter(novaBot.config.pokeFilters.get(channel.getFilterName()), pokeSpawn, channel.getFilterName())) {
+        if (novaBot.getConfig().matchesFilter(novaBot.getConfig().pokeFilters.get(channel.getFilterName()), pokeSpawn, channel.getFilterName())) {
             localLog.info("Pokemon passed filter, posting to Discord");
             sendChannelAlert(pokeSpawn.buildMessage(channel.getFormattingName()), channel.getChannelId());
         } else {

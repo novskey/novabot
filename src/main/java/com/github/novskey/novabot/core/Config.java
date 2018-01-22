@@ -467,7 +467,7 @@ public class Config {
         novaBot.setup();
 
         PokeSpawn pokeSpawn = new PokeSpawn(248);
-        System.out.println(novaBot.config.matchesFilter(novaBot.config.pokeFilters.get("ultrarare.json"),pokeSpawn,"ultrarare.json"));
+        System.out.println(novaBot.getConfig().matchesFilter(novaBot.getConfig().pokeFilters.get("ultrarare.json"),pokeSpawn,"ultrarare.json"));
 
     }
 

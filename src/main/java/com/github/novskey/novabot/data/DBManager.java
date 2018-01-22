@@ -45,7 +45,7 @@ public class DBManager implements IDataBase {
 
     public DBManager(NovaBot novaBot) {
         this.novaBot = novaBot;
-        hashCodes = new RotatingSet<>(novaBot.config.getMaxStoredHashes());
+        hashCodes = new RotatingSet<>(novaBot.getConfig().getMaxStoredHashes());
         lastChecked = ZonedDateTime.now(UtilityFunctions.UTC);
         lastCheckedRaids = ZonedDateTime.now(UtilityFunctions.UTC);
     }
@@ -346,7 +346,7 @@ public class DBManager implements IDataBase {
         int numSpawns = 0;
 
         String sql = null;
-        switch (novaBot.config.getScannerType()) {
+        switch (novaBot.getConfig().getScannerType()) {
             case RocketMap:
             case SloppyRocketMap:
             case SkoodatRocketMap:
@@ -361,7 +361,7 @@ public class DBManager implements IDataBase {
                         "FROM sightings " +
                         "WHERE pokemon_id = ? " +
                         "AND expire_timestamp > " +
-                        (novaBot.config.getScanProtocol().equals("postgresql") ?
+                        (novaBot.getConfig().getScanProtocol().equals("postgresql") ?
                             "extract(epoch from (now() - INTERVAL '" + intervalLength + "' " + intervalType.toDbString() + "))":
                             "UNIX_TIMESTAMP(UTC_TIMESTAMP() - INTERVAL '" + intervalLength + "'" + intervalType.toDbString() + ")");
                 break;
@@ -370,7 +370,7 @@ public class DBManager implements IDataBase {
         try (Connection connection = getScanConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
-            switch (novaBot.config.getScannerType()){
+            switch (novaBot.getConfig().getScannerType()){
                 case RocketMap:
                 case SloppyRocketMap:
                 case SkoodatRocketMap:
@@ -545,7 +545,7 @@ public class DBManager implements IDataBase {
         StringBuilder knownIdQMarks = new StringBuilder();
 
         if (knownRaids.size() > 0) {
-            if (novaBot.config.getScannerType() == ScannerType.PhilMap || novaBot.config.getScannerType() == ScannerType.RocketMap) {
+            if (novaBot.getConfig().getScannerType() == ScannerType.PhilMap || novaBot.getConfig().getScannerType() == ScannerType.RocketMap) {
                 knownIdQMarks.append("gym.gym_id NOT IN (");
             } else {
                 knownIdQMarks.append("forts.id NOT in (");
@@ -570,7 +570,7 @@ public class DBManager implements IDataBase {
 
         String sql = null;
 
-        switch (novaBot.config.getScannerType()) {
+        switch (novaBot.getConfig().getScannerType()) {
             case SloppyRocketMap:
             case SkoodatRocketMap:
             case RocketMap:
@@ -608,7 +608,7 @@ public class DBManager implements IDataBase {
                         "  INNER JOIN fort_sightings ON forts.id = fort_sightings.fort_id" +
                         "  INNER JOIN raids ON forts.id = raids.fort_id " +
                         "WHERE " + knownIdQMarks + " raids.time_end > " +
-                        (novaBot.config.getScanProtocol().equals("mysql")
+                        (novaBot.getConfig().getScanProtocol().equals("mysql")
                                 ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
                                 : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
                 break;
@@ -629,7 +629,7 @@ public class DBManager implements IDataBase {
                         "INNER JOIN fort_sightings ON forts.id = fort_sightings.fort_id " +
                         "INNER JOIN raids ON forts.id = raids.fort_id " +
                         "WHERE " + knownIdQMarks + " raids.time_end > " +
-                        (novaBot.config.getScanProtocol().equals("mysql")
+                        (novaBot.getConfig().getScanProtocol().equals("mysql")
                                 ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
                                 : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
                 break;
@@ -660,13 +660,13 @@ public class DBManager implements IDataBase {
              PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             for (int i = 0; i < knownRaids.size(); i++) {
-                if (novaBot.config.getScanProtocol().equals("mysql")) {
+                if (novaBot.getConfig().getScanProtocol().equals("mysql")) {
                     statement.setString(i + 1, knownIds.get(i));
                 } else {
                     statement.setInt(i + 1, Integer.parseInt(knownIds.get(i)));
                 }
             }
-            switch (novaBot.config.getScannerType()) {
+            switch (novaBot.getConfig().getScannerType()) {
                 case RocketMap:
                 case SkoodatRocketMap:
                 case SloppyRocketMap:
@@ -675,7 +675,7 @@ public class DBManager implements IDataBase {
                     break;
                 case Monocle:
                 case Hydro74000Monocle:
-                    LocalDateTime localDateTime = lastCheckedRaids.withZoneSameInstant(novaBot.config.getTimeZone()).toLocalDateTime();
+                    LocalDateTime localDateTime = lastCheckedRaids.withZoneSameInstant(novaBot.getConfig().getTimeZone()).toLocalDateTime();
                     String timeStamp = String.format("%s %s", localDateTime.toLocalDate(), localDateTime.toLocalTime());
 
                     statement.setString(knownRaids.size() + 1, timeStamp);
@@ -698,7 +698,7 @@ public class DBManager implements IDataBase {
 
 //                System.out.println("Current UTC time: " + ZonedDateTime.now(UtilityFunctions.UTC));
 //                System.out.println("Current time based on config timezone : " + UtilityFunctions.getCurrentTime(novaBot.config.getTimeZone()));
-                switch (novaBot.config.getScannerType()) {
+                switch (novaBot.getConfig().getScannerType()) {
                     case RocketMap:
                     case SkoodatRocketMap:
                     case SloppyRocketMap:
@@ -842,9 +842,9 @@ public class DBManager implements IDataBase {
 
         if (blacklistQMarks == null) {
             blacklistQMarks = new StringBuilder("(");
-            for (int i = 0; i < novaBot.config.getBlacklist().size(); ++i) {
+            for (int i = 0; i < novaBot.getConfig().getBlacklist().size(); ++i) {
                 blacklistQMarks.append("?");
-                if (i != novaBot.config.getBlacklist().size() - 1) {
+                if (i != novaBot.getConfig().getBlacklist().size() - 1) {
                     blacklistQMarks.append(",");
                 }
             }
@@ -852,7 +852,7 @@ public class DBManager implements IDataBase {
         }
 
         String sql = null;
-        switch (novaBot.config.getScannerType()) {
+        switch (novaBot.getConfig().getScannerType()) {
             case Monocle:
                 sql = "" +
                         "SELECT pokemon_id," +
@@ -868,7 +868,7 @@ public class DBManager implements IDataBase {
                         "FROM sightings " +
                         "WHERE pokemon_id NOT IN " + blacklistQMarks + " " +
                         "AND expire_timestamp > " +
-                        (novaBot.config.getScanProtocol().equals("mysql")
+                        (novaBot.getConfig().getScanProtocol().equals("mysql")
                                 ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
                                 : "extract(epoch from now())");
 //                                : "extract(epoch from (now() - INTERVAL ? SECOND))");
@@ -892,11 +892,11 @@ public class DBManager implements IDataBase {
                         "FROM sightings " +
                         "WHERE pokemon_id NOT IN " + blacklistQMarks + " " +
                         "AND updated >= " +
-                        (novaBot.config.getScanProtocol().equals("mysql")
+                        (novaBot.getConfig().getScanProtocol().equals("mysql")
                                 ? "UNIX_TIMESTAMP(? - INTERVAL 1 SECOND)"
                                 : "extract(epoch from (?::timestamptz - INTERVAL '1' SECOND)) ") +
                         "AND expire_timestamp > " +
-                        (novaBot.config.getScanProtocol().equals("mysql")
+                        (novaBot.getConfig().getScanProtocol().equals("mysql")
                                 ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
 //                            : "extract(epoch from (now() - INTERVAL ? SECOND))");
                                 : "extract(epoch from now())");
@@ -998,29 +998,29 @@ public class DBManager implements IDataBase {
         int newSpawns = 0;
         try (Connection connection = getScanConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            for (int i = 1; i <= novaBot.config.getBlacklist().size(); ++i) {
-                statement.setInt(i, novaBot.config.getBlacklist().get(i - 1));
+            for (int i = 1; i <= novaBot.getConfig().getBlacklist().size(); ++i) {
+                statement.setInt(i, novaBot.getConfig().getBlacklist().get(i - 1));
             }
 
-            switch (novaBot.config.getScannerType()) {
+            switch (novaBot.getConfig().getScannerType()) {
                 case RocketMap:
                 case SloppyRocketMap:
                 case SkoodatRocketMap:
                 case PhilMap:
-                    statement.setObject(novaBot.config.getBlacklist().size() + 1, lastChecked.toLocalDateTime(), Types.TIMESTAMP);
+                    statement.setObject(novaBot.getConfig().getBlacklist().size() + 1, lastChecked.toLocalDateTime(), Types.TIMESTAMP);
                     break;
                 case Hydro74000Monocle:
-                    LocalDateTime localDateTime = lastChecked.withZoneSameInstant(novaBot.config.getTimeZone()).toLocalDateTime();
+                    LocalDateTime localDateTime = lastChecked.withZoneSameInstant(novaBot.getConfig().getTimeZone()).toLocalDateTime();
                     String timeStamp = String.format("%s %s", localDateTime.toLocalDate(), localDateTime.toLocalTime());
 
-                    statement.setString(novaBot.config.getBlacklist().size() + 1, timeStamp);
+                    statement.setString(novaBot.getConfig().getBlacklist().size() + 1, timeStamp);
 //                    statement.setObject(novaBot.config.getBlacklist().size() + 1, lastChecked.withZoneSameInstant(novaBot.config.getTimeZone()).toLocalDateTime(), Types.TIMESTAMP);
                     break;
             }
-            if (novaBot.config.getScanProtocol().equals("mysql")) {
-                statement.setString(novaBot.config.getBlacklist().size() +
-                                (novaBot.config.getScannerType() == ScannerType.Monocle ? 1 : 2),
-                        novaBot.config.getMinSecondsLeft().toString());
+            if (novaBot.getConfig().getScanProtocol().equals("mysql")) {
+                statement.setString(novaBot.getConfig().getBlacklist().size() +
+                                (novaBot.getConfig().getScannerType() == ScannerType.Monocle ? 1 : 2),
+                        novaBot.getConfig().getMinSecondsLeft().toString());
             }
 
             dbLog.info("Executing query:" + statement);
@@ -1036,7 +1036,7 @@ public class DBManager implements IDataBase {
 
                 PokeSpawn pokeSpawn = null;
 
-                switch (novaBot.config.getScannerType()) {
+                switch (novaBot.getConfig().getScannerType()) {
                     case RocketMap:
                         int id = rs.getInt(1);
                         double lat = rs.getDouble(2);
@@ -1186,7 +1186,7 @@ public class DBManager implements IDataBase {
             }
             int offset = 1;
             if (novaBot.suburbsEnabled()) {
-                statement.setString(geofences + offset, raidSpawn.getProperties().get(novaBot.config.getGoogleSuburbField()).toLowerCase());
+                statement.setString(geofences + offset, raidSpawn.getProperties().get(novaBot.getConfig().getGoogleSuburbField()).toLowerCase());
                 offset++;
             }
             statement.setInt(geofences + offset, raidSpawn.bossId);
@@ -1235,7 +1235,7 @@ public class DBManager implements IDataBase {
             }
             int offset = 1;
             if (novaBot.suburbsEnabled()) {
-                statement.setString(geofences + offset, spawn.getProperties().get(novaBot.config.getGoogleSuburbField()).toLowerCase());
+                statement.setString(geofences + offset, spawn.getProperties().get(novaBot.getConfig().getGoogleSuburbField()).toLowerCase());
                 offset++;
             }
             statement.setString(geofences + offset, preset);
@@ -1291,7 +1291,7 @@ public class DBManager implements IDataBase {
             int offset = 1;
 
             if (novaBot.suburbsEnabled()) {
-                statement.setString(geofences + offset, pokeSpawn.getProperties().get(novaBot.config.getGoogleSuburbField()).toLowerCase());
+                statement.setString(geofences + offset, pokeSpawn.getProperties().get(novaBot.getConfig().getGoogleSuburbField()).toLowerCase());
                 offset++;
             }
             statement.setInt(geofences + offset, pokeSpawn.id);
@@ -1575,22 +1575,22 @@ public class DBManager implements IDataBase {
     }
 
     public void novabotdbConnect() {
-        boolean mysql = novaBot.config.getNbProtocol().equals("mysql");
+        boolean mysql = novaBot.getConfig().getNbProtocol().equals("mysql");
 
         nbUrl = String.format("jdbc:%s://%s:%s/%s%s",
-                novaBot.config.getNbProtocol(),
-                novaBot.config.getNbIp(),
-                novaBot.config.getNbPort(),
-                novaBot.config.getNbDbName(),
-                mysql ? "?useSSL=" + novaBot.config.getNbUseSSL() : "");
+                novaBot.getConfig().getNbProtocol(),
+                novaBot.getConfig().getNbIp(),
+                novaBot.getConfig().getNbPort(),
+                novaBot.getConfig().getNbDbName(),
+                mysql ? "?useSSL=" + novaBot.getConfig().getNbUseSSL() : "");
 
         try {
             novaBotDataSource = com.github.novskey.novabot.data.DataSource.getInstance(
                     (mysql ? MySQL_DRIVER : PgSQL_DRIVER),
-                    novaBot.config.getNbUser(),
-                    novaBot.config.getNbPass(),
+                    novaBot.getConfig().getNbUser(),
+                    novaBot.getConfig().getNbPass(),
                     nbUrl,
-                    novaBot.config.getNbMaxConnections()
+                    novaBot.getConfig().getNbMaxConnections()
             );
         } catch (IOException | SQLException | PropertyVetoException e) {
             dbLog.error("Error executing novabotdbConnect",e);
@@ -1652,22 +1652,22 @@ public class DBManager implements IDataBase {
     }
 
     public void scanDbConnect() {
-        boolean mysql = novaBot.config.getScanProtocol().equals("mysql");
+        boolean mysql = novaBot.getConfig().getScanProtocol().equals("mysql");
 
         scanUrl = String.format("jdbc:%s://%s:%s/%s%s",
-                novaBot.config.getScanProtocol(),
-                novaBot.config.getScanIp(),
-                novaBot.config.getScanPort(),
-                novaBot.config.getScanDbName(),
-                mysql ? "?useSSL=" + novaBot.config.getScanUseSSL() : "");
+                novaBot.getConfig().getScanProtocol(),
+                novaBot.getConfig().getScanIp(),
+                novaBot.getConfig().getScanPort(),
+                novaBot.getConfig().getScanDbName(),
+                mysql ? "?useSSL=" + novaBot.getConfig().getScanUseSSL() : "");
 
         try {
             scanDataSource = com.github.novskey.novabot.data.DataSource.getInstance(
                     (mysql ? MySQL_DRIVER : PgSQL_DRIVER),
-                    novaBot.config.getScanUser(),
-                    novaBot.config.getScanPass(),
+                    novaBot.getConfig().getScanUser(),
+                    novaBot.getConfig().getScanPass(),
                     scanUrl,
-                    novaBot.config.getScanMaxConnections()
+                    novaBot.getConfig().getScanMaxConnections()
             );
         } catch (IOException | SQLException | PropertyVetoException e) {
             dbLog.error("Error executing scanDbConnect",e);
@@ -1685,7 +1685,7 @@ public class DBManager implements IDataBase {
                      "INSERT INTO spawninfo " +
                      "(lat,lon,suburb,street_num,street,state,postal,neighbourhood,sublocality,country) " +
                      "VALUES (?,?,?,?,?,?,?,?,?,?) " +
-                     (novaBot.config.getNbProtocol().equals("mysql") ? "ON DUPLICATE KEY UPDATE " : "ON CONFLICT (lat,lon) DO UPDATE SET  ") +
+                     (novaBot.getConfig().getNbProtocol().equals("mysql") ? "ON DUPLICATE KEY UPDATE " : "ON CONFLICT (lat,lon) DO UPDATE SET  ") +
                      "suburb = ?," +
                      "street_num = ?," +
                      "street = ?," +
@@ -1868,7 +1868,7 @@ public class DBManager implements IDataBase {
                    "INSERT INTO spawninfo " +
                    "(lat,lon,timezone)" +
                    "VALUES (?,?,?) " +
-                   (novaBot.config.getNbProtocol().equals("mysql") ? "ON DUPLICATE KEY UPDATE " : "ON CONFLICT (lat,lon) DO UPDATE SET  ") +
+                   (novaBot.getConfig().getNbProtocol().equals("mysql") ? "ON DUPLICATE KEY UPDATE " : "ON CONFLICT (lat,lon) DO UPDATE SET  ") +
                    "timezone = ?"
                    ))
       {

@@ -73,11 +73,11 @@ public class Spawn {
 
     public String getImage(String formatFile) {
         if (this.imageUrl == null) {
-            if(novaBot.config.getStaticMapKeys().size() == 0){
+            if(novaBot.getConfig().getStaticMapKeys().size() == 0){
                 return "https://raw.githubusercontent.com/novskey/novabot/dev/static/no-api-keys-remaining.png";
             }else {
                 incRequests();
-                return this.imageUrl = "https://maps.googleapis.com/maps/api/staticmap?" + String.format("zoom=%s&size=%sx%s&markers=color:red|%s,%s&key=%s", novaBot.config.getMapZoom(formatFile, formatKey), novaBot.config.getMapWidth(formatFile, formatKey), novaBot.config.getMapHeight(formatFile, formatKey), this.lat, this.lon, getNextKey());
+                return this.imageUrl = "https://maps.googleapis.com/maps/api/staticmap?" + String.format("zoom=%s&size=%sx%s&markers=color:red|%s,%s&key=%s", novaBot.getConfig().getMapZoom(formatFile, formatKey), novaBot.getConfig().getMapWidth(formatFile, formatKey), novaBot.getConfig().getMapHeight(formatFile, formatKey), this.lat, this.lon, getNextKey());
             }
         }
         return this.imageUrl;
@@ -100,12 +100,12 @@ public class Spawn {
     }
 
     private synchronized static String getNextKey() {
-        if (lastKey >= novaBot.config.getStaticMapKeys().size() - 1) {
+        if (lastKey >= novaBot.getConfig().getStaticMapKeys().size() - 1) {
             lastKey = 0;
-            return novaBot.config.getStaticMapKeys().get(lastKey);
+            return novaBot.getConfig().getStaticMapKeys().get(lastKey);
         }
         ++lastKey;
-        return novaBot.config.getStaticMapKeys().get(lastKey);
+        return novaBot.getConfig().getStaticMapKeys().get(lastKey);
     }
 
     public SpawnLocation getLocation() {

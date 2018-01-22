@@ -22,25 +22,25 @@ public class NotificationsManager {
     }
 
     public void start(){
-        final ScheduledExecutor executor = new ScheduledExecutor(novaBot.config.getDbThreads());
+        final ScheduledExecutor executor = new ScheduledExecutor(novaBot.getConfig().getDbThreads());
 
-        if (novaBot.config.useScanDb() && novaBot.config.pokemonEnabled()) {
+        if (novaBot.getConfig().useScanDb() && novaBot.getConfig().pokemonEnabled()) {
 
-            executor.scheduleAtFixedRate(new PokeNotifier(this, novaBot, testing), 0L, novaBot.config.getPokePollingDelay(), TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(new PokeNotifier(this, novaBot, testing), 0L, novaBot.getConfig().getPokePollingDelay(), TimeUnit.SECONDS);
 
-            for (int i = 1; i <= novaBot.config.getPokemonThreads(); i++) {
+            for (int i = 1; i <= novaBot.getConfig().getPokemonThreads(); i++) {
                 new Thread(new PokeNotificationSender(novaBot,i)).start();
             }
         }
 
-        if (novaBot.config.useScanDb() && novaBot.config.raidsEnabled()) {
+        if (novaBot.getConfig().useScanDb() && novaBot.getConfig().raidsEnabled()) {
 
-            executor.scheduleAtFixedRate(new RaidNotifier(this, novaBot), 0, novaBot.config.getRaidPollingDelay(), TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(new RaidNotifier(this, novaBot), 0, novaBot.getConfig().getRaidPollingDelay(), TimeUnit.SECONDS);
 
-            if (novaBot.config.isRaidOrganisationEnabled()) {
+            if (novaBot.getConfig().isRaidOrganisationEnabled()) {
                 novaBot.lobbyManager.addLobbies(novaBot.dataManager.getActiveLobbies());
             }
-            for (int i = 1; i <= novaBot.config.getRaidThreads(); i++) {
+            for (int i = 1; i <= novaBot.getConfig().getRaidThreads(); i++) {
                 new Thread(new RaidNotificationSender(novaBot,i)).start();
             }
         }

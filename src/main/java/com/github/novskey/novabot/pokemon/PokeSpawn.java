@@ -172,7 +172,7 @@ public class PokeSpawn extends Spawn
             }
 
             if (!getProperties().containsKey("24h_time")){
-                this.setTimeZone(novaBot.config.useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.config.getTimeZone());
+                this.setTimeZone(novaBot.getConfig().useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.getConfig().getTimeZone());
                 if(getTimeZone() == null){
                     setTimeZone(novaBot.timeZones.getTimeZone(lat,lon));
                 }
@@ -184,19 +184,19 @@ public class PokeSpawn extends Spawn
             final MessageBuilder messageBuilder = new MessageBuilder();
             final EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(getColor());
-            embedBuilder.setTitle(novaBot.config.formatStr(getProperties(), (encountered()) ? novaBot.config.getEncounterTitleFormatting(formatFile) : (novaBot.config.getTitleFormatting(formatFile, "pokemon"))), novaBot.config.formatStr(getProperties(), novaBot.config.getTitleUrl(formatFile, "pokemon")));
-            embedBuilder.setDescription(novaBot.config.formatStr(getProperties(), (encountered()) ? novaBot.config.getEncounterBodyFormatting(formatFile) : novaBot.config.getBodyFormatting(formatFile, "pokemon")));
+            embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterTitleFormatting(formatFile) : (novaBot.getConfig().getTitleFormatting(formatFile, "pokemon"))), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, "pokemon")));
+            embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterBodyFormatting(formatFile) : novaBot.getConfig().getBodyFormatting(formatFile, "pokemon")));
             embedBuilder.setThumbnail(Pokemon.getIcon(this.id));
-            if (novaBot.config.showMap(formatFile, "pokemon")) {
+            if (novaBot.getConfig().showMap(formatFile, "pokemon")) {
                 embedBuilder.setImage(this.getImage(formatFile));
             }
-            embedBuilder.setFooter(novaBot.config.getFooterText(), null);
+            embedBuilder.setFooter(novaBot.getConfig().getFooterText(), null);
             embedBuilder.setTimestamp(ZonedDateTime.now(UtilityFunctions.UTC));
             messageBuilder.setEmbed(embedBuilder.build());
 
-            String contentFormatting = novaBot.config.getContentFormatting(formatFile, formatKey);
+            String contentFormatting = novaBot.getConfig().getContentFormatting(formatFile, formatKey);
             if (contentFormatting != null && !contentFormatting.isEmpty()) {
-                messageBuilder.append(novaBot.config.formatStr(getProperties(), novaBot.config.getContentFormatting(formatFile, formatKey)));
+                messageBuilder.append(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getContentFormatting(formatFile, formatKey)));
             }
 
             builtMessages.put(formatFile,messageBuilder.build());

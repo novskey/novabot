@@ -162,7 +162,7 @@ public class UserCommand
     public ArrayList<String> getBlacklisted() {
         final ArrayList<String> blacklisted = new ArrayList<>();
         for (final Object o : this.getArg(ArgType.Pokemon).getParams()) {
-            if (novaBot.config.getBlacklist().contains(Pokemon.nameToID((String) o))) {
+            if (novaBot.getConfig().getBlacklist().contains(Pokemon.nameToID((String) o))) {
                 blacklisted.add((String)o);
             }
         }

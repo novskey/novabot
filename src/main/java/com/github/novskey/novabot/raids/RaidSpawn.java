@@ -150,7 +150,7 @@ public class RaidSpawn extends Spawn {
             }
 
             if (!getProperties().containsKey("24h_start")){
-                this.setTimeZone(novaBot.config.useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.config.getTimeZone());
+                this.setTimeZone(novaBot.getConfig().useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.getConfig().getTimeZone());
                 if(getTimeZone() == null){
                     setTimeZone(novaBot.timeZones.getTimeZone(lat,lon));
                 }
@@ -167,30 +167,30 @@ public class RaidSpawn extends Spawn {
 
             if (bossId == 0) {
                 formatKey = "raidEgg";
-                embedBuilder.setDescription(novaBot.config.formatStr(getProperties(), novaBot.config.getBodyFormatting(formatFile, formatKey) + (
-                        raidLevel >= 3 && novaBot.config.isRaidOrganisationEnabled()
+                embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
+                        raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()
                                 ? "\n\nJoin the discord lobby to coordinate with other players, and be alerted when this egg hatches. Join by clicking the ✅ emoji below this post, or by typing `!joinraid <lobbycode>` in any novabot channel."
                                 : "")));
             } else {
                 formatKey = "raidBoss";
-                embedBuilder.setDescription(novaBot.config.formatStr(getProperties(), novaBot.config.getBodyFormatting(formatFile, formatKey) + (
-                        raidLevel >= 3 && novaBot.config.isRaidOrganisationEnabled()
+                embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
+                        raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()
                                 ? "\n\nJoin the discord lobby to coordinate with other players by clicking the ✅ emoji below this post, or by typing `!joinraid <lobbycode>` in any novabot channel."
                                 : "")));
             }
-            embedBuilder.setTitle(novaBot.config.formatStr(getProperties(), novaBot.config.getTitleFormatting(formatFile, formatKey)), novaBot.config.formatStr(getProperties(), novaBot.config.getTitleUrl(formatFile, formatKey)));
+            embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleFormatting(formatFile, formatKey)), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, formatKey)));
             embedBuilder.setThumbnail(getIcon());
-            if (novaBot.config.showMap(formatFile, formatKey)) {
+            if (novaBot.getConfig().showMap(formatFile, formatKey)) {
                 embedBuilder.setImage(getImage(formatFile));
             }
-            embedBuilder.setFooter(novaBot.config.getFooterText(), null);
+            embedBuilder.setFooter(novaBot.getConfig().getFooterText(), null);
             embedBuilder.setTimestamp(Instant.now());
             messageBuilder.setEmbed(embedBuilder.build());
 
-            String contentFormatting = novaBot.config.getContentFormatting(formatFile, formatKey);
+            String contentFormatting = novaBot.getConfig().getContentFormatting(formatFile, formatKey);
 
             if (contentFormatting != null && !contentFormatting.isEmpty()) {
-                messageBuilder.append(novaBot.config.formatStr(getProperties(), novaBot.config.getContentFormatting(formatFile, formatKey)));
+                messageBuilder.append(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getContentFormatting(formatFile, formatKey)));
             }
 
             builtMessages.put(formatFile, messageBuilder.build());

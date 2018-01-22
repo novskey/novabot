@@ -57,7 +57,7 @@ public class ReverseGeocoder {
         location.set("country","unkn");
 
         String key = getNextKey();
-        final GeoApiContext context = novaBot.config.getGeoApis().get(key);
+        final GeoApiContext context = novaBot.getConfig().getGeoApis().get(key);
         try {
             final GeocodingResult[] results = (GeocodingApi.reverseGeocode(context, new LatLng(lat, lon))).await();
             incRequests();
@@ -101,11 +101,11 @@ public class ReverseGeocoder {
         }
         catch (com.google.maps.errors.OverDailyLimitException e){
             novaBot.novabotLog.info(String.format("Exceeded daily geocoding limit with key %s, removing from rotation. Enable key again with !reload.", key));
-            novaBot.config.getGeocodingKeys().remove(key);
+            novaBot.getConfig().getGeocodingKeys().remove(key);
         }
         catch (RequestDeniedException e){
             novaBot.novabotLog.info(String.format("API key %s is not authorised to use the geocoding api, removing from rotation. Enable key again with !reload.", key));
-            novaBot.config.getGeocodingKeys().remove(key);
+            novaBot.getConfig().getGeocodingKeys().remove(key);
         }
         catch (Exception e) {
             novaBot.novabotLog.error("Error executing geocodedLocation",e);
@@ -115,11 +115,11 @@ public class ReverseGeocoder {
     }
 
     private String getNextKey() {
-        if (ReverseGeocoder.lastKey >= novaBot.config.getGeocodingKeys().size() - 1) {
+        if (ReverseGeocoder.lastKey >= novaBot.getConfig().getGeocodingKeys().size() - 1) {
             ReverseGeocoder.lastKey = 0;
-            return novaBot.config.getGeocodingKeys().get(ReverseGeocoder.lastKey);
+            return novaBot.getConfig().getGeocodingKeys().get(ReverseGeocoder.lastKey);
         }
         ++ReverseGeocoder.lastKey;
-        return novaBot.config.getGeocodingKeys().get(ReverseGeocoder.lastKey);
+        return novaBot.getConfig().getGeocodingKeys().get(ReverseGeocoder.lastKey);
     }
 }

@@ -307,10 +307,10 @@ public class RaidLobby {
                 .update()
                 .queue();
 
-            if (novaBot.config.getRaidLobbyCategory() == null) {
+            if (novaBot.getConfig().getRaidLobbyCategory() == null) {
                 channelId = novaBot.guild.getController().createTextChannel(String.format("raid-%s", channelName)).complete().getId();
             }else{
-                channelId = novaBot.jda.getCategoryById(novaBot.config.getRaidLobbyCategory()).createTextChannel(String.format("raid-%s",channelName)).complete().getId();
+                channelId = novaBot.jda.getCategoryById(novaBot.getConfig().getRaidLobbyCategory()).createTextChannel(String.format("raid-%s",channelName)).complete().getId();
             }
 
             channel = novaBot.jda.getTextChannelById(channelId);
@@ -323,10 +323,10 @@ public class RaidLobby {
 
             channel.createPermissionOverride(role).setAllow(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY).complete();
 
-            if(channel.getPermissionOverride(novaBot.guild.getRoleById(novaBot.config.novabotRole())) == null){
-                channel.createPermissionOverride(novaBot.guild.getRoleById(novaBot.config.novabotRole())).setAllow(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.CREATE_INSTANT_INVITE).complete();
+            if(channel.getPermissionOverride(novaBot.guild.getRoleById(novaBot.getConfig().novabotRole())) == null){
+                channel.createPermissionOverride(novaBot.guild.getRoleById(novaBot.getConfig().novabotRole())).setAllow(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.CREATE_INSTANT_INVITE).complete();
             }else{
-                channel.getPermissionOverride(novaBot.guild.getRoleById(novaBot.config.novabotRole())).getManagerUpdatable().grant(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.CREATE_INSTANT_INVITE).update().complete();
+                channel.getPermissionOverride(novaBot.guild.getRoleById(novaBot.getConfig().novabotRole())).getManagerUpdatable().grant(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.CREATE_INSTANT_INVITE).update().complete();
             }
 
             channel.createInvite().queue(inv -> {
