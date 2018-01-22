@@ -33,7 +33,7 @@ import static com.github.novskey.novabot.core.Spawn.printFormat24hr;
 
 public class NovaBot {
 
-    public final String WHITE_GREEN_CHECK = "\u2705";
+    private final String WHITE_GREEN_CHECK = "\u2705";
     public final Logger novabotLog = LoggerFactory.getLogger("novabot");
     public final ConcurrentHashMap<String, ZonedDateTime> lastUserRoleChecks = new ConcurrentHashMap<>();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -48,13 +48,14 @@ public class NovaBot {
     private final String presets;
     public TextChannel roleLog;
     public Guild guild = null;
-    public boolean testing = false;
+    private boolean testing = false;
     private CommandLineOptions cliopt;
     private Config config;
     public SuburbManager suburbs;
     public ArrayList<Invite> invites = new ArrayList<>();
     public JDA jda;
     public LobbyManager lobbyManager;
+
     public MessageChannel userUpdatesLog;
     public Geofencing geofencing;
     public ReverseGeocoder reverseGeocoder;
@@ -97,17 +98,20 @@ public class NovaBot {
     }
 
 
-    public void loadConfig() {
-        setConfig(new Config(testing ? "config.example.ini" : getConfigName(), getGkeys(), getFormatting(), getRaidChannels(), getPokeChannels(),
+    private void loadConfig() {
+        if (testing) {
+            cliopt.setConfig("config.example.ini");
+        }
+        setConfig(new Config(getConfigName(), getGkeys(), getFormatting(), getRaidChannels(), getPokeChannels(),
                 getSupporterLevels(), getPresets()));
     }
 
-    public void loadGeofences() {
+    private void loadGeofences() {
         geofencing = new Geofencing(this);
         geofencing.loadGeofences(geofences);
     }
 
-    public void loadSuburbs() {
+    private void loadSuburbs() {
         suburbs = new SuburbManager(new File(suburbsName), this);
     }
 
@@ -548,7 +552,7 @@ public class NovaBot {
                                 (limit.pokemonLimit > 0 ? getLocalString("ExceededNonZeroPokeLimitMessage") : "")).queue();
                         return;
                     } else if (limit == null && isSupporter) {
-                        novabotLog.error(String.format("LIMIT IS NULL: %s, is supporter: %s", author.getName(), isSupporter));
+                        novabotLog.error(String.format("LIMIT IS NULL: %s, is supporter", author.getName()));
                     }
 
                     if (dataManager.notContainsUser(author.getId())) {
@@ -641,7 +645,7 @@ public class NovaBot {
                                 (limit.presetLimit > 0 ? getLocalString("ExceededNonZeroPresetLimitMessage") : "")).queue();
                         return;
                     } else if (limit == null && isSupporter) {
-                        novabotLog.error(String.format("LIMIT IS NULL: %s, is supporter: %s", author.getName(), isSupporter));
+                        novabotLog.error(String.format("LIMIT IS NULL: %s, is supporter", author.getName()));
                     }
 
                     Object[] presetsObj = userCommand.getArg(ArgType.Preset).getParams();
@@ -703,7 +707,6 @@ public class NovaBot {
                             author,
                             getLocalString("ClearPresetLocationMessage"),
                             Location.listToString(locations)).queue();
-                    return;
                 }
             }
         } else if (matchingCommand.equals("clearlocationcommand")) {
@@ -970,14 +973,6 @@ public class NovaBot {
         }
     }
 
-    public void shutDown() {
-        novabotLog.info("Shutting down...");
-        if (jda != null) {
-            jda.shutdown();
-        }
-        System.exit(0);
-    }
-
     private boolean isAdmin(User author) {
         for (Guild g : jda.getGuilds()) {
             Member member = g.getMember(author);
@@ -1001,7 +996,7 @@ public class NovaBot {
         return false;
     }
 
-    public void start() {
+    private void start() {
         novabotLog.info("Connecting to db");
         novabotLog.info("Connected");
         novabotLog.info("Purging unknown spawnpoints so they can be geocoded again");
@@ -1082,12 +1077,12 @@ public class NovaBot {
         return this.suburbs.notEmpty();
     }
 
-    public void setLocale(String locale) {
+    private void setLocale(String locale) {
         this.locale = locale;
     }
 
 
-    public void loadEmotes(Guild guild, JDA jda) {
+    private void loadEmotes(Guild guild, JDA jda) {
         for (String type : Types.TYPES) {
             List<Emote> found = jda.getEmotesByName(type, true);
             String path = null;
@@ -1135,11 +1130,11 @@ public class NovaBot {
         return formatter;
     }
 
-    public String getConfigName() {
+    private String getConfigName() {
         return configName;
     }
 
-    public String getSupporterLevels() {
+    private String getSupporterLevels() {
         return supporterLevels;
     }
 
@@ -1151,11 +1146,11 @@ public class NovaBot {
         return formatting;
     }
 
-    public String getRaidChannels() {
+    private String getRaidChannels() {
         return raidChannels;
     }
 
-    public String getPokeChannels() {
+    private String getPokeChannels() {
         return pokeChannels;
     }
 
