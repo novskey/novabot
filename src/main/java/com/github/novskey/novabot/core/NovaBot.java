@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -104,7 +105,7 @@ public class NovaBot {
 
     public void loadConfig() {
         config = new Config(testing ? "config.example.ini" : configName, gkeys, formatting, raidChannels, pokeChannels,
-                supporterLevels, presets, guild, jda);
+                supporterLevels, presets);
     }
 
     public void loadGeofences() {
@@ -1102,7 +1103,7 @@ public class NovaBot {
                 }
             }
 
-            config.loadEmotes(guild, jda);
+            loadEmotes(guild, jda);
 
             guild.getMember(jda.getSelfUser()).getRoles().forEach(System.out::println);
 
@@ -1132,6 +1133,42 @@ public class NovaBot {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+
+    public void loadEmotes(Guild guild, JDA jda) {
+        for (String type : Types.TYPES) {
+            List<Emote> found = jda.getEmotesByName(type, true);
+            String path = null;
+            if (found.size() == 0) try {
+                path = "static/icons/" + type + ".png";
+
+                guild.getController().createEmote(type, Icon.from(new File(path))).queue(emote ->
+                        Types.emotes.put(type, emote));
+            } catch (IOException e) {
+                novabotLog.warn(String.format("Couldn't find emote file: %s, ignoring.", path));
+            }
+            else {
+                Types.emotes.put(type, found.get(0));
+            }
+        }
+        novabotLog.info(String.format("Finished loading type emojis: %s", Types.emotes.toString()));
+
+        for (Team team : Team.values()) {
+            List<Emote> found = jda.getEmotesByName(team.toString().toLowerCase(), true);
+            String path = null;
+            if (found.size() == 0) try {
+                path = "static/icons/" + team.toString().toLowerCase() + ".png";
+                guild.getController().createEmote(team.toString().toLowerCase(), Icon.from(new File(path))).queue(emote ->
+                        Team.emotes.put(team, emote));
+            } catch (IOException e) {
+                novabotLog.warn(String.format("Couldn't find emote file: %s, ignoring.", path));
+            }
+            else {
+                Team.emotes.put(team, found.get(0));
+            }
+        }
+        novabotLog.info(String.format("Finished loading team emojis: %s", Team.emotes.toString()));
     }
 
     public synchronized JDA getNextNotificationBot() {

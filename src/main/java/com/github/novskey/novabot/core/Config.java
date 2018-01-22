@@ -13,7 +13,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.maps.GeoApiContext;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import org.ini4j.Ini;
 import org.slf4j.Logger;
@@ -98,7 +97,7 @@ public class Config {
     private int scanMaxConnections = 8;
 
     public Config(String configName, String gkeys, String formatting, String raidChannelFile, String pokeChannelFile,
-                  String supporterLevelFile, String presetsFile, Guild guild, JDA jda) {
+                  String supporterLevelFile, String presetsFile) {
 
         Ini configIni = null;
         try {
@@ -454,41 +453,7 @@ public class Config {
         return raidChannels.size() > 0;
     }
 
-    public void loadEmotes(Guild guild, JDA jda) {
-        // TODO - Seperation of concerns indicates this shouldn't be here.
-        for (String type : Types.TYPES) {
-            List<Emote> found = jda.getEmotesByName(type, true);
-            String path = null;
-            if (found.size() == 0) try {
-                path = "static/icons/" + type + ".png";
 
-                guild.getController().createEmote(type, Icon.from(new File(path))).queue(emote ->
-                        Types.emotes.put(type, emote));
-            } catch (IOException e) {
-                log.warn(String.format("Couldn't find emote file: %s, ignoring.", path));
-            }
-            else {
-                Types.emotes.put(type, found.get(0));
-            }
-        }
-        log.info(String.format("Finished loading type emojis: %s", Types.emotes.toString()));
-
-        for (Team team : Team.values()) {
-            List<Emote> found = jda.getEmotesByName(team.toString().toLowerCase(), true);
-            String path = null;
-            if (found.size() == 0) try {
-                path = "static/icons/" + team.toString().toLowerCase() + ".png";
-                guild.getController().createEmote(team.toString().toLowerCase(), Icon.from(new File(path))).queue(emote ->
-                        Team.emotes.put(team, emote));
-            } catch (IOException e) {
-                log.warn(String.format("Couldn't find emote file: %s, ignoring.", path));
-            }
-            else {
-                Team.emotes.put(team, found.get(0));
-            }
-        }
-        log.info(String.format("Finished loading team emojis: %s", Team.emotes.toString()));
-    }
 
     public boolean loggingEnabled() {
         return logging;
