@@ -1,19 +1,17 @@
 package com.github.novskey.novabot.data;
 
+import lombok.*;
+
 /**
  * Created by Paris on 17/01/2018.
  */
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class User {
 
-    boolean paused = false;
+    @NonNull
     String userID;
+    boolean paused = false;
 
-    public User(String userID) {
-        this.userID = userID;
-    }
-
-    public User(String id, boolean paused) {
-        userID = id;
-        this.paused = paused;
-    }
 }

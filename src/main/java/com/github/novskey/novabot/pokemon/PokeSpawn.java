@@ -217,7 +217,7 @@ public class PokeSpawn extends Spawn
     public int hashCode() {
         int hash = (int) (lat * lon);
 
-        hash *= novaBot.suburbs.indexOf(suburb);
+        hash *= novaBot.getSuburbs().indexOf(suburb);
 
         hash *= id;
 

@@ -1,9 +1,11 @@
 package com.github.novskey.novabot.core;
 
 import com.github.novskey.novabot.maps.GeofenceIdentifier;
+import lombok.Data;
 
 import java.util.ArrayList;
 
+@Data
 public class Location {
     public static final Location ALL = new Location();
     public static String all;
@@ -32,18 +34,6 @@ public class Location {
         this.locationType = LocationType.All;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        assert obj.getClass().getName().equals(this.getClass().getName());
-        Location loc = (Location) obj;
-        if(loc.geofenceIdentifiers == null || this.geofenceIdentifiers == null){
-            System.out.println("null");
-        }
-        return loc.locationType == this.locationType &&
-                loc.geofenceIdentifiers.equals(this.geofenceIdentifiers) &&
-                (loc.locationType != LocationType.Suburb || loc.suburb.equals(suburb));
-    }
-
     public static Location fromDbString(String str, NovaBot novaBot) {
         if (novaBot.getConfig().isAllowAllLocation() && str.equals("all")) return Location.ALL;
 
@@ -55,7 +45,7 @@ public class Location {
             }
         }
 
-        if (novaBot.suburbs.isSuburb(str)) {
+        if (novaBot.getSuburbs().isSuburb(str)) {
             return new Location(str);
         }
         if (str.equals("civic")) {
@@ -77,14 +67,10 @@ public class Location {
             }
         }
 
-        if (novaBot.suburbs.isSuburb(str)) {
+        if (novaBot.getSuburbs().isSuburb(str)) {
             return new Location(str);
         }
         return null;
-    }
-
-    public String getSuburb() {
-        return this.suburb;
     }
 
     public static String listToString(final Location[] locations) {
@@ -111,21 +97,6 @@ public class Location {
                 return GeofenceIdentifier.listToString(this.geofenceIdentifiers);
             case All:
                 return "all";
-        }
-
-        return null;
-    }
-
-    @Override
-    public String toString() {
-
-        switch (locationType) {
-            case Suburb:
-                return this.suburb;
-            case Geofence:
-                return GeofenceIdentifier.listToString(this.geofenceIdentifiers);
-            case All:
-                return all;
         }
 
         return null;

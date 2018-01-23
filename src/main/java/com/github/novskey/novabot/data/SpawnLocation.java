@@ -23,15 +23,7 @@ public class SpawnLocation {
         this.geofenceIdentifiers.addAll(geofenceIdentifiers);
     }
 
-    public static void main(String[] args) {
-        NovaBot novaBot = new NovaBot();
-        novaBot.setup();
-        SpawnLocation location = new SpawnLocation(novaBot.reverseGeocoder.geocodedLocation(-35.2463775554412,149.136513238137), Geofencing.getGeofence(-35.2463775554412,149.136513238137));
-        System.out.println(location.intersect(Location.ALL));
-        System.out.println(location.intersect(Location.fromString("downer",novaBot)));
-        System.out.println(location.intersect(Location.fromString("gungahlinregion",novaBot)));
-    }
-
+    
     public boolean intersect(Location location){
         switch (location.locationType){
             case All:
