@@ -51,7 +51,7 @@ public class Commands {
                     .setValidArgTypes(new HashSet<>(Arrays.asList(ArgType.CommandStr, ArgType.Pokemon, ArgType.Locations, ArgType.IV, ArgType.Level, ArgType.CP)))
                     .setArgRange(1, 5);
 
-            if (config.getAllowAllLocation()){
+            if (config.isAllowAllLocation()){
                 addPokemon.setRequiredArgTypes(new HashSet<>(Collections.singletonList(ArgType.Pokemon)));
             }else{
                 addPokemon.setRequiredArgTypes(new HashSet<>(Arrays.asList(ArgType.Pokemon,ArgType.Locations)));
@@ -78,7 +78,7 @@ public class Commands {
                     .setValidArgTypes(new HashSet<>(Arrays.asList(ArgType.CommandStr, ArgType.Pokemon, ArgType.Locations)))
                     .setArgRange(1, 3);
 
-            if (config.getAllowAllLocation()){
+            if (config.isAllowAllLocation()){
                 addRaid.setRequiredArgTypes(new HashSet<>(Collections.singletonList(ArgType.Pokemon)));
             }else{
                 addRaid.setRequiredArgTypes(new HashSet<>(Arrays.asList(ArgType.Pokemon,ArgType.Locations)));

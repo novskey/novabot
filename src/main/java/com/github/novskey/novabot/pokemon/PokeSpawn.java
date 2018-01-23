@@ -47,7 +47,7 @@ public class PokeSpawn extends Spawn
     public PokeSpawn(int i) {
         super();
         this.id = i;
-        properties.put("pkmn",Pokemon.getFilterName(i));
+        getProperties().put("pkmn",Pokemon.getFilterName(i));
     }
 
     public PokeSpawn(final int id, final double lat, final double lon, final ZonedDateTime disappearTime, final Integer attack, final Integer defense, final Integer stamina, final Integer move1, final Integer move2, final float weight, final float height, final Integer gender, final Integer form, Integer cp) {
@@ -58,71 +58,71 @@ public class PokeSpawn extends Spawn
         this.disappearTime = disappearTime;
 
         this.lat = lat;
-        properties.put("lat", String.valueOf(lat));
+        getProperties().put("lat", String.valueOf(lat));
 
         this.lon = lon;
-        properties.put("lng", String.valueOf(lon));
+        getProperties().put("lng", String.valueOf(lon));
 
-        properties.put("time_left",timeLeft());
+        getProperties().put("time_left",timeLeft());
 
         this.id = id;
-        properties.put("pkmn_id", String.valueOf(id));
+        getProperties().put("pkmn_id", String.valueOf(id));
 
-        properties.put("pkmn",Pokemon.getFilterName(id));
+        getProperties().put("pkmn",Pokemon.getFilterName(id));
 
 
-        if (novaBot.config.suburbsEnabled()) {
-            this.geocodedLocation = novaBot.reverseGeocoder.geocodedLocation(lat, lon);
-            geocodedLocation.getProperties().forEach(properties::put);
+        if (novaBot.suburbsEnabled()) {
+            this.setGeocodedLocation(novaBot.reverseGeocoder.geocodedLocation(lat, lon));
+            getGeocodedLocation().getProperties().forEach(getProperties()::put);
         }
 
         this.geofenceIdentifiers = getGeofence(lat,lon);
 
-        this.spawnLocation = new SpawnLocation(geocodedLocation, geofenceIdentifiers);
+        this.setSpawnLocation(new SpawnLocation(getGeocodedLocation(), geofenceIdentifiers));
 
-        properties.put("geofence", GeofenceIdentifier.listToString(geofenceIdentifiers));
+        getProperties().put("geofence", GeofenceIdentifier.listToString(geofenceIdentifiers));
 
-        properties.put("gmaps",getGmapsLink());
+        getProperties().put("gmaps",getGmapsLink());
 
-        properties.put("applemaps",getAppleMapsLink());
+        getProperties().put("applemaps",getAppleMapsLink());
 
         this.iv_attack = attack;
-        properties.put("atk", String.valueOf(iv_attack));
+        getProperties().put("atk", String.valueOf(iv_attack));
 
         this.iv_defense = defense;
-        properties.put("def", String.valueOf(iv_defense));
+        getProperties().put("def", String.valueOf(iv_defense));
 
         this.iv_stamina = stamina;
-        properties.put("sta", String.valueOf(iv_stamina));
+        getProperties().put("sta", String.valueOf(iv_stamina));
 
         if (attack != null && defense != null && stamina != null){
             this.iv = (attack + defense + stamina) / 45.0f * 100.0f;
-            properties.put("iv", getIv());
+            getProperties().put("iv", getIv());
         }else{
             this.iv = null;
-            properties.put("iv","unkn");
+            getProperties().put("iv","unkn");
         }
 
-        this.move_1 = move1;
-        properties.put("quick_move", (move1 == null) ? "unkn" : Pokemon.moveName(move1));
-        properties.put("quick_move_type",(move1 == null) ? "unkn" : Pokemon.getMoveType(move1));
-        properties.put("quick_move_type_icon",(move1 == null) ? "unkn" : Types.getEmote(Pokemon.getMoveType(move1)));
+        this.setMove_1(move1);
+        getProperties().put("quick_move", (move1 == null) ? "unkn" : Pokemon.moveName(move1));
+        getProperties().put("quick_move_type",(move1 == null) ? "unkn" : Pokemon.getMoveType(move1));
+        getProperties().put("quick_move_type_icon",(move1 == null) ? "unkn" : Types.getEmote(Pokemon.getMoveType(move1)));
 
-        this.move_2 = move2;
-        properties.put("charge_move", (move2 == null) ? "unkn" : Pokemon.moveName(move2));
-        properties.put("charge_move_type", (move2 == null) ? "unkn" : Pokemon.getMoveType(move2));
-        properties.put("charge_move_type_icon",(move1 == null) ? "unkn" : Types.getEmote(Pokemon.getMoveType(move2)));
+        this.setMove_2(move2);
+        getProperties().put("charge_move", (move2 == null) ? "unkn" : Pokemon.moveName(move2));
+        getProperties().put("charge_move_type", (move2 == null) ? "unkn" : Pokemon.getMoveType(move2));
+        getProperties().put("charge_move_type_icon",(move1 == null) ? "unkn" : Types.getEmote(Pokemon.getMoveType(move2)));
 
         this.weight = weight;
-        properties.put("weight", getWeight());
+        getProperties().put("weight", getWeight());
 
         this.height = height;
-        properties.put("height", getHeight());
+        getProperties().put("height", getHeight());
 
-        properties.put("size",getSize());
+        getProperties().put("size",getSize());
 
         this.gender = gender;
-        properties.put("gender", getGender());
+        getProperties().put("gender", getGender());
 
         if (form != null && form != 0 && id == 201) {
             this.id = id * 10 + form;
@@ -130,73 +130,73 @@ public class PokeSpawn extends Spawn
         if (form != null) {
             this.form = ((Pokemon.intToForm(form) == null) ? null : String.valueOf(Pokemon.intToForm(form)));
         }
-        properties.put("form", (this.form == null ? "" : this.form));
+        getProperties().put("form", (this.form == null ? "" : this.form));
 
         this.cp = cp;
-        properties.put("cp", cp == null ? "?" : String.valueOf(cp));
+        getProperties().put("cp", cp == null ? "?" : String.valueOf(cp));
 
-        properties.put("lvl30cp", cp == null ? "?" : String.valueOf(Pokemon.maxCpAtLevel(id, 30)));
-        properties.put("lvl35cp", cp == null ? "?" : String.valueOf(Pokemon.maxCpAtLevel(id, 35)));
+        getProperties().put("lvl30cp", cp == null ? "?" : String.valueOf(Pokemon.maxCpAtLevel(id, 30)));
+        getProperties().put("lvl35cp", cp == null ? "?" : String.valueOf(Pokemon.maxCpAtLevel(id, 35)));
 
-        properties.put("weather","unkn");
+        getProperties().put("weather","unkn");
     }
 
     public PokeSpawn(final int id, final double lat, final double lon, final ZonedDateTime disappearTime, final Integer attack, final Integer defense, final Integer stamina, final Integer move1, final Integer move2, final float weight, final float height, final Integer gender, final Integer form, Integer cp, double cpModifier) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp);
         level = Pokemon.getLevel(cpModifier);
-        properties.put("level", String.valueOf(level));
+        getProperties().put("level", String.valueOf(level));
     }
 
     public PokeSpawn(final int id, final double lat, final double lon, final ZonedDateTime disappearTime, final Integer attack, final Integer defense, final Integer stamina, final Integer move1, final Integer move2, final float weight, final float height, final Integer gender, final Integer form, Integer cp, Integer level) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp);
         this.level = level;
-        properties.put("level", String.valueOf(level));
+        getProperties().put("level", String.valueOf(level));
     }
 
     public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, int weight, int height, Integer gender, Integer form, Integer cp, Integer level, int weather) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp,level);
-        properties.replace("weather",getWeather(weather));
+        getProperties().replace("weather",getWeather(weather));
     }
 
     public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, float weight, float height, Integer gender, Integer form, Integer cp, double cpMod, int weather) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp,cpMod);
-        properties.replace("weather",getWeather(weather));
+        getProperties().replace("weather",getWeather(weather));
     }
 
     public Message buildMessage(String formatFile) {
         if(builtMessages.get(formatFile) == null) {
 
-            if (!properties.containsKey("city")) {
-                this.geocodedLocation = novaBot.reverseGeocoder.geocodedLocation(lat, lon);
-                geocodedLocation.getProperties().forEach(properties::put);
+            if (!getProperties().containsKey("city")) {
+                this.setGeocodedLocation(novaBot.reverseGeocoder.geocodedLocation(lat, lon));
+                getGeocodedLocation().getProperties().forEach(getProperties()::put);
             }
 
-            if (!properties.containsKey("24h_time")){
-                this.timeZone = novaBot.config.useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.config.getTimeZone();
-                if(timeZone == null){
-                    timeZone = novaBot.timeZones.getTimeZone(lat,lon);
+            if (!getProperties().containsKey("24h_time")){
+                this.setTimeZone(novaBot.getConfig().useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.getConfig().getTimeZone());
+                if(getTimeZone() == null){
+                    setTimeZone(novaBot.timeZones.getTimeZone(lat,lon));
                 }
 
-                properties.put("24h_time", getDespawnTime(printFormat24hr));
-                properties.put("12h_time", getDespawnTime(printFormat12hr));
+                getProperties().put("24h_time", getDespawnTime(printFormat24hr));
+                getProperties().put("12h_time", getDespawnTime(printFormat12hr));
             }
 
             final MessageBuilder messageBuilder = new MessageBuilder();
             final EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(getColor());
-            embedBuilder.setTitle(novaBot.config.formatStr(properties, (encountered()) ? novaBot.config.getEncounterTitleFormatting(formatFile) : (novaBot.config.getTitleFormatting(formatFile, "pokemon"))), novaBot.config.formatStr(properties, novaBot.config.getTitleUrl(formatFile, "pokemon")));
-            embedBuilder.setDescription(novaBot.config.formatStr(properties, (encountered()) ? novaBot.config.getEncounterBodyFormatting(formatFile) : novaBot.config.getBodyFormatting(formatFile, "pokemon")));
+            embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterTitleFormatting(formatFile) : (novaBot.getConfig().getTitleFormatting(formatFile, "pokemon"))), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, "pokemon")));
+            embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterBodyFormatting(formatFile) : novaBot.getConfig().getBodyFormatting(formatFile, "pokemon")));
             embedBuilder.setThumbnail(Pokemon.getIcon(this.id));
-            if (novaBot.config.showMap(formatFile, "pokemon")) {
+            if (novaBot.getConfig().showMap(formatFile, "pokemon")) {
                 embedBuilder.setImage(this.getImage(formatFile));
             }
-            embedBuilder.setFooter(novaBot.config.getFooterText(), null);
+            embedBuilder.setFooter(novaBot.getConfig().getFooterText(), null);
             embedBuilder.setTimestamp(ZonedDateTime.now(UtilityFunctions.UTC));
             messageBuilder.setEmbed(embedBuilder.build());
 
-            String contentFormatting = novaBot.config.getContentFormatting(formatFile, formatKey);
+            String contentFormatting = novaBot.getConfig().getContentFormatting(formatFile, formatKey);
             if (contentFormatting != null && !contentFormatting.isEmpty()) {
-                messageBuilder.append(novaBot.config.formatStr(properties, novaBot.config.getContentFormatting(formatFile, formatKey)));
+                messageBuilder.append(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getContentFormatting(formatFile, formatKey)));
             }
 
             builtMessages.put(formatFile,messageBuilder.build());
@@ -217,7 +217,7 @@ public class PokeSpawn extends Spawn
     public int hashCode() {
         int hash = (int) (lat * lon);
 
-        hash *= novaBot.suburbs.indexOf(suburb);
+        hash *= novaBot.getSuburbs().indexOf(suburb);
 
         hash *= id;
 
@@ -227,7 +227,7 @@ public class PokeSpawn extends Spawn
 
         hash += (weight * height);
 
-        hash += (move_1 == null ? 0 : move_1) * (move_2 == null ? 0 : move_2);
+        hash += (getMove_1() == null ? 0 : getMove_1()) * (getMove_2() == null ? 0 : getMove_2());
 
         hash += ((iv_attack == null ? 0 : iv_attack) + (iv_defense == null ? 0 : iv_defense) + (iv_stamina == null ? 0 : iv_stamina));
 
@@ -241,9 +241,9 @@ public class PokeSpawn extends Spawn
     @Override
     public String toString() {
         if (this.disappearTime == null) {
-            return "[" + ((this.suburb == null) ? "null" : this.suburb) + "]" + Pokemon.idToName(this.id) + " " + PokeSpawn.df.format(this.iv) + "%, " + this.move_1 + ", " + this.move_2;
+            return "[" + ((this.suburb == null) ? "null" : this.suburb) + "]" + Pokemon.idToName(this.id) + " " + PokeSpawn.df.format(this.iv) + "%, " + this.getMove_1() + ", " + this.getMove_2();
         }
-        return "[" + ((this.suburb == null) ? "null" : this.suburb) + "]" + Pokemon.idToName(this.id) + " " + (iv != null ? PokeSpawn.df.format(this.iv) : "unkn") + "%,CP: " + this.cp + ", " + this.move_1 + ", " + this.move_2 + ", for " + this.timeLeft() + ", disappears at " + this.disappearTime;
+        return "[" + ((this.suburb == null) ? "null" : this.suburb) + "]" + Pokemon.idToName(this.id) + " " + (iv != null ? PokeSpawn.df.format(this.iv) : "unkn") + "%,CP: " + this.cp + ", " + this.getMove_1() + ", " + this.getMove_2() + ", for " + this.timeLeft() + ", disappears at " + this.disappearTime;
     }
 
     public static void main(String[] args) {
@@ -251,7 +251,7 @@ public class PokeSpawn extends Spawn
         novaBot.setup();
         Spawn.setNovaBot(novaBot);
         PokeSpawn pokeSpawn = new PokeSpawn(201);
-        System.out.println(pokeSpawn.properties.get("pkmn"));
+        System.out.println(pokeSpawn.getProperties().get("pkmn"));
     }
 
     private boolean encountered() {
@@ -276,7 +276,7 @@ public class PokeSpawn extends Spawn
     }
 
     private String getDespawnTime(DateTimeFormatter printFormat) {
-        return printFormat.format(disappearTime.withZoneSameInstant(timeZone));
+        return printFormat.format(disappearTime.withZoneSameInstant(getTimeZone()));
     }
 
     private String getGender() {

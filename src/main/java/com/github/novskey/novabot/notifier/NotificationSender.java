@@ -11,18 +11,18 @@ class NotificationSender {
     NovaBot novaBot;
 
     boolean checkSupporterStatus(User user) {
-        NotificationLimit limit = novaBot.config.getNotificationLimit(novaBot.guild.getMember(user));
+        NotificationLimit limit = novaBot.getConfig().getNotificationLimit(novaBot.guild.getMember(user));
 
         boolean passedChecks = true;
 
-        int pokeCount = novaBot.dataManager.countPokemon(user.getId(), novaBot.config.countLocationsInLimits());
+        int pokeCount = novaBot.dataManager.countPokemon(user.getId(), novaBot.getConfig().countLocationsInLimits());
         if (limit.pokemonLimit != null && pokeCount > limit.pokemonLimit) {
             resetUser(user,limit);
             passedChecks = false;
         }
 
         if (passedChecks) {
-            int presetCount = novaBot.dataManager.countPresets(user.getId(), novaBot.config.countLocationsInLimits());
+            int presetCount = novaBot.dataManager.countPresets(user.getId(), novaBot.getConfig().countLocationsInLimits());
             if (limit.presetLimit != null && presetCount > limit.presetLimit) {
                 resetUser(user,limit);
                 passedChecks = false;
@@ -30,7 +30,7 @@ class NotificationSender {
             }
 
             if (passedChecks) {
-                int raidCount = novaBot.dataManager.countRaids(user.getId(), novaBot.config.countLocationsInLimits());
+                int raidCount = novaBot.dataManager.countRaids(user.getId(), novaBot.getConfig().countLocationsInLimits());
                 if (limit.raidLimit != null && raidCount > limit.raidLimit) {
                     resetUser(user,limit);
                     passedChecks = false;
@@ -46,7 +46,7 @@ class NotificationSender {
         user.openPrivateChannel().queue(channel -> channel.sendMessageFormat("Hi %s, I noticed that recently your supporter status has changed." +
                 " As a result I have cleared your settings. At your current level you can add up to %s to your settings.",user,newLimit.toWords()).queue());
 
-        if (novaBot.config.loggingEnabled()) {
+        if (novaBot.getConfig().loggingEnabled()) {
             novaBot.roleLog.sendMessageFormat("%s's supporter status has changed, requiring a reset of their settings. They have been informed via PM.", user).queue();
         }
     }

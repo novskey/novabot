@@ -28,8 +28,8 @@ public class MessageListener extends ListenerAdapter {
     public MessageListener(NovaBot novaBot, boolean mainBot) {
         this.novaBot = novaBot;
         this.mainBot = mainBot;
-        if (novaBot.config.loggingEnabled()){
-            int maxSize = novaBot.config.getMaxStoredMessages();
+        if (novaBot.getConfig().loggingEnabled()){
+            int maxSize = novaBot.getConfig().getMaxStoredMessages();
 
             if(maxSize > 0){
                 messageMap = new MaxSizeHashMap<>(maxSize);
@@ -41,7 +41,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onUserNameUpdate(UserNameUpdateEvent event) {
-        if (!mainBot || !novaBot.config.loggingEnabled()) return;
+        if (!mainBot || !novaBot.getConfig().loggingEnabled()) return;
 
         final User user = event.getUser();
         novaBot.userUpdatesLog.sendMessage(user.getAsMention() + " has changed their username from " + event.getOldName() + " to " + event.getUser().getName()).queue();
@@ -66,20 +66,20 @@ public class MessageListener extends ListenerAdapter {
             return;
         }
 
-        if(novaBot.config.loggingEnabled() && !author.isBot() && !message.isWebhookMessage()) {
+        if(novaBot.getConfig().loggingEnabled() && !author.isBot() && !message.isWebhookMessage()) {
             messageMap.put(message.getIdLong(), message);
         }
 
         if (event.isFromType(ChannelType.TEXT)) {
             final TextChannel textChannel = event.getTextChannel();
 
-            if (novaBot.config.isRaidOrganisationEnabled() && novaBot.lobbyManager.isLobbyChannel(channel.getId())) {
+            if (novaBot.getConfig().isRaidOrganisationEnabled() && novaBot.lobbyManager.isLobbyChannel(channel.getId())) {
                 novaBot.parseRaidLobbyMsg(author, msg, textChannel);
-            } else if (novaBot.config.isRaidOrganisationEnabled() && novaBot.config.isRaidChannel(channel.getId())) {
+            } else if (novaBot.getConfig().isRaidOrganisationEnabled() && novaBot.getConfig().isRaidChannel(channel.getId())) {
                 novaBot.parseRaidChatMsg(author, msg, textChannel);
-            } else if (channel.getId().equals(novaBot.config.getUserUpdatesId())) {
+            } else if (channel.getId().equals(novaBot.getConfig().getUserUpdatesId())) {
                 novaBot.parseModMsg(message, textChannel);
-            } else if (channel.getId().equals(novaBot.config.getCommandChannelId())) {
+            } else if (channel.getId().equals(novaBot.getConfig().getCommandChannelId())) {
                 novaBot.novabotLog.info(String.format("[COMMAND CHANNEL]<%s>: %s\n", author.getName(), msg));
                 novaBot.parseMsg(msg.toLowerCase().trim(), author, textChannel);
             }
@@ -99,7 +99,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        if (!mainBot || !novaBot.config.loggingEnabled()) return;
+        if (!mainBot || !novaBot.getConfig().loggingEnabled()) return;
 
         final long  id      = event.getMessageIdLong();
         TextChannel channel = novaBot.jda.getTextChannelById(event.getChannel().getId());
@@ -116,7 +116,7 @@ public class MessageListener extends ListenerAdapter {
         embedBuilder.setTitle(String.format("A message was deleted from %s", channel.getName()), null);
         embedBuilder.addField("Channel", channel.getAsMention(), true);
         embedBuilder.setDescription(String.format("%s%n %s:%n %s",
-                                                  foundMessage.getCreationTime().atZoneSameInstant(novaBot.config.getTimeZone()).format(novaBot.formatter),
+                                                  foundMessage.getCreationTime().atZoneSameInstant(novaBot.getConfig().getTimeZone()).format(novaBot.getFormatter()),
                                                   foundMessage.getAuthor().getAsMention(),
                                                   foundMessage.getContentDisplay()));
 
@@ -126,7 +126,7 @@ public class MessageListener extends ListenerAdapter {
     @Override
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
 
-        if (!mainBot || !novaBot.config.isRaidOrganisationEnabled()) return;
+        if (!mainBot || !novaBot.getConfig().isRaidOrganisationEnabled()) return;
 
         if (event.getUser().isBot()) return;
 
@@ -165,10 +165,10 @@ public class MessageListener extends ListenerAdapter {
                 event.getChannel().sendMessageFormat("%s you have been placed in %s. There are now %s users in the lobby.", event.getUser(), lobby.getChannel(), lobby.memberCount()).queue();
             }
 
-            novaBot.alertRaidChats(novaBot.config.getRaidChats(lobby.spawn.getGeofences()), String.format(
+            novaBot.alertRaidChats(novaBot.getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
                     "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the ✅ or by typing `!joinraid %s`.",
                     novaBot.guild.getMember(event.getUser()).getAsMention(),
-                    (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.properties.get("pkmn")),
+                    (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
                     lobby.getChannel().getAsMention(),
                     lobby.memberCount(),
                     lobby.lobbyCode
@@ -178,7 +178,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(final GuildMemberJoinEvent event) {
-        if (!mainBot || !novaBot.config.loggingEnabled()) return;
+        if (!mainBot || !novaBot.getConfig().loggingEnabled()) return;
 
         final Member member = event.getMember();
 
@@ -216,7 +216,7 @@ public class MessageListener extends ListenerAdapter {
             novaBot.userUpdatesLog.sendMessage(
                     member.getAsMention() +
                     " joined with code " + theCode + ". The account was created " +
-                    member.getUser().getCreationTime().atZoneSameInstant(novaBot.config.getTimeZone()).format(novaBot.formatter)).queue();
+                    member.getUser().getCreationTime().atZoneSameInstant(novaBot.getConfig().getTimeZone()).format(novaBot.getFormatter())).queue();
             novaBot.dataManager.logNewUser(member.getUser().getId());
 
             if (member.getEffectiveName().equalsIgnoreCase("novaBot") && !member.getUser().isBot()) {
@@ -229,7 +229,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRoleAdd(final GuildMemberRoleAddEvent event) {
-        if (!mainBot || !novaBot.config.loggingEnabled()) return;
+        if (!mainBot || !novaBot.getConfig().loggingEnabled()) return;
 
         final User    user    = event.getMember().getUser();
         StringBuilder roleStr = new StringBuilder();
@@ -246,7 +246,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRoleRemove(final GuildMemberRoleRemoveEvent event) {
-        if (!mainBot || !novaBot.config.loggingEnabled()) return;
+        if (!mainBot || !novaBot.getConfig().loggingEnabled()) return;
 
         final User    user    = event.getMember().getUser();
         StringBuilder roleStr = new StringBuilder();
@@ -262,7 +262,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberNickChange(final GuildMemberNickChangeEvent event) {
-        if (!mainBot || !novaBot.config.loggingEnabled()) return;
+        if (!mainBot || !novaBot.getConfig().loggingEnabled()) return;
 
         final User user = event.getMember().getUser();
         novaBot.userUpdatesLog.sendMessage(user.getAsMention() + " has changed their nickname from " + event.getPrevNick() + " to " + event.getNewNick()).queue();

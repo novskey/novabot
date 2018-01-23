@@ -123,7 +123,7 @@ public class Parser {
             } else if (valid.contains(ArgType.TimeUnit) && TimeUnit.fromString(trimmed) != null) {
                 argument.setType(ArgType.TimeUnit);
                 argument.setParams(new Object[]{TimeUnit.fromString(trimmed)});
-            }else if (valid.contains(ArgType.Preset) && novaBot.config.presets.get(trimmed) != null) {
+            }else if (valid.contains(ArgType.Preset) && novaBot.getConfig().presets.get(trimmed) != null) {
                 argument.setType(ArgType.Preset);
                 argument.setParams(new Object[]{trimmed});
             } else if (valid.contains(ArgType.Int) && getInt(trimmed.replace("iv","")) != null) {
@@ -216,7 +216,7 @@ public class Parser {
                         args.add(pokemon.name);
                         break;
                     case Preset:
-                        String presetFilter = novaBot.config.presets.get(string.trim());
+                        String presetFilter = novaBot.getConfig().presets.get(string.trim());
                         args.add(string.trim());
                         if (presetFilter == null) {
                             malformed.add(string.trim());

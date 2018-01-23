@@ -246,7 +246,7 @@ public class DBCache implements IDataBase {
 
         userIds.addAll(UtilityFunctions.filterByValue(unPausedUsers,raidsSet -> {
             Stream<Raid> matchingIds = raidsSet.stream().filter(r -> r.bossId == raidSpawn.bossId);
-            return matchingIds.anyMatch(raid -> raidSpawn.spawnLocation.intersect(raid.location));
+            return matchingIds.anyMatch(raid -> raidSpawn.getSpawnLocation().intersect(raid.location));
         }).keySet());
 
         return userIds;
@@ -263,7 +263,7 @@ public class DBCache implements IDataBase {
 
         userIds.addAll(UtilityFunctions.filterByValue(unPausedUsers,presetsSet -> {
             Stream<Preset> matchingNames = presetsSet.stream().filter(p -> p.presetName.equals(preset));
-            return matchingNames.anyMatch(pre -> spawn.spawnLocation.intersect(pre.location));
+            return matchingNames.anyMatch(pre -> spawn.getSpawnLocation().intersect(pre.location));
         }).keySet());
 
         return userIds;
@@ -281,7 +281,7 @@ public class DBCache implements IDataBase {
         userIds.addAll(UtilityFunctions.filterByValue(unPausedUsers,pokeSet -> {
             Stream<Pokemon> matchingIds = pokeSet.stream().filter(pokemon -> pokemon.getID() == pokeSpawn.id);
             return matchingIds.anyMatch(poke -> {
-                if (!pokeSpawn.spawnLocation.intersect(poke.getLocation())) return false;
+                if (!pokeSpawn.getSpawnLocation().intersect(poke.getLocation())) return false;
 
                 float iv = pokeSpawn.iv == null ? 0 : pokeSpawn.iv;
 
