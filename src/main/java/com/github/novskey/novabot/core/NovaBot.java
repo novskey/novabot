@@ -10,8 +10,10 @@ import com.github.novskey.novabot.maps.Geofencing;
 import com.github.novskey.novabot.maps.ReverseGeocoder;
 import com.github.novskey.novabot.maps.TimeZones;
 import com.github.novskey.novabot.notifier.NotificationsManager;
+import com.github.novskey.novabot.notifier.PokeNotificationSender;
 import com.github.novskey.novabot.notifier.RaidNotificationSender;
 import com.github.novskey.novabot.parser.*;
+import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.LobbyManager;
 import com.github.novskey.novabot.raids.Raid;
@@ -269,13 +271,28 @@ public class NovaBot {
             return;
         }
 
-        if (msg.equals(getLocalString("SettingsCommand"))) {
-            final UserPref userPref = dataManager.getUserPref(author.getId());
+        if (msg.equals(getLocalString("SettingsCommand")) || msg.startsWith(getLocalString("SettingsUserCommand"))) {
+            UserPref userPref;
+            String userMention;
+        	if (msg.equals(getLocalString("SettingsCommand"))) {
+        		userPref = dataManager.getUserPref(author.getId());
+        		userMention = author.getAsMention();
+        	} else {
+                if (isAdmin(author)) {
+                    channel.sendMessageFormat(getLocalString("HelpSettingsUser")).queue();
+                	String idToCheck = msg.substring(msg.indexOf(" ") + 1).trim();
+            		userPref = dataManager.getUserPref(idToCheck);
+            		userMention = "<@"+idToCheck+">";
+                } else {
+                	novabotLog.info(String.format("%s doesn't have the admin role required for this command.",author.getName()));
+                	return;
+                }
+        	}
             novabotLog.debug("!settings");
             if (userPref == null || (userPref.isRaidEmpty() && userPref.isPokeEmpty() && userPref.isPresetEmpty())) {
-                channel.sendMessage(author.getAsMention() + ", " + getLocalString("NoSettingsMessage")).queue();
+                channel.sendMessage(userMention + ", " + getLocalString("NoSettingsMessage")).queue();
             } else {
-                String toSend = author.getAsMention() + ", " + getLocalString("SettingsMessageStart");
+                String toSend = userMention + ", " + getLocalString("SettingsMessageStart");
                 toSend += userPref.allSettingsToString();
                 final MessageBuilder builder = new MessageBuilder();
                 builder.append(toSend);
@@ -344,6 +361,16 @@ public class NovaBot {
         } else if (msg.equals(getLocalString("ResetCommand"))) {
             dataManager.resetUser(author.getId());
             channel.sendMessageFormat("%s, %s", author, getLocalString("ResetMessage")).queue();
+            return;
+        } else if (msg.startsWith(getLocalString("ResetUserCommand"))) {
+            if (isAdmin(author)) {
+            	String idToReset = msg.substring(msg.indexOf(" ") + 1).trim();
+                channel.sendMessageFormat(getLocalString("HelpResetUser")).queue();
+            	dataManager.resetUser(idToReset);
+                channel.sendMessageFormat("%s, %s", idToReset, getLocalString("ResetMessage")).queue();
+            } else {
+            	novabotLog.info(String.format("%s doesn't have the admin role required for this command.",author.getName()));
+            }
             return;
         } else if (msg.equals(getLocalString("ResetPokemonCommand")) && getConfig().pokemonEnabled()) {
             dataManager.resetPokemon(author.getId());
