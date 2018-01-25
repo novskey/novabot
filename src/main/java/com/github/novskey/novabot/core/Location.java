@@ -1,5 +1,6 @@
 package com.github.novskey.novabot.core;
 
+import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.maps.GeofenceIdentifier;
 import lombok.Data;
 
@@ -100,6 +101,21 @@ public class Location {
         }
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+
+        switch (locationType) {
+            case Suburb:
+                return this.suburb;
+            case Geofence:
+                return GeofenceIdentifier.listToString(this.geofenceIdentifiers);
+            case All:
+                return StringLocalizer.getLocalString("all");
+        }
+
+        return "";
     }
 
     public String toWords() {

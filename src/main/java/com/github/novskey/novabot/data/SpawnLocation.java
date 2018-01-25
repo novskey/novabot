@@ -23,7 +23,7 @@ public class SpawnLocation {
         this.geofenceIdentifiers.addAll(geofenceIdentifiers);
     }
 
-    
+
     public boolean intersect(Location location){
         switch (location.locationType){
             case All:

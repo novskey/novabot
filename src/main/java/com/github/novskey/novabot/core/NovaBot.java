@@ -1,6 +1,7 @@
 package com.github.novskey.novabot.core;
 
 import com.github.novskey.novabot.Util.CommandLineOptions;
+import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.Util.UtilityFunctions;
 import com.github.novskey.novabot.data.DataManager;
 import com.github.novskey.novabot.data.SpawnLocation;
@@ -945,6 +946,8 @@ public class NovaBot {
     public void setup() {
         messagesBundle = ResourceBundle.getBundle("Messages",new Locale(locale));
         timeUnitsBundle = ResourceBundle.getBundle("TimeUnits",new Locale(locale));
+        StringLocalizer.init(ResourceBundle.getBundle("Messages",new Locale(locale)),
+                ResourceBundle.getBundle("TimeUnits",new Locale(locale)));
         TimeUnit.SetBundle(timeUnitsBundle);
         Team.setBundle(messagesBundle);
         SpawnLocation.novaBot = this;
