@@ -58,7 +58,10 @@ CREATE TABLE IF NOT EXISTS `raid` (
   `user_id` varchar(50) NOT NULL,
   `boss_id` int(11) NOT NULL,
   `location` varchar(30) NOT NULL,
-  PRIMARY KEY (`user_id`,`boss_id`,`location`),
+  `raid_level` tinyint NOT NUll DEFAULT 0
+  `egg_level` TINYINT AFTER `boss_id`,
+  `gym_name` VARCHAR(100) AFTER `egg_level`,
+  PRIMARY KEY (user_id, boss_id, egg_level, raid_level,location, gym_name);
   CONSTRAINT `raid_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
