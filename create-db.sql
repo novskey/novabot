@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `id` varchar(50) NOT NULL,
   `joindate` timestamp NOT NULL DEFAULT current_timestamp(),
   `paused` tinyint(1) DEFAULT 0,
+  `bot_token` VARCHAR(70) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_id_uindex` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
