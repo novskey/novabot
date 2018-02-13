@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 
 public class PokeNotificationSender extends NotificationSender implements Runnable {
@@ -111,11 +112,17 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
             localLog.info(String.format("Checking supporter status of %s", user.getName()));
             novaBot.lastUserRoleChecks.put(userID, currentTime);
             if (checkSupporterStatus(user)) {
-                user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
+                user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue(), logPMBlocked(user));
             }
         } else {
             user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
         }
+    }
+
+    private Consumer<Throwable> logPMBlocked(User user) {
+        localLog.info(user.getName() + " has messages blocked. Please inform them to pause notifications instead of blocking. Pausing user automatically.");
+        novaBot.dataManager.pauseUser(user.getId());
+        return null;
     }
 
     private void sendChannelAlert(Message message, String channelId) {
