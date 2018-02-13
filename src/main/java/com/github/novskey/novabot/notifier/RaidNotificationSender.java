@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 /**
  * Created by Owner on 27/06/2017.
@@ -151,7 +152,7 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
                             if (showTick) {
                                 msg.addReaction(WHITE_GREEN_CHECK).queue();
                             }
-                        }
+                        }, novaBot.notificationLogger.logPMBlocked(user)
                 ));
             }
         } else {
@@ -160,7 +161,7 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
                         if (showTick) {
                             msg.addReaction(WHITE_GREEN_CHECK).queue();
                         }
-                    }
+                    }, novaBot.notificationLogger.logPMBlocked(user)
             ));
         }
     }
@@ -171,7 +172,6 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
 
         if(channel == null){
             localLog.warn(String.format("Couldn't find from ID %s",channelId));
-            return;
         }
         channel.sendMessage(message).queue(m -> {
             if (novaBot.getConfig().isRaidOrganisationEnabled() && raidLevel >= 3) {

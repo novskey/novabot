@@ -4,6 +4,8 @@ import com.github.novskey.novabot.core.NotificationLimit;
 import com.github.novskey.novabot.core.NovaBot;
 import net.dv8tion.jda.core.entities.User;
 
+import java.util.function.Consumer;
+
 class NotificationSender {
 
     public final String WHITE_GREEN_CHECK = "\u2705";
@@ -44,7 +46,7 @@ class NotificationSender {
         novaBot.dataManager.resetUser(user.getId());
 
         user.openPrivateChannel().queue(channel -> channel.sendMessageFormat("Hi %s, I noticed that recently your supporter status has changed." +
-                " As a result I have cleared your settings. At your current level you can add up to %s to your settings.",user,newLimit.toWords()).queue());
+                " As a result I have cleared your settings. At your current level you can add up to %s to your settings.", user, newLimit.toWords()).queue(), novaBot.notificationLogger.logPMBlocked(user));
 
         if (novaBot.getConfig().loggingEnabled()) {
             novaBot.roleLog.sendMessageFormat("%s's supporter status has changed, requiring a reset of their settings. They have been informed via PM.", user).queue();

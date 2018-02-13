@@ -9,6 +9,7 @@ import com.github.novskey.novabot.data.SpawnLocation;
 import com.github.novskey.novabot.maps.Geofencing;
 import com.github.novskey.novabot.maps.ReverseGeocoder;
 import com.github.novskey.novabot.maps.TimeZones;
+import com.github.novskey.novabot.Util.NotificationLogger;
 import com.github.novskey.novabot.notifier.NotificationsManager;
 import com.github.novskey.novabot.notifier.RaidNotificationSender;
 import com.github.novskey.novabot.parser.*;
@@ -29,6 +30,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import static com.github.novskey.novabot.Util.StringLocalizer.getLocalString;
 import static com.github.novskey.novabot.core.Spawn.printFormat24hr;
@@ -66,6 +68,7 @@ public class NovaBot {
     public ReverseGeocoder reverseGeocoder;
     public Commands commands;
     public NotificationsManager notificationsManager;
+    public NotificationLogger notificationLogger = new NotificationLogger(this);
     public Parser parser;
     private ResourceBundle messagesBundle;
     private ResourceBundle timeUnitsBundle;
@@ -1278,5 +1281,11 @@ public class NovaBot {
 
     public void setSuburbs(SuburbManager suburbs) {
         this.suburbs = suburbs;
+    }
+
+    public Consumer<Throwable> logPMBlocked(User user, Logger localLogger) {
+        localLogger.info(user.getName() + " has messages blocked. Please inform them to pause notifications instead of blocking. Pausing user automatically.");
+        this.dataManager.pauseUser(user.getId());
+        return null;
     }
 }
