@@ -111,11 +111,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
             localLog.info(String.format("Checking supporter status of %s", user.getName()));
             novaBot.lastUserRoleChecks.put(userID, currentTime);
             if (checkSupporterStatus(user)) {
-<<<<<<< HEAD
                 user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue(), novaBot.notificationLogger.logPMBlocked(user));
-=======
-                user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
->>>>>>> parent of f4a65eb... Handle users who block the bot by automatically pausing their notifications.
             }
         } else {
             user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue(), novaBot.notificationLogger.logPMBlocked(user));
@@ -124,6 +120,6 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
 
     private void sendChannelAlert(Message message, String channelId) {
         localLog.info("Sending public alert message to channel " + channelId);
-        novaBot.getNextNotificationBot().getTextChannelById(channelId).sendMessage(message).queue(m -> localLog.info("Successfully sent message."));
+        novaBot.getNextNotificationBot().getTextChannelById(channelId).sendMessage(message).queue(m -> localLog.info("Successfully sent message."), novaBot.notificationLogger.logBadChannelPerms(channelId));
     }
 }
