@@ -9,7 +9,6 @@ import com.github.novskey.novabot.data.SpawnLocation;
 import com.github.novskey.novabot.maps.Geofencing;
 import com.github.novskey.novabot.maps.ReverseGeocoder;
 import com.github.novskey.novabot.maps.TimeZones;
-import com.github.novskey.novabot.Util.NotificationLogger;
 import com.github.novskey.novabot.notifier.NotificationsManager;
 import com.github.novskey.novabot.notifier.RaidNotificationSender;
 import com.github.novskey.novabot.parser.*;
@@ -68,7 +67,6 @@ public class NovaBot {
     public ReverseGeocoder reverseGeocoder;
     public Commands commands;
     public NotificationsManager notificationsManager;
-    public NotificationLogger notificationLogger = new NotificationLogger(this);
     public Parser parser;
     private ResourceBundle messagesBundle;
     private ResourceBundle timeUnitsBundle;
