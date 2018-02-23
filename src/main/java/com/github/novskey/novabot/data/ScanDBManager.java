@@ -438,7 +438,7 @@ public class ScanDBManager  {
                       "       weather_boosted_condition, " +
                       "       encounter_id " +
                       "FROM sightings " +
-                      "WHERE updated >= " +
+                      "WHERE cp IS NOT NULL AND updated >= " +
                             (scannerDb.getProtocol().equals("mysql")
                              ? "UNIX_TIMESTAMP(? - INTERVAL 1 SECOND)"
                              : "extract(epoch from (?::timestamptz - INTERVAL '1' SECOND)) ") +
