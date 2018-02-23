@@ -1075,6 +1075,18 @@ public class NovaBot {
         }
         return false;
     }
+    
+    public boolean isAllowedSpecialSpawns(final String userID) {
+        final Member member = guild.getMemberById(userID);
+
+        if (member == null || member.getRoles() == null) return false;
+
+        for (final Role role : member.getRoles()) {
+            if (role == null) continue;
+            if (config.getSpecialSpawnRoles().contains(role.getId())) return true;
+        }
+        return false;
+    }
 
     public void start() {
         novabotLog.info("Connecting to db");

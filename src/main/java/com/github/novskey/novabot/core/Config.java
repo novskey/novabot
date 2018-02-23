@@ -97,6 +97,9 @@ public class Config {
     private int nbMaxConnections = 8;
     private String mainGuild = null;
 
+    private ArrayList<Integer> specialSpawns = new ArrayList<>();
+    private ArrayList<String> specialSpawnRoles = new ArrayList<>();
+
     public Config(String configName, String gkeys, String formatting, String raidChannelsFile, String pokeChannelsFile,
                   String supporterLevelsFile, String presetsFile, String globalFilterFile) {
 
@@ -322,12 +325,16 @@ public class Config {
         }
 
         raidLobbyCategory = config.get("raidLobbyCategory",raidLobbyCategory);
+        
+        specialSpawns.clear();
+        UtilityFunctions.parseList(config.get("specialSpawns", "[]")).forEach(str -> specialSpawns.add(Integer.valueOf(str)));
 
         mainGuild = config.get("mainGuild",mainGuild);
-
         if (mainGuild == null){
             log.warn(String.format("Couldn't find mainGuild in %s. novabot will use the first guild it finds as main guild.", configName));
         }
+
+        specialSpawnRoles = UtilityFunctions.parseList(config.get("specialSpawnRoles", "[]"));
     }
 
     public boolean countLocationsInLimits() {
@@ -1186,4 +1193,11 @@ public class Config {
         return useGoogleTimeZones;
     }
 
+    public boolean isSpecialSpawn(int pokemonid) {
+            return specialSpawns.contains(pokemonid);
+    }
+
+    public ArrayList<String> getSpecialSpawnRoles() {
+            return specialSpawnRoles;
+    }
 }

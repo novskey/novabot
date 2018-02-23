@@ -18,6 +18,8 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.slf4j.Logger;
+
 import static com.github.novskey.novabot.maps.Geofencing.getGeofence;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -197,12 +199,12 @@ public class PokeSpawn extends Spawn
             getProperties().replace("weather_icon", w.getEmote());
         }
     }
-    
+
     public Message buildMessage(String formatFile) {
-    	return buildMessage(formatFile, false);
+    	return buildMessage(formatFile, false, null);
     }
     
-    public Message buildMessage(String formatFile, boolean minimizeAPICalls) {
+    public Message buildMessage(String formatFile, boolean minimizeAPICalls, Logger localLog) {
         if(builtMessages.get(formatFile) == null) {
 
             getProperties().put("time_left",timeLeft());
@@ -222,13 +224,18 @@ public class PokeSpawn extends Spawn
             }
 
             final MessageBuilder messageBuilder = new MessageBuilder();
+            
             final EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(getColor());
             embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterTitleFormatting(formatFile) : (novaBot.getConfig().getTitleFormatting(formatFile, "pokemon"))), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, "pokemon")));
             embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterBodyFormatting(formatFile) : novaBot.getConfig().getBodyFormatting(formatFile, "pokemon")));
             embedBuilder.setThumbnail(Pokemon.getIcon(this.id));
             if (novaBot.getConfig().showMap(formatFile, "pokemon")) {
-                embedBuilder.setImage(this.getImage(formatFile, minimizeAPICalls));
+            	String image = this.getImage(formatFile, minimizeAPICalls);
+                embedBuilder.setImage(image);
+                if (localLog != null) {
+                	localLog.info(image);
+                }
             }
             embedBuilder.setFooter(novaBot.getConfig().getFooterText(), null);
             embedBuilder.setTimestamp(ZonedDateTime.now(UtilityFunctions.UTC));

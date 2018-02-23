@@ -56,6 +56,11 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                 for (String preset : matchingPresets) {
                     toNotify.addAll(novaBot.dataManager.getUserIDsToNotify(preset, pokeSpawn));
                 }
+                
+                //For special spawns, remove users not in one of the special spawns roles
+                if (novaBot.config.isSpecialSpawn(pokeSpawn.id)) {
+                    toNotify.removeIf(userid -> !novaBot.isAllowedSpecialSpawns(userid));
+                }
 
                 if (toNotify.size() == 0) {
                     localLog.info("no-one wants this pokemon");
@@ -63,10 +68,13 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                 	//For weirdo notifications that only one person wants, minimize API calls to reduce costs:
                 	boolean minimizeAPICalls = toNotify.size() <= 1;
                 		
-                    final Message message = pokeSpawn.buildMessage("formatting.ini", minimizeAPICalls);
+                    final Message message = pokeSpawn.buildMessage("formatting.ini", minimizeAPICalls, localLog);
                     localLog.info("Built message for pokespawn");
 
-                    localLog.info("Notifying " + String.join(", ", toNotify));
+                    localLog.info(
+                    		String.format("Notifying %-12s %-2d %-6.2f %-15s ", Pokemon.idToName(pokeSpawn.id), pokeSpawn.level, pokeSpawn.iv, pokeSpawn.properties.get("city")) 
+                    		+ String.join(", ", toNotify)
+                    );
                     toNotify.forEach(userID -> this.notifyUser(userID, message));
                 }
 
