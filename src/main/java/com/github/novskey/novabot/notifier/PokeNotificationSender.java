@@ -58,7 +58,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                 }
                 
                 //For special spawns, remove users not in one of the special spawns roles
-                if (novaBot.config.isSpecialSpawn(pokeSpawn.id)) {
+                if (novaBot.getConfig().isSpecialSpawn(pokeSpawn.id)) {
                     toNotify.removeIf(userid -> !novaBot.isAllowedSpecialSpawns(userid));
                 }
 
@@ -72,7 +72,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                     localLog.info("Built message for pokespawn");
 
                     localLog.info(
-                    		String.format("Notifying %-12s %-2d %-6.2f %-15s ", Pokemon.idToName(pokeSpawn.id), pokeSpawn.level, pokeSpawn.iv, pokeSpawn.properties.get("city")) 
+                    		String.format("Notifying %-12s %-2d %-6.2f %-15s ", Pokemon.idToName(pokeSpawn.id), pokeSpawn.level, pokeSpawn.iv, pokeSpawn.getProperties().get("city")) 
                     		+ String.join(", ", toNotify)
                     );
                     toNotify.forEach(userID -> this.notifyUser(userID, message));
