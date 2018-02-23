@@ -99,6 +99,7 @@ public class Config {
 
     private ArrayList<Integer> specialSpawns = new ArrayList<>();
     private ArrayList<String> specialSpawnRoles = new ArrayList<>();
+    private ArrayList<Integer> restrictedSpawns = new ArrayList<>();
 
     public Config(String configName, String gkeys, String formatting, String raidChannelsFile, String pokeChannelsFile,
                   String supporterLevelsFile, String presetsFile, String globalFilterFile) {
@@ -328,7 +329,10 @@ public class Config {
         
         specialSpawns.clear();
         UtilityFunctions.parseList(config.get("specialSpawns", "[]")).forEach(str -> specialSpawns.add(Integer.valueOf(str)));
-
+        
+        restrictedSpawns.clear();
+        UtilityFunctions.parseList(config.get("restrictedSpawns", "[]")).forEach(str -> restrictedSpawns.add(Integer.valueOf(str)));
+        
         mainGuild = config.get("mainGuild",mainGuild);
         if (mainGuild == null){
             log.warn(String.format("Couldn't find mainGuild in %s. novabot will use the first guild it finds as main guild.", configName));
@@ -1200,4 +1204,18 @@ public class Config {
     public ArrayList<String> getSpecialSpawnRoles() {
             return specialSpawnRoles;
     }
+
+	public boolean matchesRestrictedFilter(PokeSpawn pokeSpawn) {
+		//For pokemon in the restrictedSpawns list, we add some filtering just to reduce spam:
+		//iv is a number between 0 and 100 for perfect iv
+        if (restrictedSpawns.contains(pokeSpawn.id) &&
+        		pokeSpawn.iv > 0.0f &&
+        		pokeSpawn.iv < 90.0f &&
+        		pokeSpawn.cp != 420 && 
+        		pokeSpawn.cp != 666
+        ) {
+        	return true;
+        }
+		return false;
+	}
 }
