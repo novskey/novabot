@@ -1,4 +1,4 @@
-package my.classpath;
+package com.github.novskey.novabot.core;
 
 import ch.qos.logback.core.rolling.TriggeringPolicyBase;
 
