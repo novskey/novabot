@@ -68,7 +68,7 @@ public class Config {
     private Integer minSecondsLeft = 60;
     private String footerText = null;
     private String googleSuburbField = "city";
-    private String adminRole = null;
+    private ArrayList<String> adminRoles = new ArrayList<>();
     private String commandChannelId = null;
     private String novabotRoleId = null;
     private String roleLogId = null;
@@ -303,10 +303,10 @@ public class Config {
 
         startupMessage = config.get("startupMessage", Boolean.class, startupMessage);
 
-        adminRole = config.get("adminRole", adminRole);
+        adminRoles = UtilityFunctions.parseList(config.get("adminRoles", "[]"));
 
-        if (adminRole == null) {
-            log.warn(String.format("Couldn't find adminRole in %s. !reload command won't work unless an adminRole is specified.", configName));
+        if (adminRoles.isEmpty()) {
+            log.warn(String.format("Couldn't find adminRoles in %s. !reload command won't work unless an admin role is specified.", configName));
         }
 
         novabotRoleId = config.get("novabotRole", novabotRoleId);

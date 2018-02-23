@@ -1058,7 +1058,7 @@ public class NovaBot {
             Member member = g.getMember(author);
             if(member == null) continue;
             for (Role role : member.getRoles()) {
-                if (role.getId().equals(getConfig().getAdminRole())) return true;
+            	if (getConfig().getAdminRoles().contains(role.getId())) return true;
             }
         }
         return false;
