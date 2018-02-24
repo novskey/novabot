@@ -31,6 +31,7 @@ public class ScanDBManager  {
 
     private final ScannerDb scannerDb;
     private ZonedDateTime lastChecked;
+    private long lastCheckedID = 0;
     private java.lang.String scanUrl;
     public final HashMap<String, RaidSpawn> knownRaids = new HashMap<>();
     private ZonedDateTime lastCheckedRaids;
@@ -436,17 +437,21 @@ public class ScanDBManager  {
                       "       cp," +
                       "       level, " +
                       "       weather_boosted_condition, " +
-                      "       encounter_id " +
+                      "       encounter_id, " +
+                      "       id " +
                       "FROM sightings " +
-                      "WHERE cp IS NOT NULL AND updated >= " +
+                      "WHERE cp IS NOT NULL AND (" +
+                      (lastCheckedID > 0 ? "id > ? OR " : "") +
+                      "updated >= " +
                             (scannerDb.getProtocol().equals("mysql")
                              ? "UNIX_TIMESTAMP(? - INTERVAL 1 SECOND)"
                              : "extract(epoch from (?::timestamptz - INTERVAL '1' SECOND)) ") +
                             "AND expire_timestamp > " +
                             (scannerDb.getProtocol().equals("mysql")
                              ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
-                             : "extract(epoch from now())")
-                      + blacklistQuery;
+                             : "extract(epoch from now())") +
+                      ")" +
+                      blacklistQuery;
                 break;
             case RocketMap:
                 sql = "" +
@@ -562,9 +567,15 @@ public class ScanDBManager  {
                     break;
                 case Monocle:
                 case Hydro74000Monocle:
+                    if (lastCheckedID > 0) {
+                    	statement.setLong(offset, lastCheckedID);
+                    	offset++;
+                    }
+                    
                     LocalDateTime localDateTime = lastChecked.withZoneSameInstant(novaBot.getConfig().getTimeZone()).toLocalDateTime();
                     String timeStamp = String.format("%s %s", localDateTime.toLocalDate(), localDateTime.toLocalTime());
 
+                    
                     statement.setString(offset, timeStamp);
                     offset++;
 //                    statement.setObject(novaBot.getConfig().getBlacklist().size() + 1, lastChecked.withZoneSameInstant(novaBot.getConfig().getTimeZone()).toLocalDateTime(), Types.TIMESTAMP);
@@ -685,6 +696,8 @@ public class ScanDBManager  {
                         Integer level = (Integer) rs.getObject(13);
                         weather = rs.getInt(14);
                         String encounter_id = rs.getString(15);
+                        long table_id = rs.getLong(16);
+                        lastCheckedID = Math.max(lastCheckedID, table_id);
                         pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, 0, 0, gender, form, cp, level, weather, encounter_id);
 
                         break;
