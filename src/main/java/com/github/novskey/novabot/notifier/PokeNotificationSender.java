@@ -61,16 +61,16 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                 if (novaBot.getConfig().isSpecialSpawn(pokeSpawn.id)) {
                     toNotify.removeIf(userid -> !novaBot.isAllowedSpecialSpawns(userid));
                 }
-                
-                if (novaBot.getConfig().matchesRestrictedFilter(pokeSpawn)) {
-                	//see matchesRestrictedFilter for how the restrictedSpawns list works.
-                	localLog.info(String.format("Skipping a spammy %.2f %s in restrictedSpawns.", pokeSpawn.iv, Pokemon.idToName(pokeSpawn.id)));
-                	continue;
-                }
 
                 if (toNotify.size() == 0) {
                     localLog.info("no-one wants this pokemon");
                 } else {
+                    if (novaBot.getConfig().matchesRestrictedFilter(pokeSpawn)) {
+                    	//see matchesRestrictedFilter for how the restrictedSpawns list works.
+                    	localLog.info(String.format("Skipping a spammy %.2f %s in restrictedSpawns.", pokeSpawn.iv, Pokemon.idToName(pokeSpawn.id)));
+                    	continue;
+                    }
+                    
                 	//For weirdo notifications that only one person wants, minimize API calls to reduce costs:
                 	boolean minimizeAPICalls = toNotify.size() <= 1;
                 		

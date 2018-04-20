@@ -1210,7 +1210,7 @@ public class Config {
 		//iv is a number between 0 and 100 for perfect iv
         if (restrictedSpawns.contains(pokeSpawn.id) &&
         		pokeSpawn.iv > 0.0f &&
-        		pokeSpawn.iv < 90.0f &&
+        		pokeSpawn.iv < 95.0f &&
         		pokeSpawn.cp != 420 && 
         		pokeSpawn.cp != 666
         ) {
