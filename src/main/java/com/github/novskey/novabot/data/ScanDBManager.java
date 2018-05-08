@@ -234,7 +234,8 @@ public class ScanDBManager  {
                       " raids.cp," +
                       " raids.level," +
                       " raids.move_1," +
-                      " raids.move_2 " +
+                      " raids.move_2, " +
+                      " raids.submitter " +
                       "FROM forts " +
                       "INNER JOIN fort_sightings ON (fort_sightings.fort_id = forts.id AND fort_sightings.last_modified = (SELECT MAX(last_modified) FROM fort_sightings fs2 WHERE fs2.fort_id=forts.id)) " +
                       "INNER JOIN raids ON forts.id = raids.fort_id " +
@@ -346,8 +347,9 @@ public class ScanDBManager  {
                         raidLevel = rs.getInt(10);
                         move_1 = rs.getInt(11);
                         move_2 = rs.getInt(12);
+                        String submitter = rs.getString(13);
 
-                        raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel);
+                        raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel, submitter);
                         break;
                     case Monocle:
                         gymId = String.valueOf(rs.getInt(1));

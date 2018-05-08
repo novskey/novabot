@@ -39,7 +39,7 @@ public class RaidSpawn extends Spawn {
     private int bossCp;
     private String imageUrl;
     private int lobbyCode;
-
+    private String submitter;
 
     public RaidSpawn(int id, boolean egg) {
         super();
@@ -105,6 +105,11 @@ public class RaidSpawn extends Spawn {
         getProperties().put("level", String.valueOf(raidLevel));
 
         getProperties().put("lobbycode", "unkn");
+    }
+    public RaidSpawn(String name, String gymId, double lat, double lon, Team team, ZonedDateTime raidEnd, ZonedDateTime battleStart, int bossId, int bossCp, int move_1, int move_2, int raidLevel, String submitter) {
+    	this(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel);
+    	this.submitter = submitter;
+    	getProperties().put("submitter", submitter);
     }
 
     public String timeLeft(ZonedDateTime until) {
