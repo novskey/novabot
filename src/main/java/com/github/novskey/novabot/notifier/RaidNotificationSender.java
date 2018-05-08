@@ -97,7 +97,7 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
                     toNotify.addAll(novaBot.dataManager.getUserIDsToNotify(preset, raidSpawn));
                 }
 
-                toNotify.forEach(id -> notifyUser(id, raidSpawn.buildMessage("formatting.ini"), raidSpawn.raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()));
+                toNotify.forEach(id -> notifyUser(id, raidSpawn.buildMessage(novaBot.getFormatting()), raidSpawn.raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()));
 
                 if (!novaBot.getConfig().isRaidChannelsEnabled()) continue;
 

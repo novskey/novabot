@@ -39,13 +39,36 @@ public class Raid {
         this.raidLevel = raidLevel;
     }
 
+    public static String getGymNameString(Raid[] raids) {
+        StringBuilder str = new StringBuilder(StringLocalizer.getLocalString("At") + " ");
+        ArrayList<String> uniqueNames = new ArrayList<>();
+        for (Raid raid : raids) {
+            if(raid.gymName.equals("") || uniqueNames.contains(raid.gymName)){
+                continue;
+            }
+            uniqueNames.add(raid.gymName);
+        }
+        if (uniqueNames.size() < 1) {
+            return "";
+        }
+        for (int i = 0; i < uniqueNames.size(); ++i) {
+            if (uniqueNames.size() > 1 && i == uniqueNames.size() - 1) {
+                str.append("and ").append(uniqueNames.get(i));
+            } else {
+                str.append((uniqueNames.size() == 1 || i == raids.length - 2) ? (uniqueNames.get(i) + " ") : (uniqueNames.get(i) + ", "));
+            }
+        }
+        str.append(" ");
+        return str.toString();
+    }
+
     public static String getRaidsString(Raid[] raids) {
         StringBuilder str = new StringBuilder();
 
         HashSet<Raid> uniqueRaids = new HashSet<>();
 
         for (Raid raid : raids) {
-            uniqueRaids.add(new Raid(raid.bossId,raid.eggLevel,raid.raidLevel,raid.gymName,Location.ALL));
+            uniqueRaids.add(new Raid(raid.bossId,raid.eggLevel,raid.raidLevel,"",Location.ALL));
         }
 
         int i = 0;
@@ -64,10 +87,6 @@ public class Raid {
                 }else {
                     str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
                 }
-            }
-
-            if (!raid.gymName.equals("")){
-                str.append(String.format(" %s %s",StringLocalizer.getLocalString("At"),raid.gymName));
             }
             i++;
         }

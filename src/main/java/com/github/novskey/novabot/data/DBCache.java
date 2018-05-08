@@ -287,8 +287,15 @@ public class DBCache implements IDataBase {
         });
 
         return new ArrayList<>(UtilityFunctions.filterByValue(unPausedUsers, raidsSet -> {
-            Stream<Raid> matchingIds = raidsSet.stream().filter(r -> (r.gymName.equals("") || r.gymName.equalsIgnoreCase(raidSpawn.getProperties().get("gym_name"))) &&
-                                                                 ((r.bossId != 0 && (r.bossId == raidSpawn.bossId)) || (r.bossId == 0 && (r.eggLevel == raidSpawn.raidLevel)))
+            Stream<Raid> matchingIds = raidsSet.stream().filter(raidSetting ->
+                                                                        (raidSetting.gymName.equals("") ||
+                                                                         raidSetting.gymName.equalsIgnoreCase(raidSpawn.getProperties().get("gym_name"))) &&
+                                                                        ((raidSpawn.bossId == 0 &&
+                                                                         raidSetting.eggLevel == raidSpawn.raidLevel) ||
+                                                                         (raidSpawn.bossId != 0 &&
+                                                                         ((raidSetting.bossId == raidSpawn.bossId) ||
+                                                                          (raidSetting.raidLevel == raidSpawn.raidLevel) ||
+                                                                          (raidSetting.eggLevel == raidSpawn.raidLevel))))
             );
             return matchingIds.anyMatch(raid -> raidSpawn.getSpawnLocation ().intersect(raid.location));
         }).keySet());
@@ -316,23 +323,22 @@ public class DBCache implements IDataBase {
 
         return new ArrayList<>(UtilityFunctions.filterByValue(unPausedUsers, pokeSet -> {
             Stream<Pokemon> matchingIds = pokeSet.stream().filter(
-                    pokemon ->
-                            (pokemon.getID() == pokeSpawn.id) ||
-                            (pokemon.getID() == ((pokeSpawn.form != null) ? 201 : pokeSpawn.id)));
-            return matchingIds.anyMatch(poke -> {
-                if (!pokeSpawn.getSpawnLocation().intersect(poke.getLocation())) return false;
+                    pokemonSetting ->
+                            (pokemonSetting.getID() == pokeSpawn.id));
+            return matchingIds.anyMatch(pokemonSetting -> {
+                if (!pokeSpawn.getSpawnLocation().intersect(pokemonSetting.getLocation())) return false;
 
                 float iv = pokeSpawn.iv == null ? 0 : pokeSpawn.iv;
 
-                if (!(iv >= poke.miniv && iv <= poke.maxiv)) return false;
+                if (!(iv >= pokemonSetting.miniv && iv <= pokemonSetting.maxiv)) return false;
 
                 int level = pokeSpawn.level == null ? 0 : pokeSpawn.level;
 
-                if (!(level >= poke.minlvl && level <= poke.maxlvl)) return false;
+                if (!(level >= pokemonSetting.minlvl && level <= pokemonSetting.maxlvl)) return false;
 
                 int cp = pokeSpawn.cp == null ? 0 : pokeSpawn.cp;
 
-                return cp >= poke.mincp && cp <= poke.maxcp;
+                return cp >= pokemonSetting.mincp && cp <= pokemonSetting.maxcp;
 
             });
         }).keySet());

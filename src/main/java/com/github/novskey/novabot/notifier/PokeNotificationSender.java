@@ -50,7 +50,6 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                 }
 
                 HashSet<String> toNotify = new HashSet<>(novaBot.dataManager.getUserIDsToNotify(pokeSpawn));
-
                 ArrayList<String> matchingPresets = novaBot.getConfig().findMatchingPresets(pokeSpawn);
 
                 for (String preset : matchingPresets) {
@@ -74,7 +73,7 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                 	//For weirdo notifications that only one person wants, minimize API calls to reduce costs:
                 	boolean minimizeAPICalls = toNotify.size() <= 1;
                 		
-                    final Message message = pokeSpawn.buildMessage("formatting.ini", minimizeAPICalls, localLog);
+                    final Message message = pokeSpawn.buildMessage(novaBot.getFormatting(), minimizeAPICalls, localLog);
                     localLog.info("Built message for pokespawn");
 
                     localLog.info(

@@ -732,7 +732,7 @@ public class SettingsDBManager implements IDataBase {
             }
             statement.setInt(geofences + offset, pokeSpawn.id);
             offset++;
-            statement.setInt(geofences + offset, (pokeSpawn.form != null) ? 201 : pokeSpawn.id);
+            statement.setInt(geofences + offset, pokeSpawn.id);
             offset++;
             statement.setDouble(geofences + offset, (pokeSpawn.iv == null ? 0 : pokeSpawn.iv));
             offset++;

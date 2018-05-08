@@ -1,7 +1,10 @@
 package com.github.novskey.novabot.data;
 
 import com.github.novskey.novabot.Util.UtilityFunctions;
-import com.github.novskey.novabot.core.*;
+import com.github.novskey.novabot.core.NovaBot;
+import com.github.novskey.novabot.core.ScannerType;
+import com.github.novskey.novabot.core.Team;
+import com.github.novskey.novabot.core.TimeUnit;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.RaidSpawn;
@@ -12,12 +15,10 @@ import org.slf4j.LoggerFactory;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.*;
-import java.sql.Types;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import static com.github.novskey.novabot.core.ScannerType.*;
@@ -33,7 +34,6 @@ public class ScanDBManager  {
     private ZonedDateTime lastChecked;
     private long lastCheckedID = 0;
     private java.lang.String scanUrl;
-    public final HashMap<String, RaidSpawn> knownRaids = new HashMap<>();
     private ZonedDateTime lastCheckedRaids;
     private StringBuilder blacklistQuery = new StringBuilder();
     private final NovaBot novaBot;
@@ -156,27 +156,22 @@ public class ScanDBManager  {
 
         StringBuilder knownIdQMarks = new StringBuilder();
 
-        if (knownRaids.size() > 0) {
+        if (novaBot.getDataManager().getKnownRaids().size() > 0) {
             if (scannerDb.getScannerType() == ScannerType.PhilMap || scannerDb.getScannerType() == RocketMap || scannerDb.getScannerType() == SkoodatRocketMap || scannerDb.getScannerType() == SloppyRocketMap) {
                 knownIdQMarks.append("gym.gym_id NOT IN (");
             } else {
                 knownIdQMarks.append("forts.id NOT in (");
             }
-            for (int i = 0; i < knownRaids.size(); ++i) {
+            for (int i = 0; i < novaBot.getDataManager().getKnownRaids().size(); ++i) {
                 knownIdQMarks.append("?");
-                if (i != knownRaids.size() - 1) {
+                if (i != novaBot.getDataManager().getKnownRaids().size() - 1) {
                     knownIdQMarks.append(",");
                 }
             }
             knownIdQMarks.append(") AND");
         }
 
-        ArrayList<String> knownIds = new ArrayList<>(knownRaids.keySet());
-
-        if (knownRaids.containsKey(null)) {
-            System.out.println("NULL, OH NO KNOWNRAIDS CONTAINS NULL? WHY???");
-            System.out.println(knownRaids.get(null));
-        }
+        ArrayList<String> knownIds = new ArrayList<>(novaBot.getDataManager().getKnownRaids().keySet());
 
         String sql = null;
 
@@ -270,7 +265,7 @@ public class ScanDBManager  {
         try (Connection connection = getScanConnection();
              PreparedStatement statement = connection.prepareStatement(sql)
         ) {
-            for (int i = 0; i < knownRaids.size(); i++) {
+            for (int i = 0; i < novaBot.getDataManager().getKnownRaids().size(); i++) {
                 if (scannerDb.getProtocol().equals("mysql")) {
                     statement.setString(i + 1, knownIds.get(i));
                 } else {
@@ -282,18 +277,18 @@ public class ScanDBManager  {
                 case SkoodatRocketMap:
                 case SloppyRocketMap:
                 case PhilMap:
-                    statement.setObject(knownRaids.size() + 1, lastCheckedRaids.toLocalDateTime(), Types.TIMESTAMP);
+                    statement.setObject(novaBot.getDataManager().getKnownRaids().size() + 1, lastCheckedRaids.toLocalDateTime(), Types.TIMESTAMP);
                     break;
                 case Monocle:
                 case Hydro74000Monocle:
                     LocalDateTime localDateTime = lastCheckedRaids.withZoneSameInstant(novaBot.getConfig().getTimeZone()).toLocalDateTime();
                     String timeStamp = String.format("%s %s", localDateTime.toLocalDate(), localDateTime.toLocalTime());
 
-                    statement.setString(knownRaids.size() + 1, timeStamp);
+                    statement.setString(novaBot.getDataManager().getKnownRaids().size() + 1, timeStamp);
                     break;
             }
 
-//            statement.setTimestamp(knownRaids.size() + 1, Timestamp.from(lastCheckedRaids.toInstant()), utcCalendar);
+//            statement.setTimestamp(novaBot.getDataManager().getKnownRaids().size() + 1, Timestamp.from(lastCheckedRaids.toInstant()), utcCalendar);
 
 
             dbLog.info("Executing query: " + statement);
@@ -367,7 +362,7 @@ public class ScanDBManager  {
                         break;
                 }
                 dbLog.debug(raidSpawn.toString());
-                knownRaids.put(gymId, raidSpawn);
+                novaBot.getDataManager().getKnownRaids().put(gymId, raidSpawn);
 
                 if (!firstRun) {
                     novaBot.notificationsManager.raidQueue.add(raidSpawn);
@@ -471,7 +466,8 @@ public class ScanDBManager  {
                       "       gender," +
                       "       form," +
                       "       cp, " +
-                      "       cp_multiplier " +
+                      "       cp_multiplier, " +
+                      "       weather_boosted_condition " +
                       "FROM pokemon " +
                       "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
                       "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" + blacklistQuery;
@@ -625,7 +621,8 @@ public class ScanDBManager  {
                         Integer form = (Integer) rs.getObject(13);
                         Integer cp = (Integer) rs.getObject(14);
                         double cpMod = rs.getDouble(15);
-                        pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, weight, height, gender, form, cp, cpMod);
+                        int weather = rs.getInt(16);
+                        pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, weight, height, gender, form, cp, cpMod,weather);
                         break;
                     case SloppyRocketMap:
                     case SkoodatRocketMap:
@@ -647,7 +644,7 @@ public class ScanDBManager  {
                         float catchprob3 = rs.getFloat(16);
                         cp = (Integer) rs.getObject(17);
                         cpMod = rs.getDouble(18);
-                        int weather = rs.getInt(19);
+                        weather = rs.getInt(19);
                         pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, weight, height, gender, form, cp, cpMod, catchprob1, catchprob2, catchprob3, weather);
                         break;
                     case PhilMap:
@@ -745,7 +742,7 @@ public class ScanDBManager  {
 
         ArrayList<String> toRemove = new ArrayList<>();
 
-        knownRaids.forEach((gymId, raid) -> {
+        novaBot.getDataManager().getKnownRaids().forEach((gymId, raid) -> {
             if (lastCheckedRaids.isAfter(raid.battleStart) && raid.bossId == 0) {
                 dbLog.debug(String.format("%s egg has hatched, removing from known raids so we can find out boss pokemon", gymId));
                 toRemove.add(gymId);
@@ -759,7 +756,7 @@ public class ScanDBManager  {
             }
         });
 
-        toRemove.forEach(knownRaids::remove);
+        toRemove.forEach(novaBot.getDataManager().getKnownRaids()::remove);
 
         dbLog.debug("Removed all queued gyms");
     }

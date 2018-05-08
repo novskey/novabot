@@ -52,6 +52,7 @@ public class CommandLineOptions {
                     break;
                 case "-l":
                     parsed.setLocale(args[i + 1]);
+                    break;
                 default:
                     System.out.println("Unknown argument: " + args[i]);
                     System.out.println("Valid arguments: -cf, -gf, -sl, -s, -gk, -f, -rc, -pc, -p, -l");

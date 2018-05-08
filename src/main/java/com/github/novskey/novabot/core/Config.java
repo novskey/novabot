@@ -39,7 +39,7 @@ import java.util.*;
 public class Config {
 
     private static final String[] formatKeys = new String[]{"pokemon", "raidEgg", "raidBoss"};
-    private static final String[] formattingVars = new String[]{"title", "titleUrl", "body", "content", "showMap", "mapZoom", "mapWidth", "mapHeight"};
+    private static final String[] formattingVars = new String[]{"title", "titleUrl", "body", "content", "showMap", "mapZoom", "mapWidth", "mapHeight","showColor"};
     private static final HashSet<String> filterTypes = new HashSet<>(Arrays.asList("atk", "def", "sta", "level", "iv", "cp"));
     private JsonObject globalFilter = null;
     private final HashMap<String, JsonObject> pokeFilters = new HashMap<>();
@@ -178,6 +178,13 @@ public class Config {
 
     public boolean passesGlobalFilter(PokeSpawn pokeSpawn) {
         return matchesFilter(globalFilter,pokeSpawn,"global");
+    }
+
+    public boolean showColor(String formatFile, String formatKey) {
+        String showColor = formats.get(formatFile).getFormatting(formatKey, "showColor");
+
+        if (showColor == null) return true;
+        return Boolean.parseBoolean(showColor);
     }
 
     public boolean useGlobalFilter() {

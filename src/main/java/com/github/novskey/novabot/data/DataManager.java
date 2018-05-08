@@ -34,6 +34,7 @@ public class DataManager implements IDataBase {
 
 
     public static RotatingSet<Integer> hashCodes = null;
+    public ConcurrentHashMap<String, RaidSpawn> knownRaids = null;
 
     public synchronized void addHashCode(int hashCode) {
         hashCodes.syncAdd(hashCode);
@@ -53,6 +54,10 @@ public class DataManager implements IDataBase {
 
     public RotatingSet<Integer> getHashCodes() {
         return hashCodes;
+    }
+
+    public ConcurrentHashMap<String,RaidSpawn> getKnownRaids() {
+        return knownRaids;
     }
 
     public Map<String, Integer> getTokenUses() {
@@ -95,6 +100,7 @@ public class DataManager implements IDataBase {
         settingsDbManager.novabotdbConnect();
 
         hashCodes = new RotatingSet<>(novaBot.getConfig().getMaxStoredHashes(), ConcurrentHashMap.newKeySet(novaBot.getConfig().getMaxStoredHashes()));
+        knownRaids = new ConcurrentHashMap<>();
 
         int scannerDbId = 1;
         for (ScannerDb scannerDb : scannerDbs) {

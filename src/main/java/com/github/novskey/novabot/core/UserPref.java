@@ -9,7 +9,7 @@ import java.util.*;
 
 public class UserPref {
     private final TreeMap<String, TreeSet<Pokemon>> pokemonPrefs = new TreeMap<>();
-    private final TreeMap<String, TreeSet<Raid>> raidPrefs = new TreeMap<>();
+    private final TreeMap<String, TreeMap<String,TreeSet<Raid>>> raidPrefs = new TreeMap<>();
     private final TreeMap<String, TreeSet<String>> presetPrefs = new TreeMap<>();
     private final NovaBot novaBot;
 
@@ -53,11 +53,19 @@ public class UserPref {
         if (location == null) return;
 
         if (!this.raidPrefs.containsKey(location.toWords())) {
-            final TreeSet<Raid> set = new TreeSet<>(Comparator.comparing(Raid::toString));
+            final TreeMap<String,TreeSet<Raid>> map = new TreeMap<>(Comparator.comparing(String::toString));
+            TreeSet<Raid> set = new TreeSet<>(Comparator.comparing(Raid::toString));
             set.add(raid);
-            this.raidPrefs.put(location.toWords(), set);
+            map.put(raid.gymName,set);
+            this.raidPrefs.put(location.toWords(), map);
         } else {
-            this.raidPrefs.get(location.toWords()).add(raid);
+            if (this.raidPrefs.get(location.toWords()).containsKey(raid.gymName)) {
+                this.raidPrefs.get(location.toWords()).get(raid.gymName).add(raid);
+            } else {
+                TreeSet<Raid> set = new TreeSet<>(Comparator.comparing(Raid::toString));
+                set.add(raid);
+                this.raidPrefs.get(location.toWords()).put(raid.gymName,set);
+            }
         }
     }
 
@@ -107,19 +115,30 @@ public class UserPref {
                 locStr = location.toWords();
             }
             str.append("**").append(locname).append("**:\n");
-            for (final Raid raid : this.raidPrefs.get(locStr)) {
-                if (raid.bossId != 0) {
-                    str.append(String.format("%s %s", Pokemon.idToName(raid.bossId), StringLocalizer.getLocalString("Raids")));
-                }else{
-                    if (raid.eggLevel != 0){
-                        str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.eggLevel, StringLocalizer.getLocalString("Eggs")));
-                    }else {
-                        str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
-                    }
+            for (Map.Entry<String, TreeSet<Raid>> entry : raidPrefs.get(locStr).entrySet()) {
+                String gymName = entry.getKey();
+                TreeSet<Raid> raids = entry.getValue();
+
+                if (!gymName.equals("")){
+                    str.append(String.format("  **%s**:\n", gymName));
                 }
 
-                if (!raid.gymName.equals("")){
-                    str.append(String.format(" %s %s",StringLocalizer.getLocalString("At"),raid.gymName));
+                for (Raid raid : raids) {
+                    if (!gymName.equals("")) {
+                        str.append("  ");
+                    }
+                    str.append("  ");
+
+                    if (raid.bossId != 0) {
+                        str.append(String.format("%s %s", Pokemon.idToName(raid.bossId), StringLocalizer.getLocalString("Raids")));
+                    }else{
+                        if (raid.eggLevel != 0){
+                            str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.eggLevel, StringLocalizer.getLocalString("Eggs")));
+                        }else {
+                            str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
+                        }
+                    }
+                    str.append("\n");
                 }
                 str.append("\n");
             }
@@ -131,45 +150,109 @@ public class UserPref {
     public String allSettingsToString() {
         TreeMap<String, TreeSet<String>> prefMap = new TreeMap<>();
 
-        raidPrefs.forEach((location, raids) -> {
+        raidPrefs.forEach((location, raidMap) -> {
             if (!prefMap.containsKey(location)) {
                 final TreeSet<String> set = new TreeSet<>();
 
-                for (Raid raid : raids) {
+
+                for (Map.Entry<String, TreeSet<Raid>> entry : raidMap.entrySet()) {
+                    String gymName = entry.getKey();
+                    TreeSet<Raid> raids = entry.getValue();
                     StringBuilder str = new StringBuilder();
-                    if (raid.bossId != 0) {
-                        str.append(String.format("%s %s", Pokemon.idToName(raid.bossId), StringLocalizer.getLocalString("Raids")));
-                    }else{
-                        if (raid.eggLevel != 0){
-                            str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.eggLevel, StringLocalizer.getLocalString("Eggs")));
-                        }else {
-                            str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
+
+                    if (!gymName.equals("")){
+                        str.append(String.format("  **%s**:\n", gymName));
+                    }
+                    int i = 0;
+
+                    for (Raid raid : raids) {
+                        if (!gymName.equals("")) {
+                            str.append("  ");
                         }
+                        str.append("  ");
+
+
+                        if (raid.bossId != 0) {
+                            str.append(String.format("%s %s", Pokemon.idToName(raid.bossId), StringLocalizer.getLocalString("Raids")));
+                        }else{
+                            if (raid.eggLevel != 0){
+                                str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.eggLevel, StringLocalizer.getLocalString("Eggs")));
+                            }else {
+                                str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
+                            }
+                        }
+                        if (i != raids.size() - 1) {
+                            str.append("\n");
+                        }
+                        i++;
+                    }
+                    if (!gymName.equals("")) {
+                        str.append("\n");
                     }
 
-                    if (!raid.gymName.equals("")){
-                        str.append(String.format(" %s %s",StringLocalizer.getLocalString("At"),raid.gymName));
-                    }
+//                    for (Raid raid : raids) {
+//                        StringBuilder str = new StringBuilder();
+//                        if (raid.bossId != 0) {
+//                            str.append(String.format("%s %s", Pokemon.idToName(raid.bossId), StringLocalizer.getLocalString("Raids")));
+//                        }else{
+//                            if (raid.eggLevel != 0){
+//                                str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.eggLevel, StringLocalizer.getLocalString("Eggs")));
+//                            }else {
+//                                str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
+//                            }
+//                        }
+//                        set.add(str.toString());
+//                    }
                     set.add(str.toString());
                 }
                 prefMap.put(location, set);
             } else {
-                for (Raid raid : raids) {
+                for (Map.Entry<String, TreeSet<Raid>> entry : raidMap.entrySet()) {
+                    String gymName = entry.getKey();
+                    TreeSet<Raid> raids = entry.getValue();
                     StringBuilder str = new StringBuilder();
-                    if (raid.bossId != 0) {
-                        str.append(String.format("%s %s", Pokemon.idToName(raid.bossId), StringLocalizer.getLocalString("Raids")));
-                    }else{
-                        if (raid.eggLevel != 0){
-                            str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.eggLevel, StringLocalizer.getLocalString("Eggs")));
-                        }else {
-                            str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
-                        }
+
+                    if (!gymName.equals("")){
+                        str.append(String.format("  **%s**:\n", gymName));
                     }
 
-                    if (!raid.gymName.equals("")){
-                        str.append(String.format(" %s %s",StringLocalizer.getLocalString("At"),raid.gymName));
+                    int i = 0;
+                    for (Raid raid : raids) {
+                        if (!gymName.equals("")) {
+                            str.append("  ");
+                        }
+                        str.append("  ");
+
+
+                        if (raid.bossId != 0) {
+                            str.append(String.format("%s %s", Pokemon.idToName(raid.bossId), StringLocalizer.getLocalString("Raids")));
+                        }else{
+                            if (raid.eggLevel != 0){
+                                str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.eggLevel, StringLocalizer.getLocalString("Eggs")));
+                            }else {
+                                str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
+                            }
+                        }
+                        if (i != raids.size() - 1) {
+                            str.append("\n");
+                        }
+                        prefMap.get(location).add(str.toString());
+                        i++;
                     }
-                    prefMap.get(location).add(str.toString());
+
+//                    for (Raid raid : raids) {
+//                        StringBuilder str = new StringBuilder();
+//                        if (raid.bossId != 0) {
+//                            str.append(String.format("%s %s", Pokemon.idToName(raid.bossId), StringLocalizer.getLocalString("Raids")));
+//                        }else{
+//                            if (raid.eggLevel != 0){
+//                                str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.eggLevel, StringLocalizer.getLocalString("Eggs")));
+//                            }else {
+//                                str.append(String.format("%s %s %s", StringLocalizer.getLocalString("Level"), raid.raidLevel, StringLocalizer.getLocalString("Raids")));
+//                            }
+//                        }
+//                        set.add(str.toString());
+//                    }
                 }
             }
         });
@@ -179,12 +262,12 @@ public class UserPref {
                 final TreeSet<String> set = new TreeSet<>();
 
                 for (Pokemon pokemon : pokemons) {
-                    set.add(pokePrefString(pokemon));
+                    set.add("  " + pokePrefString(pokemon));
                 }
                 prefMap.put(location, set);
             } else {
                 for (Pokemon pokemon : pokemons) {
-                    prefMap.get(location).add(pokePrefString(pokemon));
+                    prefMap.get(location).add("  " + pokePrefString(pokemon));
                 }
             }
         });
@@ -194,12 +277,12 @@ public class UserPref {
                 TreeSet<String> set = new TreeSet<>();
 
                 for (String preset : presets) {
-                    set.add(presetString(preset));
+                    set.add("  " + presetString(preset));
                 }
                 prefMap.put(location, set);
             } else {
                 for (String preset : presets) {
-                    prefMap.get(location).add(presetString(preset));
+                    prefMap.get(location).add("  " + presetString(preset));
                 }
             }
         });
@@ -214,7 +297,7 @@ public class UserPref {
             }
             str.append("**").append(locname).append("**:\n");
             for (final String string : prefMap.get(locStr)) {
-                str.append(String.format("    %s%n", string));
+                str.append(String.format("%s%n", string));
             }
             str.append("\n");
         }

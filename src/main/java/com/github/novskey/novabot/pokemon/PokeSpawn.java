@@ -35,6 +35,7 @@ public class PokeSpawn extends Spawn
     public ZonedDateTime disappearTime;
     public String form;
     public Integer id;
+    public Integer formId;
     public Float iv;
     public Integer cp;
     public Integer level;
@@ -60,6 +61,7 @@ public class PokeSpawn extends Spawn
         super();
         this.disappearTime = null;
         this.form = null;
+        this.formId = form;
         this.suburb = null;
         this.disappearTime = disappearTime;
 
@@ -127,11 +129,8 @@ public class PokeSpawn extends Spawn
         this.gender = gender;
         getProperties().put("gender", getGender());
 
-        if (form != null && form != 0 && id == 201) {
-            this.id = id * 10 + form;
-        }
-        if (form != null) {
-            this.form = ((Pokemon.intToForm(form) == null) ? null : String.valueOf(Pokemon.intToForm(form)));
+        if (form != null && form != 0) {
+            this.form = ((Pokemon.formToString(id,form) == null) ? null : String.valueOf(Pokemon.formToString(id,form)));
         }
         getProperties().put("form", (this.form == null ? "" : this.form));
 
@@ -226,10 +225,10 @@ public class PokeSpawn extends Spawn
             final MessageBuilder messageBuilder = new MessageBuilder();
             
             final EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setColor(getColor());
+            embedBuilder.setColor(getColor(formatFile));
             embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterTitleFormatting(formatFile) : (novaBot.getConfig().getTitleFormatting(formatFile, "pokemon"))), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, "pokemon")));
             embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterBodyFormatting(formatFile) : novaBot.getConfig().getBodyFormatting(formatFile, "pokemon")));
-            embedBuilder.setThumbnail(Pokemon.getIcon(this.id));
+            embedBuilder.setThumbnail(Pokemon.getIcon(this.id,this.formId));
             if (novaBot.getConfig().showMap(formatFile, "pokemon")) {
             	String image = this.getImage(formatFile, minimizeAPICalls);
                 embedBuilder.setImage(image);
@@ -303,21 +302,24 @@ public class PokeSpawn extends Spawn
         return iv_attack != null;
     }
 
-    private Color getColor() {
-        if(iv == null || iv < 25)
-            return new Color(0x9d9d9d);
-        if(iv < 50)
-            return new Color(0xffffff);
-        if(iv < 81)
-            return new Color(0x1eff00);
-        if(iv < 90)
-            return new Color(0x0070dd);
-        if(iv < 100)
-            return new Color(0xa335ee);
-        if(iv == 100)
-            return new Color(0xff8000);
-
-        return Color.GRAY;
+    private Color getColor(String formatFile) {
+        if (novaBot.getConfig().showColor(formatFile, "pokemon")) {
+            if(iv == null || iv < 25)
+                return new Color(0x9d9d9d);
+            if(iv < 50)
+                return new Color(0xffffff);
+            if(iv < 81)
+                return new Color(0x1eff00);
+            if(iv < 90)
+                return new Color(0x0070dd);
+            if(iv < 100)
+                return new Color(0xa335ee);
+            if(iv == 100)
+                return new Color(0xff8000);
+            return Color.GRAY;
+        } else {
+            return Color.GRAY;
+        }
     }
 
     private String getDespawnTime(DateTimeFormatter printFormat) {

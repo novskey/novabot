@@ -211,10 +211,10 @@ public class UserCommand
 
     public Raid[] buildRaids() {
         Location[] locations = { Location.ALL };
-        String[] bossNames = {""};
+        String[] bossNames = {};
         String[] gymNames = {""};
-        Integer[] eggLevels = {0};
-        Integer[] raidLevels = {0};
+        Integer[] eggLevels = {};
+        Integer[] raidLevels = {};
 
         for (final Argument arg : this.args) {
             switch (arg.getType()) {
@@ -238,19 +238,34 @@ public class UserCommand
 
         final ArrayList<Raid> raids = new ArrayList<>();
         for (final String bossName : bossNames) {
-            for (Integer eggLevel : eggLevels) {
-                for (Integer raidLevel : raidLevels) {
-                    for (String gymName : gymNames) {
-                        for (final Location location : locations) {
-                            Raid raid = new Raid(Pokemon.nameToID(bossName),eggLevel,raidLevel, gymName,location);
-                            System.out.println(raid);
-                            raids.add(raid);
-                        }
-                    }
+            for (String gymName : gymNames) {
+                for (final Location location : locations) {
+                    Raid raid = new Raid(Pokemon.nameToID(bossName),0,0, gymName,location);
+                    System.out.println(raid);
+                    raids.add(raid);
                 }
             }
         }
 
+        for (Integer eggLevel : eggLevels) {
+            for (String gymName : gymNames) {
+                for (final Location location : locations) {
+                    Raid raid = new Raid(0,eggLevel,0, gymName,location);
+                    System.out.println(raid);
+                    raids.add(raid);
+                }
+            }
+        }
+
+        for (Integer raidLevel : raidLevels) {
+            for (String gymName : gymNames) {
+                for (final Location location : locations) {
+                    Raid raid = new Raid(0,0,raidLevel, gymName,location);
+                    System.out.println(raid);
+                    raids.add(raid);
+                }
+            }
+        }
         final Raid[] raidArray = new Raid[raids.size()];
         return raids.toArray(raidArray);
     }

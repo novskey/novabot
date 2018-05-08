@@ -564,7 +564,7 @@ public class NovaBot {
                     if (locationsArg != null) {
                         locations = userCommand.getLocations();
                     }
-                    message2 += String.format(" %s %s", getLocalString("In"),Location.listToString(locations));
+                    message2 += String.format(" %s%s %s", Raid.getGymNameString(raids),getLocalString("In"),Location.listToString(locations));
                     channel.sendMessage(message2).queue();
 
                     return;
@@ -578,14 +578,14 @@ public class NovaBot {
                         channel.sendMessageFormat("%s, please include either a raid boss name or an egg level",author).queue();
                         return;
                     }
-                    String message2 = String.format("%s, %s %s",author.getAsMention(), getLocalString("YouWillNoLongerBeNotifiedOf"),Pokemon.listToString(userCommand.getUniquePokemon()));
+                    String message2 = String.format("%s, %s %s", author.getAsMention(), getLocalString("YouWillNoLongerBeNotifiedOf"), Raid.getRaidsString(raids));
 
                     final Argument locationsArg = userCommand.getArg(ArgType.Locations);
                     Location[] locations = {Location.ALL};
                     if (locationsArg != null) {
                         locations = userCommand.getLocations();
                     }
-                    message2 += String.format(" %s %s", getLocalString("RaidsIn"), Location.listToString(locations));
+                    message2 += String.format(" %s%s %s",Raid.getGymNameString(raids),getLocalString("In"),Location.listToString(locations));
                     channel.sendMessage(message2).queue();
 
                     return;
@@ -1036,7 +1036,7 @@ public class NovaBot {
 
         Spawn.setNovaBot(this);
 
-        commands = new Commands(getConfig());
+        commands = new Commands(this);
         parser = new Parser(this);
 
         reverseGeocoder = new ReverseGeocoder(this);

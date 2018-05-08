@@ -28,12 +28,7 @@ public class Argument
     }
 
     public boolean notFullyParsed() {
-        for (final Object param : this.params) {
-            if (param == null) {
-                return true;
-            }
-        }
-        return false;
+        return (malformed != null) && malformed.size() > 0;
     }
 
     public static ArgType getDuplicateArg(final Argument[] args) {

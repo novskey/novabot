@@ -1,6 +1,8 @@
 package com.github.novskey.novabot.parser;
 
+import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.core.Config;
+import com.github.novskey.novabot.core.NovaBot;
 
 import java.util.*;
 
@@ -9,24 +11,25 @@ import static com.github.novskey.novabot.parser.ArgType.*;
 public class Commands {
     private HashMap<String, Command> commands;
 
-    public Commands(Config config) {
+    public Commands(NovaBot novaBot) {
+        Config config = novaBot.getConfig();
         commands = new HashMap<>();
         final Command clearLocation = new Command()
                 .setValidArgTypes(new HashSet<>(Arrays.asList(CommandStr, Locations)))
                 .setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Locations)))
                 .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Locations)));
 
-        commands.put("!clearlocation", clearLocation);
+        commands.put(StringLocalizer.getLocalString("ClearLocationCommand"), clearLocation);
 
         if(config.presetsEnabled()){
             Command loadPreset = new Command()
                     .setValidArgTypes(new HashSet<>(Arrays.asList(CommandStr, Preset, Locations)));
 
             if (config.isAllowAllLocation()){
-            	loadPreset.setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Preset)));
-                loadPreset.addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Preset)));
-            } else {
-            	loadPreset.setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Preset, Locations)));
+                loadPreset.addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Preset)))
+                          .setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Preset)));
+            }else{
+                loadPreset.setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Preset, Locations)));
             }
             loadPreset.addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Preset, Locations)));
 
@@ -46,10 +49,10 @@ public class Commands {
                     .setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Locations)))
                     .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Locations)));
 
-            commands.put("!loadpreset", loadPreset);
-            commands.put("!delpreset", delPreset);
-            commands.put("!clearpreset", clearPreset);
-            commands.put("!clearpresetlocation", clearPresetLocation);
+            commands.put(StringLocalizer.getLocalString("LoadPresetCommand"), loadPreset);
+            commands.put(StringLocalizer.getLocalString("DelPresetCommand"), delPreset);
+            commands.put(StringLocalizer.getLocalString("ClearPresetCommand"), clearPreset);
+            commands.put(StringLocalizer.getLocalString("ClearPresetLocationCommand"), clearPresetLocation);
         }
 
         if(config.pokemonEnabled()) {
@@ -89,10 +92,10 @@ public class Commands {
                     .setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Pokemon)))
                     .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon)));
 
-            commands.put("!addpokemon", addPokemon);
-            commands.put("!delpokemon", delPokemon);
-            commands.put("!clearpokemon", clearPokemon);
-            commands.put("!clearpokelocation", clearLocation);
+            commands.put(StringLocalizer.getLocalString("AddPokemonCommand"), addPokemon);
+            commands.put(StringLocalizer.getLocalString("DelPokemonCommand"), delPokemon);
+            commands.put(StringLocalizer.getLocalString("ClearPokemonCommand"), clearPokemon);
+            commands.put(StringLocalizer.getLocalString("ClearLocationCommand"), clearLocation);
         }
 
         if(config.raidsEnabled()){
@@ -150,10 +153,10 @@ public class Commands {
                     .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Egg, Level)))
                     .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Level)));
 
-            commands.put("!addraid", addRaid);
-            commands.put("!delraid", delRaid);
-            commands.put("!clearraid", clearRaid);
-            commands.put("!clearraidlocation", clearLocation);
+            commands.put(StringLocalizer.getLocalString("AddRaidCommand"), addRaid);
+            commands.put(StringLocalizer.getLocalString("DelRaidCommand"), delRaid);
+            commands.put(StringLocalizer.getLocalString("ClearRaidCommand"), clearRaid);
+            commands.put(StringLocalizer.getLocalString("ClearRaidLocationCommand"), clearLocation);
         }
 
         if(config.statsEnabled()) {
@@ -161,19 +164,19 @@ public class Commands {
                     .setValidArgTypes(new HashSet<>(Arrays.asList(CommandStr, Pokemon, Int, TimeUnit)))
                     .setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Pokemon, Int, TimeUnit)))
                     .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr,Pokemon, Int, TimeUnit)));
-            commands.put("!stats", stats);
+            commands.put(StringLocalizer.getLocalString("StatsCommand"), stats);
         }
         Command help = new Command()
                 .setValidArgTypes(new HashSet<>(Arrays.asList(CommandStr, CommandName)))
                 .setRequiredArgTypes(new HashSet<>(Collections.singleton(CommandStr)))
                 .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, CommandName)))
                 .addValidArgCombination(new TreeSet<>(Collections.singletonList(CommandStr)));
-        commands.put("!help",help);
+        commands.put(StringLocalizer.getLocalString("HelpCommand"),help);
     }
 
     public Command get(final String firstArg) {
-        if(!firstArg.startsWith("!")){
-            return commands.get("!"+firstArg);
+        if(!firstArg.startsWith(StringLocalizer.getLocalString("Prefix"))){
+            return commands.get(StringLocalizer.getLocalString("Prefix")+firstArg);
         }else{
             return commands.get(firstArg);
         }
@@ -184,8 +187,8 @@ public class Commands {
     }
 
     public boolean validName(String trimmed) {
-        if(!trimmed.startsWith("!")){
-            return commands.containsKey("!"+trimmed);
+        if(!trimmed.startsWith(StringLocalizer.getLocalString("Prefix"))){
+            return commands.containsKey(StringLocalizer.getLocalString("Prefix")+trimmed);
         }else{
             return commands.containsKey(trimmed);
         }

@@ -24,7 +24,7 @@ public class Parser {
     private static final Pattern CP_PATTERN = Pattern.compile("(cp[0-9]+)|([0-9]+cp)");
     private static final Pattern IV_PATTERN = Pattern.compile("iv[0-9]+|([0-9]+iv)|[0-9]+");
     private static final Pattern EGG_PATTERN = Pattern.compile("egg[1-5]");
-
+	private static final Pattern POKE_PATTERN = Pattern.compile("p[0-9]+|pid[0-9]+|poke[0-9]+|pokemon[0-9]+");
 
     private final NovaBot novaBot;
 
@@ -77,15 +77,19 @@ public class Parser {
         return command;
     }
 
-    private Argument getArg(final String s, HashSet<ArgType> valid) {
-        String trimmed = s.trim();
-        final Argument argument = new Argument();
+    private Argument getArg(final String s, Command command) {
+        String           trimmed  = s.trim();
+        final Argument   argument = new Argument();
+        HashSet<ArgType> valid    = (command == null) ? new HashSet<>() : command.getValidArgTypes();
         if (novaBot.commands.isCommandWithArgs(trimmed)) {
             argument.setType(ArgType.CommandStr);
             argument.setParams(new Object[]{s});
         } else if (valid.contains(ArgType.Pokemon) && Pokemon.nameToID(trimmed) != 0) {
             argument.setType(ArgType.Pokemon);
             argument.setParams(new Object[]{trimmed});
+        } else if (valid.contains(ArgType.Pokemon) && POKE_PATTERN.matcher(trimmed).matches()) {
+            argument.setType(ArgType.Pokemon);
+            argument.setParams(new Object[]{Pokemon.idToName(getInt(trimmed.replaceAll("[^\\d.]", "")))});
         } else if (valid.contains(ArgType.Egg) && EGG_PATTERN.matcher(trimmed).matches()) {
             argument.setType(ArgType.Egg);
             Matcher matcher = ONLY_NUMBERS.matcher(trimmed);
@@ -155,17 +159,17 @@ public class Parser {
     private Argument[] getArgs(final String input) {
         final ArrayList<Argument> args    = new ArrayList<>();
         final Matcher             matcher = Parser.PATTERN.matcher(input);
-        HashSet<ArgType> valid = new HashSet<>();
+        Command command = null;
         while (matcher.find()) {
             final String group = matcher.group();
             if (group.charAt(0) == '<') {
-                args.add(parseList(group, valid));
+                args.add(parseList(group, command));
             } else {
-                Argument arg = getArg(group, valid);
+                Argument arg = getArg(group, command);
                 if (arg.getType() == ArgType.CommandStr){
-                    valid = novaBot.commands.get(group).getValidArgTypes();
+                    command = novaBot.commands.get(group);
                 }
-                args.add(getArg(group, valid));
+                args.add(getArg(group, command));
             }
         }
         final Argument[] arguments = new Argument[args.size()];
@@ -189,14 +193,14 @@ public class Parser {
         }
     }
 
-    private Argument parseList(final String group, HashSet<ArgType> valid) {
+    private Argument parseList(final String group, Command command) {
         final Argument argument = new Argument();
         final String toSplit = group.substring(1, group.length() - 1);
         final String[] strings = toSplit.split(",");
         final ArrayList<Object> args = new ArrayList<>();
         final ArrayList<String> malformed = new ArrayList<>();
 
-        for (ArgType argType : valid) {
+        for (ArgType argType : command.getValidArgTypes()) {
             args.clear();
             malformed.clear();
             for (String string : strings) {
@@ -228,7 +232,13 @@ public class Parser {
                         }
                         break;
                     case Pokemon:
-                        final Pokemon pokemon = new Pokemon(trimmed);
+                        final Pokemon pokemon;
+                        if (POKE_PATTERN.matcher(trimmed).matches()) {
+                            pokemon = new Pokemon(getInt(trimmed.replaceAll("[^\\d.]", "")));
+                        }
+                        else {
+                            pokemon = new Pokemon(trimmed);
+                        }
                         if (pokemon.name == null) {
                             malformed.add(string);
                         }
@@ -257,15 +267,16 @@ public class Parser {
                         }
                         break;
                     case Level:
-                        if (strings.length == 1 || strings.length == 2) {
-                            if (LEVEL_PATTERN.matcher(trimmed).matches()) {
-                                argument.setType(ArgType.Level);
-                                Matcher matcher = ONLY_NUMBERS.matcher(trimmed);
-                                if (matcher.find()) {
-                                    args.add(Integer.valueOf(matcher.group()));
-                                }
-                            } else {
+                        if(command.equals(novaBot.commands.get("AddRaidCommand")) || command.equals(novaBot.commands.get("DelRaidCommand"))){
+                            if (strings.length > 2){
                                 malformed.add(string);
+                            }
+                        }
+                        if (LEVEL_PATTERN.matcher(trimmed).matches()) {
+                            argument.setType(ArgType.Level);
+                            Matcher matcher = ONLY_NUMBERS.matcher(trimmed);
+                            if (matcher.find()) {
+                                args.add(Integer.valueOf(matcher.group()));
                             }
                         } else {
                             malformed.add(string);
@@ -364,7 +375,7 @@ public class Parser {
         }
 
 
-        UserCommand command = novaBot.parser.parseInput("!addraid level5");
+        UserCommand command = novaBot.parser.parseInput("!addraid <egg1,level1>");
         System.out.println(command.getExceptions());
         System.out.println(command.buildRaids());
 
