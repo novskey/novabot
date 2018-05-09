@@ -170,7 +170,7 @@ public class RaidSpawn extends Spawn {
             final EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(getColor(formatFile));
 
-            if (bossId == 0) {
+            if (bossId == 0 || this.battleStart.isAfter(ZonedDateTime.now(UtilityFunctions.UTC))) {
                 formatKey = "raidEgg";
                 embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
                         raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()

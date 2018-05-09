@@ -103,6 +103,7 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
 
                 for (GeofenceIdentifier identifier : raidSpawn.getGeofences()) {
                     ArrayList<AlertChannel> channels = novaBot.getConfig().getRaidChannels(identifier);
+                    localLog.info(String.format("Channels for %s: %s", identifier + "", channels + ""));
 
                     if (channels == null) continue;
 
