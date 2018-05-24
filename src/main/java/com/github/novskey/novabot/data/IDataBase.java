@@ -8,9 +8,11 @@ import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.raids.RaidLobbyMember;
 
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Paris on 17/01/2018.
@@ -68,7 +70,7 @@ public interface IDataBase {
 
     void logNewUser(String userID);
 
-    void newLobby(String lobbyCode, String gymId, int memberCount, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode);
+    void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members);
 
     boolean notContainsUser(String userID);
 
@@ -88,7 +90,7 @@ public interface IDataBase {
 
     void unPauseUser(String id);
 
-    void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId);
+    void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members);
 
     int purgeUnknownSpawnpoints();
 

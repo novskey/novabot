@@ -7,6 +7,7 @@ import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
+import com.github.novskey.novabot.raids.RaidLobbyMember;
 import com.github.novskey.novabot.raids.RaidSpawn;
 
 import java.time.Instant;
@@ -264,9 +265,9 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void newLobby(String lobbyCode, String gymId, int memberCount, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode) {
-        dbCache.newLobby(lobbyCode, gymId, memberCount, channelId, roleId, nextTimeLeftUpdate, inviteCode);
-        settingsDbManager.newLobby(lobbyCode, gymId, memberCount, channelId, roleId, nextTimeLeftUpdate, inviteCode);
+    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members) {
+        dbCache.newLobby(lobbyCode, gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members);
+        settingsDbManager.newLobby(lobbyCode, gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members);
     }
 
     @Override
@@ -323,9 +324,9 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId) {
-        dbCache.updateLobby(lobbyCode, memberCount, nextTimeLeftUpdate, inviteCode, roleId, channelId);
-        settingsDbManager.updateLobby(lobbyCode, memberCount, nextTimeLeftUpdate, inviteCode, roleId, channelId);
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members) {
+        dbCache.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
+        settingsDbManager.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
     }
 
     @Override

@@ -215,7 +215,7 @@ public class MessageListener extends ListenerAdapter {
                             RaidLobby lobby = novaBot.lobbyManager.getLobbyByChannelId(newInvite.getChannel().getId());
 
                             if (lobby != null) {
-                                lobby.joinLobby(member.getUser().getId(), 1 /* ToDo */);
+                                lobby.joinLobby(member.getUser().getId(), 1);
                             }
                             break;
                         }

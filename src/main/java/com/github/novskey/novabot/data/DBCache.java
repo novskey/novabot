@@ -10,6 +10,7 @@ import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.raids.RaidLobbyMember;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -376,8 +377,8 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void newLobby(String lobbyCode, String gymId, int memberCount, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode) {
-        raidLobbies.put(lobbyCode, new DbLobby(gymId,memberCount,channelId,roleId, (int) nextTimeLeftUpdate,inviteCode));
+    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members) {
+        raidLobbies.put(lobbyCode, new DbLobby(gymId,channelId,roleId, (int) nextTimeLeftUpdate,inviteCode,members));
     }
 
     @Override
@@ -444,16 +445,16 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId) {
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members) {
         DbLobby lobby = raidLobbies.get(lobbyCode);
 
         if (lobby == null) return;
 
-        lobby.memberCount = memberCount;
         lobby.nextTimeLeftUpdate = nextTimeLeftUpdate;
         lobby.inviteCode = inviteCode;
         lobby.roleId = roleId;
         lobby.channelId = channelId;
+        lobby.members = members;
     }
 
     @Override
