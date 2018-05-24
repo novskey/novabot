@@ -88,7 +88,7 @@ public interface IDataBase {
 
     void unPauseUser(String id);
 
-    void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode);
+    void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId);
 
     int purgeUnknownSpawnpoints();
 

@@ -31,23 +31,6 @@ public class LobbyManager {
         return activeLobbies.get(lobbyCode);
     }
 
-    public void getLobbiesFromDb(HashMap<String, String> activeLobbyCodes) {
-
-        lobbyManagerLog.info("Loading active lobbies based on lobby codes found in the DB");
-
-        for (Map.Entry<String, String> entry : activeLobbyCodes.entrySet()) {
-            String lobbyCode = entry.getKey();
-            String gymId     = entry.getValue();
-
-            RaidSpawn raidSpawn = novaBot.dataManager.settingsDbManager.knownRaids.get(gymId);
-
-            if (raidSpawn != null) {
-                lobbyManagerLog.info("Found an active raid/egg for gymId: %s, previous lobby code %s. Restoring the lobby");
-                raidSpawn.setLobbyCode(lobbyCode);
-            }
-        }
-    }
-
     public boolean isLobbyChannel(String id) {
         Collection<RaidLobby> raidLobbies = activeLobbies.values();
         for (RaidLobby raidLobby : raidLobbies) {

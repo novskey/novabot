@@ -37,10 +37,6 @@ public class NotificationsManager {
 
             executor.scheduleAtFixedRate(new RaidNotifier(this, novaBot), 0, novaBot.getConfig().getRaidPollingDelay(), TimeUnit.SECONDS);
 
-            if (novaBot.getConfig().isRaidOrganisationEnabled()) {
-                novaBot.lobbyManager.addLobbies(novaBot.dataManager.getActiveLobbies());
-            }
-
             for (int i = 1; i <= novaBot.getConfig().getRaidThreads(); i++) {
                 novaBot.novabotLog.info("Starting raid thread " + i);
                 new Thread(new RaidNotificationSender(novaBot,i)).start();

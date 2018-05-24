@@ -149,7 +149,11 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
                 user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue(
                         msg -> {
                             if (showTick) {
-                                msg.addReaction(WHITE_GREEN_CHECK).queue();
+                                msg.addReaction(NUMBER_1).queue();
+                                msg.addReaction(NUMBER_2).queue();
+                                msg.addReaction(NUMBER_3).queue();
+                                msg.addReaction(NUMBER_4).queue();
+                                msg.addReaction(NUMBER_5).queue();
                             }
                         }
                 ));
@@ -158,7 +162,11 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
             user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue(
                     msg -> {
                         if (showTick) {
-                            msg.addReaction(WHITE_GREEN_CHECK).queue();
+                            msg.addReaction(NUMBER_1).queue();
+                            msg.addReaction(NUMBER_2).queue();
+                            msg.addReaction(NUMBER_3).queue();
+                            msg.addReaction(NUMBER_4).queue();
+                            msg.addReaction(NUMBER_5).queue();
                         }
                     }
             ));
@@ -175,8 +183,12 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
         }
         channel.sendMessage(message).queue(m -> {
             if (novaBot.getConfig().isRaidOrganisationEnabled() && raidLevel >= 3) {
-                System.out.println(String.format("adding reaction to raid with raidlevel %s", raidLevel));
-                m.addReaction(WHITE_GREEN_CHECK).queue();
+                System.out.println(String.format("adding reactions to raid with raidlevel %s", raidLevel));
+                m.addReaction(NUMBER_1).queue();
+                m.addReaction(NUMBER_2).queue();
+                m.addReaction(NUMBER_3).queue();
+                m.addReaction(NUMBER_4).queue();
+                m.addReaction(NUMBER_5).queue();            
             }
         });
     }

@@ -370,7 +370,11 @@ public class ScanDBManager  {
             dbLog.error("Error executing getCurrentRaids",e);
         }
         dbLog.info(String.format("Returned %s rows", rows));
-
+        if (firstRun) {
+            if (novaBot.getConfig().isRaidOrganisationEnabled()) {
+                novaBot.lobbyManager.addLobbies(novaBot.dataManager.getActiveLobbies());
+            }
+        }
     }
 
     public HashSet<String> getGymNames() {

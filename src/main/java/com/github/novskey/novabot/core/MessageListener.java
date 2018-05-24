@@ -18,8 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessageListener extends ListenerAdapter {
-    public final String WHITE_GREEN_CHECK = "\u2705";
-
+    public final String NUMBER_1 = "\u0031\u20E3";
+    public final String NUMBER_2 = "\u0032\u20E3";
+    public final String NUMBER_3 = "\u0033\u20E3";
+    public final String NUMBER_4 = "\u0034\u20E3";
+    public final String NUMBER_5 = "\u0035\u20E3";
 
     private Map<Long, Message> messageMap;
     private NovaBot novaBot;
@@ -130,13 +133,26 @@ public class MessageListener extends ListenerAdapter {
 
         if (event.getUser().isBot()) return;
 
-        if (!event.getReactionEmote().getName().equals(WHITE_GREEN_CHECK)) return;
+        int groupCount = 1;
+        if (event.getReactionEmote().getName().equals(NUMBER_1)) {
+        		groupCount = 1;
+        } else if (event.getReactionEmote().getName().equals(NUMBER_2)) {
+        		groupCount = 2;
+        } else if (event.getReactionEmote().getName().equals(NUMBER_3)) {
+        		groupCount = 3;
+        } else if (event.getReactionEmote().getName().equals(NUMBER_4)) {
+        		groupCount = 4;
+        } else if (event.getReactionEmote().getName().equals(NUMBER_5)) {
+    			groupCount = 5;
+        } else {
+        		return;
+        }
 
         Message message = event.getChannel().getMessageById(event.getMessageId()).complete();
 
         if (!message.getAuthor().isBot()) return;
 
-        novaBot.novabotLog.debug("white green check reaction added to a bot message that contains an embed!");
+        novaBot.novabotLog.debug("join reaction added to a bot message that contains an embed!");
 
         String content;
         if (message.getEmbeds().size() > 0) {
@@ -148,7 +164,7 @@ public class MessageListener extends ListenerAdapter {
         int    joinIndex = content.indexOf("!joinraid") + 10;
         String lobbyCode = content.substring(joinIndex, content.substring(joinIndex).indexOf("`") + joinIndex).trim();
 
-        novaBot.novabotLog.info("Message clicked was for lobbycode " + lobbyCode);
+        novaBot.novabotLog.info("Message clicked was for lobbycode " + lobbyCode + " with group size of " + groupCount);
 
         RaidLobby lobby = novaBot.lobbyManager.getLobby(lobbyCode);
 
@@ -159,14 +175,14 @@ public class MessageListener extends ListenerAdapter {
 
         if (!lobby.containsUser(event.getUser().getId())) {
 
-            lobby.joinLobby(event.getUser().getId());
+            lobby.joinLobby(event.getUser().getId(), groupCount);
 
             if (event.getChannelType() == ChannelType.PRIVATE) {
                 event.getChannel().sendMessageFormat("%s you have been placed in %s. There are now %s users in the lobby.", event.getUser(), lobby.getChannel(), lobby.memberCount()).queue();
             }
 
             novaBot.alertRaidChats(novaBot.getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                    "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the ✅ or by typing `!joinraid %s`.",
+                    "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the numbers or by typing `!joinraid %s`.",
                     novaBot.guild.getMember(event.getUser()).getAsMention(),
                     (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
                     lobby.getChannel().getAsMention(),
@@ -199,7 +215,7 @@ public class MessageListener extends ListenerAdapter {
                             RaidLobby lobby = novaBot.lobbyManager.getLobbyByChannelId(newInvite.getChannel().getId());
 
                             if (lobby != null) {
-                                lobby.joinLobby(member.getUser().getId());
+                                lobby.joinLobby(member.getUser().getId(), 1 /* ToDo */);
                             }
                             break;
                         }

@@ -6,8 +6,8 @@ package com.github.novskey.novabot.data;
 public class DbLobby {
     private final String gymId;
     public int memberCount;
-    private final String channelId;
-    private final String roleId;
+    public String channelId;
+    public String roleId;
     public int nextTimeLeftUpdate;
     public String inviteCode;
 

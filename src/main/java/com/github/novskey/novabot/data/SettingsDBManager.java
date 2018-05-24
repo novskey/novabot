@@ -26,7 +26,6 @@ public class SettingsDBManager implements IDataBase {
 
     Calendar utcCalendar = Calendar.getInstance(TimeZone.getTimeZone(UtilityFunctions.UTC));
 
-    public final HashMap<String, RaidSpawn> knownRaids = new HashMap<>();
     private StringBuilder blacklistQuery = new StringBuilder();
     private final NovaBot novaBot;
     private java.lang.String scanUrl;
@@ -427,9 +426,6 @@ public class SettingsDBManager implements IDataBase {
     public ArrayList<RaidLobby> getActiveLobbies() {
         ArrayList<RaidLobby> activeLobbies = new ArrayList<>();
 
-        ArrayList<String> toDelete = null;
-
-
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "SELECT lobby_id,gym_id,channel_id,role_id,next_timeleft_update,invite_code FROM raidlobby;")
@@ -448,15 +444,13 @@ public class SettingsDBManager implements IDataBase {
 
                 dbLog.info(String.format("Found lobby with info %s,%s,%s,%s in the db, checking for known raid", lobbyCode, gymId, channelId, roleId));
 
-                RaidSpawn spawn = knownRaids.get(gymId);
+                
+                RaidSpawn spawn = novaBot.getDataManager().getKnownRaids().get(gymId);
 
                 if (spawn == null) {
-                    dbLog.warn(String.format("Couldn't find a known raid for gym id %s which was found as an active raid lobby, queuing for deletion", gymId));
-                    if (toDelete == null) {
-                        toDelete = new ArrayList<>();
-                    }
+                    dbLog.warn(String.format("Couldn't find a known raid for gym id %s which was found as an active raid lobbyo, deleting", gymId));
 
-                    toDelete.add(lobbyCode);
+                    new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, true);
                 } else {
                     dbLog.info(String.format("Found a raid for gym id %s, lobby code %s", gymId, lobbyCode));
                     RaidLobby lobby = new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, true);
@@ -468,12 +462,6 @@ public class SettingsDBManager implements IDataBase {
             }
         } catch (SQLException e) {
             dbLog.error("Error executing getActiveLobbies",e);
-        }
-
-
-        if (toDelete != null) {
-            dbLog.info("Deleting non-existent lobbies");
-            endLobbies(toDelete);
         }
 
         return activeLobbies;
@@ -1151,15 +1139,17 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode) {
+    public void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE raidlobby SET members = ?, next_timeleft_update = ?, invite_code = ? WHERE lobby_id = ?")
+                     "UPDATE raidlobby SET  members = ?, next_timeleft_update = ?, invite_code = ?, role_id = ?, channel_id = ? WHERE lobby_id = ?")
         ) {
             statement.setInt(1, memberCount);
             statement.setInt(2, nextTimeLeftUpdate);
             statement.setString(3, inviteCode);
-            statement.setInt(4, Integer.parseInt(lobbyCode));
+            statement.setString(4, roleId);
+            statement.setString(5, channelId);
+            statement.setInt(6, Integer.parseInt(lobbyCode));
             statement.executeUpdate();
         } catch (SQLException e) {
             dbLog.error("Error executing updateLobby",e);

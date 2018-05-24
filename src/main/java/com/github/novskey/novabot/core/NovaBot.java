@@ -37,7 +37,11 @@ import static com.github.novskey.novabot.parser.ArgType.CommandName;
 
 public class NovaBot {
 
-    private final String WHITE_GREEN_CHECK = "\u2705";
+    public final String NUMBER_1 = "\u0031\u20E3";
+    public final String NUMBER_2 = "\u0032\u20E3";
+    public final String NUMBER_3 = "\u0033\u20E3";
+    public final String NUMBER_4 = "\u0034\u20E3";
+    public final String NUMBER_5 = "\u0035\u20E3";
     public final Logger novabotLog = LoggerFactory.getLogger("novabot");
     public final ConcurrentHashMap<String, ZonedDateTime> lastUserRoleChecks = new ConcurrentHashMap<>();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -101,7 +105,13 @@ public class NovaBot {
     public void alertRaidChats(String[] raidChatIds, String message) {
         for (String raidChatId : raidChatIds) {
             guild.getTextChannelById(raidChatId).sendMessageFormat(message).queue(
-                    m -> m.addReaction(WHITE_GREEN_CHECK).queue()
+                m -> { 
+                    	m.addReaction(NUMBER_1).queue();
+                    	m.addReaction(NUMBER_2).queue();
+                    	m.addReaction(NUMBER_3).queue();
+                    	m.addReaction(NUMBER_4).queue();
+                    	m.addReaction(NUMBER_5).queue();
+                }
             );
         }
     }
@@ -236,8 +246,19 @@ public class NovaBot {
         }
 
         if (msg.startsWith(getLocalString("JoinRaidCommand")) && getConfig().isRaidOrganisationEnabled()) {
-            String groupCode = msg.substring(msg.indexOf(" ") + 1).trim();
-
+        	
+            String[] splited = msg.split("\\s+");
+            String groupCode = "";
+            	if (splited.length >= 2) {
+            		groupCode = splited[1];
+            	}
+            	int groupSize = 1;
+            	if (splited.length >= 3) {
+            		try {
+            			groupSize = Integer.parseInt(splited[2]);
+            		} catch (NumberFormatException e) {}
+            	}
+            
             RaidLobby lobby = lobbyManager.getLobby(groupCode);
 
             if (lobby == null) {
@@ -249,7 +270,7 @@ public class NovaBot {
                     return;
                 }
 
-                lobby.joinLobby(author.getId());
+                lobby.joinLobby(author.getId(), groupSize);
 
                 String alertMsg = getLocalString("AlertRaidChatsMessage");
                 alertMsg = alertMsg.replaceAll("<user>", author.getAsMention());
@@ -837,7 +858,18 @@ public class NovaBot {
         if (!msg.startsWith(getLocalString("Prefix")) || author.isBot()) return;
 
         if (msg.startsWith(getLocalString("JoinRaidCommand"))) {
-            String groupCode = msg.substring(msg.indexOf(" ") + 1).trim();
+            
+        		String[] splited = msg.split("\\s+");
+    			String groupCode = "";
+            	if (splited.length >= 2) {
+            		groupCode = splited[1];
+            	}
+            	int groupSize = 1;
+            	if (splited.length >= 3) {
+            		try {
+            			groupSize = Integer.parseInt(splited[2]);
+            		} catch (NumberFormatException e) {}
+            	}
 
             RaidLobby lobby = lobbyManager.getLobby(groupCode);
 
@@ -849,9 +881,9 @@ public class NovaBot {
                     return;
                 }
 
-                lobby.joinLobby(author.getId());
+                lobby.joinLobby(author.getId(), groupSize);
                 alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                        "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the ✅ or by typing `!joinraid %s`.",
+                        "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the numbers or by typing `!joinraid %s`.",
                         author.getAsMention(),
                         (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
                         lobby.getChannel().getAsMention(),

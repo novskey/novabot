@@ -444,7 +444,7 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode) {
+    public void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId) {
         DbLobby lobby = raidLobbies.get(lobbyCode);
 
         if (lobby == null) return;
@@ -452,6 +452,8 @@ public class DBCache implements IDataBase {
         lobby.memberCount = memberCount;
         lobby.nextTimeLeftUpdate = nextTimeLeftUpdate;
         lobby.inviteCode = inviteCode;
+        lobby.roleId = roleId;
+        lobby.channelId = channelId;
     }
 
     @Override

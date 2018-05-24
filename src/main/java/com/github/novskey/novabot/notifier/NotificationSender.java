@@ -6,8 +6,11 @@ import net.dv8tion.jda.core.entities.User;
 
 class NotificationSender {
 
-    public final String WHITE_GREEN_CHECK = "\u2705";
-
+    public final String NUMBER_1 = "\u0031\u20E3";
+    public final String NUMBER_2 = "\u0032\u20E3";
+    public final String NUMBER_3 = "\u0033\u20E3";
+    public final String NUMBER_4 = "\u0034\u20E3";
+    public final String NUMBER_5 = "\u0035\u20E3";
     NovaBot novaBot;
 
     boolean checkSupporterStatus(User user) {
