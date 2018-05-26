@@ -1543,7 +1543,13 @@ public class SettingsDBManager implements IDataBase {
     		if (members.size() > 0) {
 	    		String sql = "INSERT INTO raidlobby_members (lobby_id, user_id, count, time) "
 	    	               + "VALUES ";
+	    		boolean first = true;
 	    		for (int i = 0; i < members.size(); i++) {
+	    			if (first) {
+	    				first = false;
+	    			} else {
+	    				sql += ",";
+	    			}
 				sql += "(?, ?, ?, ?)";
 			}
 	    		

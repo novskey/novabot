@@ -325,7 +325,7 @@ public class DataManager implements IDataBase {
 
     @Override
     public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members) {
-        dbCache.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
+    		dbCache.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
         settingsDbManager.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
     }
 

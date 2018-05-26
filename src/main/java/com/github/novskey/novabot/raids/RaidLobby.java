@@ -6,6 +6,7 @@ import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.core.ScheduledExecutor;
 import com.github.novskey.novabot.core.Types;
 import com.github.novskey.novabot.data.SettingsDBManager;
+import com.github.novskey.novabot.maps.TimeZones;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -16,8 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -220,7 +225,7 @@ public class RaidLobby {
 
 			embedBuilder.setDescription(StringLocalizer.getLocalString("StatusDescription"));
 
-			embedBuilder.addField(StringLocalizer.getLocalString("LobbyMembers"), String.valueOf(memberCount()), false);
+			embedBuilder.addField(StringLocalizer.getLocalString("LobbyMembers"), getTimeString(), false);
 			embedBuilder.addField(StringLocalizer.getLocalString(StringLocalizer.getLocalString("Address")),
 					String.format("%s %s, %s", spawn.getProperties().get("street_num"),
 							spawn.getProperties().get("street"), spawn.getProperties().get("city")),
@@ -272,7 +277,7 @@ public class RaidLobby {
 
 			embedBuilder.setDescription(StringLocalizer.getLocalString("StatusDescription"));
 
-			embedBuilder.addField(StringLocalizer.getLocalString("LobbyMembers"), String.valueOf(memberCount()), false);
+			embedBuilder.addField(StringLocalizer.getLocalString("LobbyMembers"), getTimeString(), false);
 			embedBuilder.addField(StringLocalizer.getLocalString("Address"),
 					String.format("%s %s, %s", spawn.getProperties().get("street_num"),
 							spawn.getProperties().get("street"), spawn.getProperties().get("city")),
@@ -305,7 +310,130 @@ public class RaidLobby {
 
 		return str.toString();
 	}
+	
+	public void setTime(String userId, String time) {
+		for (RaidLobbyMember member : members) {
+			if (member.memberId.equals(userId)) {
+				member.time = time;
+			}
+		}
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
+		sendTimes();
+	}
 
+	public void setTime(String userId, int hour, int minute) {
+		String time = String.format("%02d", hour) + ":" + String.format("%02d", minute);
+		setTime(userId, time);
+	}
+	
+	private String getTimeString() {
+		TreeMap<String, Integer> times = new TreeMap<String, Integer>();
+		for (RaidLobbyMember member : members) {
+			String time;
+			if (member.time == null) {
+				time = StringLocalizer.getLocalString("NoTime");
+			} else {
+				time = member.time;
+			}
+	
+			if (times.containsKey(time)) {
+				times.put(time, times.get(time) + member.count);
+			} else {
+				times.put(time, member.count);
+			}
+		}
+		String timesString = "";
+		boolean first = true;
+		for(Map.Entry<String,Integer> time : times.entrySet()) {
+			if (first) {
+				first = false;
+			} else {
+				timesString += "\n";
+			}
+			timesString += time.getKey() + ": " + time.getValue();
+		}
+		return timesString;
+	}
+	
+	private TreeSet<String> getTimes() {
+		TreeSet<String> times = new TreeSet<String>();
+		
+		ZonedDateTime middle = spawn.battleStart.plusMinutes(20);		
+		ZonedDateTime end = spawn.battleStart.plusMinutes(40);
+
+		ZoneId zone = novaBot.getConfig().getTimeZone();
+		int startHour = spawn.battleStart.withZoneSameInstant(zone).getHour();
+		int startMinute = spawn.battleStart.withZoneSameInstant(zone).getMinute();
+		int middleHour = middle.withZoneSameInstant(zone).getHour();
+		int middleMinute = middle.withZoneSameInstant(zone).getMinute();
+		int endHour = end.withZoneSameInstant(zone).getHour();
+		int endMinute = end.withZoneSameInstant(zone).getMinute();
+
+		times.add(String.format("%02d", startHour) + ":" + String.format("%02d", startMinute));
+		times.add(String.format("%02d", middleHour) + ":" + String.format("%02d", middleMinute));
+		times.add(String.format("%02d", endHour) + ":" + String.format("%02d", endMinute));
+
+		for (RaidLobbyMember member : members) {
+			if (member.time == null) {
+				continue;
+			}
+	
+			if (!times.contains(member.time)) {
+				times.add(member.time);
+			}
+		}
+		return times;
+	}
+	
+	private String getClickTimeString() {
+		TreeSet<String> times = getTimes();
+		String timesString = "";
+		int count = 0;
+		for (String time : times) {
+			timesString += String.valueOf(Character.toChars(0x0031 + count )) + String.valueOf(Character.toChars(0x20E3)) +  "=" + time + " ";
+					
+			count++;
+		}
+		return timesString;
+	}
+	
+	public void sendTimes() {
+		sendTimes(getRole());
+	}
+	
+	public void sendTimes(IMentionable ping) {
+		
+		TreeSet<String> times = getTimes();
+		String timesString = getTimeString();
+		String timesClickString = getClickTimeString();
+				
+		getChannel()
+		.sendMessageFormat("%s %s\n%s\n\n%s\n%s", ping,
+				StringLocalizer.getLocalString("CurrentLobbyTimes") + ":",
+				timesString,
+				StringLocalizer.getLocalString("SetTimeInfo"),
+				timesClickString
+				)
+		.queue(
+            msg -> {
+            		for (int i = 0; i < times.size(); i++) {
+            			String string = String.valueOf(Character.toChars(0x0031 + i)) + String.valueOf(Character.toChars(0x20E3));
+            			msg.addReaction(string).queue();
+            		}
+            }
+        );
+		
+	}
+	 
+	public void setCount(String userId, int userCount) {
+		for (RaidLobbyMember member : members) {
+			if (member.memberId.equals(userId)) {
+				member.count = userCount;
+			}
+		}
+		sendTimes();
+	}
+	
 	public void joinLobby(String userId, int userCount) {
 		if (spawn.raidEnd.isBefore(ZonedDateTime.now(UtilityFunctions.UTC)))
 			return;
@@ -405,9 +533,15 @@ public class RaidLobby {
 			shutDownService = null;
 		}
 
-		channel.sendMessageFormat("%s, %s!\n%s %s %s.", member, StringLocalizer.getLocalString("WelcomeMessage"),
+		String numberString = "";
+		if (userCount > 1) {
+			numberString = " (+" + (userCount - 1) + ")";
+		}
+		channel.sendMessageFormat("%s%s, %s!\n%s %s %s.", member, numberString, StringLocalizer.getLocalString("WelcomeMessage"),
 				WordUtils.capitalize(StringLocalizer.getLocalString("ThereAreNow")), memberCount(),
 				StringLocalizer.getLocalString("UsersInTheLobby")).queue();
+
+		sendTimes();
 
 		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
 	}
@@ -497,7 +631,7 @@ public class RaidLobby {
 	}
 
 	public void loadMembers(HashSet<RaidLobbyMember> prevMembers) {
-		try {
+		try {			
 			Role role = novaBot.jda.getRoleById(roleId);
 			
 			final HashSet<String> memberIds = new HashSet<>();

@@ -18,6 +18,7 @@ import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
 import net.dv8tion.jda.core.*;
 import net.dv8tion.jda.core.entities.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -874,21 +875,25 @@ public class NovaBot {
             RaidLobby lobby = lobbyManager.getLobby(groupCode);
 
             if (lobby == null) {
-                textChannel.sendMessageFormat("%s sorry, there are no active raid lobbies with the lobby code `%s`", author, groupCode).queue();
+                textChannel.sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyNoLobby"), author, groupCode).queue();
             } else {
                 if (lobby.containsUser(author.getId())) {
-                    textChannel.sendMessageFormat("%s you are already in that raid lobby!", author).queue();
+                    textChannel.sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyAllreadyInLoby"), author).queue();
                     return;
                 }
 
                 lobby.joinLobby(author.getId(), groupSize);
+		    		String numberString = "";
+		    		if (groupSize > 1) {
+		    			numberString = " (+" + (groupSize - 1) + ")";
+		    		}
                 alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                        "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the numbers or by typing `!joinraid %s`.",
-                        author.getAsMention(),
-                        (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                        lobby.getChannel().getAsMention(),
-                        lobby.memberCount(),
-                        lobby.lobbyCode
+                		   StringLocalizer.getLocalString("LobbyChatJoined"),
+                		   author.getAsMention() + numberString,
+                		   (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
+                		   lobby.getChannel().getAsMention(),
+                		   lobby.memberCount(),
+                		   lobby.lobbyCode
                 ));
             }
 
@@ -947,6 +952,9 @@ public class NovaBot {
                     getLocalString("RaidLobbyHelpStart"),
                     getLocalString("LeaveCommand"),
                     getLocalString("MapCommand"),
+                    getLocalString("SetTimeCommand") + " HH:MM",
+                    getLocalString("TimesCommand"),
+                    getLocalString("SetCountCommand") + " X",
                     getLocalString("TimeLeftCommand"),
                     getLocalString("StatusCommand"),
                     getLocalString("BossCommand"),
@@ -960,10 +968,102 @@ public class NovaBot {
             lobby.leaveLobby(author.getId());
             return;
         }
+        
+        if (msg.equals(getLocalString("TimesCommand"))) {
+            lobby.sendTimes(author);
+            return;
+        }
+        
+        if (msg.startsWith(getLocalString("SetCountCommand"))) {
+        		String countString = msg.substring(msg.indexOf(" ") + 1).trim();
+        		
+        		boolean sucess = false;
+        		int count;
+        		try {
+    				count = Integer.parseInt(countString);
+    				if (count > 0) {
+    					sucess = true;
+    				}
+    				
+    			} catch (NumberFormatException e) {
+    				count = 1;
+    			}
+        	
+        		if (sucess) {
+        			lobby.getChannel()
+    				.sendMessageFormat("%s %s", author,
+    						StringLocalizer.getLocalString("CountSet"))
+    				.queue();
+            		lobby.setCount(author.getId(), count);
+        		} else {
+        			lobby.getChannel()
+					.sendMessageFormat("%s %s %s", author,
+							StringLocalizer.getLocalString("ProblemReadingInput"),
+							StringLocalizer.getLocalString("WrongCountFormat"))
+					.queue();
+        		}
+            return;
+        }
 
         if (msg.equals(getLocalString("MapCommand"))) {
             textChannel.sendMessage(lobby.spawn.getProperties().get("gmaps")).queue();
             return;
+        }
+        
+        if (msg.startsWith(getLocalString("SetTimeCommand"))) {
+        		String time = msg.substring(msg.indexOf(" ") + 1).trim();
+             
+        		String[] splited = time.split(":");
+        		if (splited.length != 2) {
+        			lobby.getChannel()
+					.sendMessageFormat("%s %s %s", author,
+							StringLocalizer.getLocalString("ProblemReadingInput"),
+							StringLocalizer.getLocalString("NoTimeSpecified"))
+					.queue();
+        			return;
+        		};
+        		
+        		int hour;
+        		int minute;
+        		boolean valid = false;
+    			try {
+    				hour = Integer.parseInt(splited[0]);
+    				minute = Integer.parseInt(splited[1]);
+    				
+    				if (hour < 0 || hour > 60 || minute < 0 || minute > 60) {
+    					throw new Exception();
+    				}
+    				
+    			} catch (Exception e) {
+        			lobby.getChannel()
+					.sendMessageFormat("%s %s %s", author,
+							StringLocalizer.getLocalString("ProblemReadingInput"),
+							StringLocalizer.getLocalString("WrongTimeFromat"))
+					.queue();
+        			return;
+    			}
+    			
+    			int startHour = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getHour();
+    			int startMinute = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getMinute();
+    			int endHour = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getHour();
+    			int endMinute = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getMinute();
+    			
+    			if (		hour > endHour || 
+    					hour < startHour || 
+    					(hour == endHour && minute > endMinute) ||
+    					(hour == startHour && minute < startMinute)
+    				) {
+    				lobby.getChannel()
+					.sendMessageFormat("%s %s", author,
+							StringLocalizer.getLocalString("TimeOutsideRaid"))
+					.queue();
+    			} else { 
+    				lobby.getChannel()
+					.sendMessageFormat("%s %s", author,
+							StringLocalizer.getLocalString("TimeSet"))
+					.queue();
+	    			lobby.setTime(author.getId(), hour, minute);
+    			}
         }
 
         if (msg.equals(getLocalString("TimeLeftCommand"))) {

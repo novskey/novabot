@@ -170,13 +170,13 @@ public class RaidSpawn extends Spawn {
                 formatKey = "raidEgg";
                 embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
                         raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()
-                                ? "\n\nJoin the discord lobby to coordinate with other players, and be alerted when this egg hatches. Join by clicking the ✅ emoji below this post, or by typing `!joinraid <lobbycode>` in any novabot channel."
+                                ? "\n\n" + StringLocalizer.getLocalString("JoinLobbyInfo")
                                 : "")));
             } else {
                 formatKey = "raidBoss";
                 embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
                         raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()
-                                ? "\n\nJoin the discord lobby to coordinate with other players by clicking the ✅ emoji below this post, or by typing `!joinraid <lobbycode>` in any novabot channel."
+                                ? "\n\n" + StringLocalizer.getLocalString("JoinLobbyInfo")
                                 : "")));
             }
             embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleFormatting(formatFile, formatKey)), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, formatKey)));
