@@ -169,7 +169,11 @@ public class Pokemon {
     }
 
     public static String getMoveType(int moveId) {
-        return movesInfo.getAsJsonObject(Integer.toString(moveId)).get("type").getAsString();
+    		if (moveId <= 0 || moveId > movesInfo.size()) {
+    			return StringLocalizer.getLocalString("Unknown");
+    		} else {
+    			return movesInfo.getAsJsonObject(Integer.toString(moveId)).get("type").getAsString();
+    		}
     }
 
     public static String getSize(int id, float height, float weight) {
