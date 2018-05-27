@@ -159,7 +159,7 @@ public class ScanDBManager  {
             if (scannerDb.getScannerType() == ScannerType.PhilMap || scannerDb.getScannerType() == RocketMap || scannerDb.getScannerType() == SkoodatRocketMap || scannerDb.getScannerType() == SloppyRocketMap) {
                 knownIdQMarks.append("gym.gym_id NOT IN (");
             } else {
-                knownIdQMarks.append("forts.id NOT in (");
+                knownIdQMarks.append("forts.external_id NOT in (");
             }
             for (int i = 0; i < novaBot.getDataManager().getKnownRaids().size(); ++i) {
                 knownIdQMarks.append("?");
