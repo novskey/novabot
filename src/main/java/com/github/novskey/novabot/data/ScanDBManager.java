@@ -198,7 +198,7 @@ public class ScanDBManager  {
                 break;
             case Monocle:
                 sql = "SELECT" +
-                      "  forts.id," +
+                      "  forts.external_id," +
                       "  forts.lat," +
                       "  forts.lon," +
                       "  fort_sightings.team," +
@@ -218,7 +218,7 @@ public class ScanDBManager  {
                 break;
             case Hydro74000Monocle:
                 sql = "SELECT forts.name," +
-                      " forts.id," +
+                      " forts.external_id," +
                       " forts.lat," +
                       " forts.lon," +
                       " fort_sightings.team," +
