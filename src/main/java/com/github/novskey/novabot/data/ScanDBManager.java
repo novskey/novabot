@@ -329,7 +329,7 @@ public class ScanDBManager  {
                         break;
                     case Hydro74000Monocle:
                         name = rs.getString(1);
-                        gymId = String.valueOf(rs.getInt(2));
+                        gymId = rs.getString(2);
                         lat = rs.getDouble(3);
                         lon = rs.getDouble(4);
                         team = Team.fromId((Integer) rs.getObject(5));
@@ -344,7 +344,7 @@ public class ScanDBManager  {
                         raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel);
                         break;
                     case Monocle:
-                        gymId = String.valueOf(rs.getInt(1));
+                        gymId = rs.getString(1);
                         lat = rs.getDouble(2);
                         lon = rs.getDouble(3);
                         team = Team.fromId(rs.getInt(4));
