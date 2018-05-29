@@ -215,6 +215,7 @@ public class RaidLobby {
 	public Message getStatusMessage() {
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 
+		spawn.prepareTime();
 		if (spawn.bossId != 0) {
 			embedBuilder.setTitle(
 					String.format("%s %s (%s %s) %s %s - %s %s", StringLocalizer.getLocalString("StatusTitleBossStart"),
@@ -434,7 +435,7 @@ public class RaidLobby {
 		sendTimes();
 	}
 	
-	public void joinLobby(String userId, int userCount) {
+	public void joinLobby(String userId, int userCount, String userTime) {
 		if (spawn.raidEnd.isBefore(ZonedDateTime.now(UtilityFunctions.UTC)))
 			return;
 
@@ -443,7 +444,7 @@ public class RaidLobby {
 		if (member == null)
 			return;
 
-		members.add(new RaidLobbyMember(userId, userCount, null));
+		members.add(new RaidLobbyMember(userId, userCount, userTime));
 
 		if (delete)
 			delete = false;
@@ -580,6 +581,8 @@ public class RaidLobby {
 			getChannel().sendMessageFormat("%s %s %s", StringLocalizer.getLocalString("NoUsersInLobbyMessage"), 10,
 					StringLocalizer.getLocalString("Minutes")).queue();
 			end(10);
+		} else {
+			sendTimes();
 		}
 	}
 

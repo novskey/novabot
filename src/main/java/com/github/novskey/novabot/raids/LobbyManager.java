@@ -88,6 +88,18 @@ public class LobbyManager {
         return lobbies;
     }
 
+    public ArrayList<RaidLobby> getActiveLobbies() {
+        ArrayList<RaidLobby> lobbies = new ArrayList<>();
+
+        for (RaidLobby lobby : activeLobbies.values()) {
+            if(lobby.memberCount() > 0) {
+                lobbies.add(lobby);
+            }
+        }
+
+        return lobbies;
+    }
+
     public void newRaid(String lobbyCode, RaidSpawn raidSpawn) {
         activeLobbies.put(lobbyCode, new RaidLobby(raidSpawn, lobbyCode, novaBot, false));
     }

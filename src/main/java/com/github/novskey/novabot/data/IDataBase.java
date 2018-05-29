@@ -97,4 +97,8 @@ public interface IDataBase {
     ZoneId getZoneId(double lat, double lon);
 
     void setZoneId(double lat, double lon, ZoneId zoneId);
+
+    void saveToken(String userId, String token, int hours);
+
+    void clearTokens(String userId);
 }

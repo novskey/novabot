@@ -9,6 +9,7 @@ import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
 import com.github.novskey.novabot.raids.RaidLobbyMember;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.api.Token;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -116,6 +117,7 @@ public class DataManager implements IDataBase {
         dbCache.presets = settingsDbManager.dumpPresets();
         dbCache.raidLobbies = settingsDbManager.dumpRaidLobbies();
         dbCache.spawnInfo = settingsDbManager.dumpSpawnInfo();
+        loadTokens();
     }
 
     @Override
@@ -343,6 +345,27 @@ public class DataManager implements IDataBase {
     public void setZoneId(double lat, double lon, ZoneId zoneId) {
         dbCache.setZoneId(lat, lon, zoneId);
         settingsDbManager.setZoneId(lat, lon, zoneId);
+    }
+
+    @Override
+    public void saveToken(String userId, String token, int hours) {
+        settingsDbManager.saveToken(userId, token, hours);
+        dbCache.saveToken(userId, token, hours);
+    }
+
+    @Override
+    public void clearTokens(String userId) {
+        settingsDbManager.clearTokens(userId);
+        dbCache.clearTokens(userId);
+    }
+
+    public Token getToken(String token) {
+        return dbCache.getToken(token);
+    }
+
+    private void loadTokens() {
+        Token[] tokens = settingsDbManager.getTokens();
+        dbCache.saveTokens(tokens);
     }
 
     public int countSpawns(int id, TimeUnit timeUnit, int intervalLength) {

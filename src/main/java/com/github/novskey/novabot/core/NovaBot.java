@@ -3,6 +3,7 @@ package com.github.novskey.novabot.core;
 import com.github.novskey.novabot.Util.CommandLineOptions;
 import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.Util.UtilityFunctions;
+import com.github.novskey.novabot.api.ApiManager;
 import com.github.novskey.novabot.data.DataManager;
 import com.github.novskey.novabot.data.Preset;
 import com.github.novskey.novabot.data.SpawnLocation;
@@ -30,6 +31,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.security.SecureRandom;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import static com.github.novskey.novabot.Util.StringLocalizer.getLocalString;
 import static com.github.novskey.novabot.core.Spawn.printFormat24hr;
@@ -245,6 +248,44 @@ public class NovaBot {
             channel.sendMessageFormat("%s, %s", author, getLocalString("UnPauseMessage")).queue();
             return;
         }
+        
+        if (msg.startsWith(getLocalString("GetTokenCommand"))) {
+        		char[] alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+            String token = RandomStringUtils.random(
+            		128, 
+            		0, 
+            		alphabet.length, 
+            		false,
+            		false,
+            		alphabet, 
+            		new SecureRandom()
+        		);
+            final String hoursString = msg.substring(msg.indexOf(" ") + 1).trim();
+            int hoursN = 8760;
+            try {
+            		int hours = Integer.parseInt(hoursString);
+            		if (hours > 0) {
+            			hoursN = hours;
+            		}
+            } catch (NumberFormatException e) {}
+            final int hours = hoursN;
+            
+            dataManager.saveToken(author.getId(), token, hours);
+            if (channel.getType() != ChannelType.PRIVATE) {
+                channel.sendMessageFormat("%s, %s", author, getLocalString("SendPrivateMessage")).queue();
+            }
+            author.openPrivateChannel().queue((privateChannel) ->
+            {
+            		privateChannel.sendMessageFormat("%s, %s", author, getLocalString("GetTokenMessage").replace("<token>", token).replace("<hours>", String.valueOf(hours))).queue();
+            });
+            return;
+        }
+
+        if (msg.equals(getLocalString("ClearTokensCommand"))) {
+            dataManager.clearTokens(author.getId());
+            channel.sendMessageFormat("%s, %s", author, getLocalString("ClearTokensMessage")).queue();
+            return;
+        }
 
         if (msg.startsWith(getLocalString("JoinRaidCommand")) && getConfig().isRaidOrganisationEnabled()) {
         	
@@ -271,7 +312,7 @@ public class NovaBot {
                     return;
                 }
 
-                lobby.joinLobby(author.getId(), groupSize);
+                lobby.joinLobby(author.getId(), groupSize, null);
 
                 String alertMsg = getLocalString("AlertRaidChatsMessage");
                 alertMsg = alertMsg.replaceAll("<user>", author.getAsMention());
@@ -882,7 +923,7 @@ public class NovaBot {
                     return;
                 }
 
-                lobby.joinLobby(author.getId(), groupSize);
+                lobby.joinLobby(author.getId(), groupSize, null);
 		    		String numberString = "";
 		    		if (groupSize > 1) {
 		    			numberString = " (+" + (groupSize - 1) + ")";
@@ -1038,7 +1079,7 @@ public class NovaBot {
         			lobby.getChannel()
 					.sendMessageFormat("%s %s %s", author,
 							StringLocalizer.getLocalString("ProblemReadingInput"),
-							StringLocalizer.getLocalString("WrongTimeFromat"))
+							StringLocalizer.getLocalString("WrongTimeFormat"))
 					.queue();
         			return;
     			}
@@ -1047,7 +1088,7 @@ public class NovaBot {
     			int startMinute = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getMinute();
     			int endHour = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getHour();
     			int endMinute = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getMinute();
-    			
+
     			if (		hour > endHour || 
     					hour < startHour || 
     					(hour == endHour && minute > endMinute) ||
@@ -1152,9 +1193,13 @@ public class NovaBot {
 
         botTokenUses.putAll(dataManager.getTokenUses());
 
-        if (getConfig().isRaidOrganisationEnabled()) {
+        if (config.isRaidOrganisationEnabled()) {
             lobbyManager = new LobbyManager(this);
             RaidNotificationSender.setNextId(dataManager.highestRaidLobbyId() + 1);
+        }
+
+        if (config.isApiEnabled()) {
+            ApiManager.setup(getConfig().getApiPort(), this);
         }
     }
 

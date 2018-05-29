@@ -9,6 +9,7 @@ import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
 import com.github.novskey.novabot.raids.RaidSpawn;
 import com.github.novskey.novabot.raids.RaidLobbyMember;
+import com.github.novskey.novabot.api.Token;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -424,7 +425,6 @@ public class SettingsDBManager implements IDataBase {
         } catch (SQLException e) {
             dbLog.error("Error executing endLobby",e);
         }
-        deleteAllMembers(Integer.parseInt(lobbyCode));
     }
 
     public ArrayList<RaidLobby> getActiveLobbies() {
@@ -739,7 +739,7 @@ public class SettingsDBManager implements IDataBase {
             offset++;
             statement.setInt(geofences + offset, pokeSpawn.cp == null ? 0 : pokeSpawn.cp);
             dbLog.debug(statement.toString());
-            System.out.println(statement);
+            // System.out.println(statement);
             final ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 ids.add(rs.getString(1));
@@ -1572,5 +1572,58 @@ public class SettingsDBManager implements IDataBase {
 	            dbLog.error("Error executing setMembers",e);
 	        }
     		}
+    }
+
+    public void saveToken(String userId, String token, int hours) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT INTO token (token, valid_date, user_id) VALUES (?, ?, ?)")
+        ) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.HOUR, hours);
+            final Timestamp timestamp = new Timestamp(calendar.getTime().getTime());
+
+            statement.setString(1, token);
+            statement.setTimestamp(2, timestamp);
+            statement.setString(3, userId);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing saveToken",e);
+        }
+    }
+
+    public void clearTokens(String userId) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "DELETE FROM token WHERE user_id = ?")
+        ) {
+            statement.setString(1, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing clearTokens",e);
+        }
+    }
+
+    public Token[] getTokens() {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT token, valid_date, user_id FROM token"))
+        {
+            final ResultSet rs = statement.executeQuery();
+
+
+            ArrayList<Token> tokens = new ArrayList<Token>();
+            while (rs.next()) {
+                String    token     = rs.getString(1);
+                Timestamp validDate = rs.getTimestamp(2);
+                String    userId    = rs.getString(3);
+
+                tokens.add(new Token(token, userId, new Date(validDate.getTime())));
+            }
+            return tokens.toArray(new Token[0]);
+        } catch (SQLException e) {
+            dbLog.error("Error executing getTokens",e);
+        }
+        return null;
     }
 }

@@ -139,6 +139,20 @@ public class RaidSpawn extends Spawn {
         this.raidLevel = level;
     }
 
+    public void prepareTime() {
+        if (!getProperties().containsKey("24h_start")){
+            this.setTimeZone(novaBot.getConfig().useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.getConfig().getTimeZone());
+            if(getTimeZone() == null){
+                setTimeZone(novaBot.timeZones.getTimeZone(lat,lon));
+            }
+            getProperties().put("24h_end", getDisappearTime(printFormat24hr));
+            getProperties().put("12h_end", getDisappearTime(printFormat12hr));
+
+            getProperties().put("24h_start", getStartTime(printFormat24hr));
+            getProperties().put("12h_start", getStartTime(printFormat12hr));
+        }
+    }
+
     public Message buildMessage(String formatFile) {
 
         if (builtMessages.get(formatFile) == null) {
@@ -150,17 +164,7 @@ public class RaidSpawn extends Spawn {
                 novaBot.reverseGeocoder.geocodedLocation(lat, lon).getProperties().forEach(getProperties()::put);
             }
 
-            if (!getProperties().containsKey("24h_start")){
-                this.setTimeZone(novaBot.getConfig().useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.getConfig().getTimeZone());
-                if(getTimeZone() == null){
-                    setTimeZone(novaBot.timeZones.getTimeZone(lat,lon));
-                }
-                getProperties().put("24h_end", getDisappearTime(printFormat24hr));
-                getProperties().put("12h_end", getDisappearTime(printFormat12hr));
-
-                getProperties().put("24h_start", getStartTime(printFormat24hr));
-                getProperties().put("12h_start", getStartTime(printFormat12hr));
-            }
+            prepareTime();
 
             final MessageBuilder messageBuilder = new MessageBuilder();
             final EmbedBuilder embedBuilder = new EmbedBuilder();

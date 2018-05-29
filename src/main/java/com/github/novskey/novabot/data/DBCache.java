@@ -1,6 +1,7 @@
 package com.github.novskey.novabot.data;
 
 import com.github.novskey.novabot.Util.UtilityFunctions;
+import com.github.novskey.novabot.api.Token;
 import com.github.novskey.novabot.core.Location;
 import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.core.Spawn;
@@ -11,6 +12,7 @@ import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidSpawn;
 import com.github.novskey.novabot.raids.RaidLobbyMember;
+import com.github.novskey.novabot.api.Token;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -28,6 +30,7 @@ public class DBCache implements IDataBase {
     public ConcurrentHashMap<String, Set<Pokemon>> pokemons = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, Set<Raid>> raids = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, DbLobby> raidLobbies = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, Token> tokens = new ConcurrentHashMap<>();
     public ConcurrentHashMap<SpawnPoint, SpawnInfo> spawnInfo = new ConcurrentHashMap<>();
     private NovaBot novaBot;
 
@@ -491,5 +494,35 @@ public class DBCache implements IDataBase {
             locationNames.add(location.toDbString().toLowerCase());
         }
         return locationNames;
+    }
+
+    @Override
+    public void saveToken(String userId, String token, int hours) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, hours);
+        saveToken(new Token(token, userId, calendar.getTime()));
+    }
+
+    public void saveTokens(Token[] tokens) {
+        for (Token token: tokens) {
+            saveToken(token);
+        }
+    }
+
+    private void saveToken(Token token) {
+        tokens.put(token.getToken(), token);
+    }
+
+    @Override
+    public void clearTokens(String userId) {
+        tokens.forEach((v, token) -> {
+            if (token.getUserId().equals(userId)) {
+                tokens.remove(v);
+            }
+        });
+    }
+
+    public Token getToken(String token) {
+        return tokens.get(token);
     }
 }
