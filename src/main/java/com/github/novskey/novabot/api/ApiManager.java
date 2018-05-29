@@ -38,10 +38,14 @@ public class ApiManager {
     static class ApiSearchHandler extends ApiManager.ApiHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
+            String query = t.getRequestURI().getQuery();
+            if (query == null) {
+                errorRespones(t, "invalid_token", 401);
+                return;
+            }
             Map<String, String> params = queryToMap(t.getRequestURI().getQuery());
             String token = params.get("token");
             String user = checkToken(token);
-
 
             if (user != null) {
                 String gymId = params.get("gymid");
@@ -291,7 +295,9 @@ public class ApiManager {
 
         protected Map<String, String> queryToMap(String query) {
             Map<String, String> result = new HashMap<>();
+            System.out.println("ASDF1");
             for (String param : query.split("&")) {
+                System.out.println("ASDF2");
                 String[] entry = param.split("=");
                 if (entry.length > 1) {
                     result.put(entry[0], entry[1]);
@@ -299,6 +305,7 @@ public class ApiManager {
                     result.put(entry[0], "");
                 }
             }
+            System.out.println("ASDF3");
             return result;
         }
     }
