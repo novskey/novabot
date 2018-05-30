@@ -220,9 +220,9 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void endLobby(String lobbyCode) {
-        dbCache.endLobby(lobbyCode);
-        settingsDbManager.endLobby(lobbyCode);
+    public void endLobby(String lobbyCode, String gymId) {
+        dbCache.endLobby(lobbyCode, gymId);
+        settingsDbManager.endLobby(lobbyCode, gymId);
     }
 
     @Override
@@ -326,9 +326,9 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members) {
-    		dbCache.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
-        settingsDbManager.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members);
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId) {
+        dbCache.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members, gymId);
+        settingsDbManager.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members, gymId);
     }
 
     @Override
@@ -391,6 +391,12 @@ public class DataManager implements IDataBase {
     public void getCurrentRaids(boolean firstRun) {
         for (ScanDBManager scanDBManager : scanDBManagers) {
             new Thread(() -> scanDBManager.getCurrentRaids(firstRun)).start();
+        }
+    }
+
+    public void updateFortSightings(String fortsId){
+        for (ScanDBManager scanDBManager : scanDBManagers) {
+            scanDBManager.updateFortSightings(fortsId);
         }
     }
 }

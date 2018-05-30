@@ -52,7 +52,7 @@ public interface IDataBase {
 
     void deleteRaid(String userID, Raid raid);
 
-    void endLobby(String lobbyCode);
+    void endLobby(String lobbyCode, String gymId);
 
     GeocodedLocation getGeocodedLocation(double lat, double lon);
 
@@ -90,7 +90,7 @@ public interface IDataBase {
 
     void unPauseUser(String id);
 
-    void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members);
+    void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId);
 
     int purgeUnknownSpawnpoints();
 

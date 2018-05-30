@@ -415,7 +415,7 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void endLobby(String lobbyCode) {
+    public void endLobby(String lobbyCode, String gymId) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "DELETE FROM raidlobby WHERE lobby_id = ?")
@@ -1144,7 +1144,7 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members) {
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "UPDATE raidlobby SET next_timeleft_update = ?, invite_code = ?, role_id = ?, channel_id = ? WHERE lobby_id = ?")
@@ -1159,6 +1159,7 @@ public class SettingsDBManager implements IDataBase {
             dbLog.error("Error executing updateLobby",e);
         }
         setMembers(Integer.parseInt(lobbyCode), members);
+        novaBot.dataManager.updateFortSightings(gymId);
     }
 
     private void endLobbies(ArrayList<String> toDelete) {

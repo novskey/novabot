@@ -267,7 +267,7 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void endLobby(String lobbyCode) {
+    public void endLobby(String lobbyCode, String gymId) {
         raidLobbies.remove(lobbyCode);
     }
 
@@ -448,7 +448,7 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members) {
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId) {
         DbLobby lobby = raidLobbies.get(lobbyCode);
 
         if (lobby == null) return;
