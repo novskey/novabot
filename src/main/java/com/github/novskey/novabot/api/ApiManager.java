@@ -231,7 +231,7 @@ public class ApiManager {
                     }
 
                 } else {
-                    ArrayList<RaidLobby> lobbies =  novaBot.lobbyManager.getActiveLobbies();
+                    ArrayList<RaidLobby> lobbies =  novaBot.lobbyManager.getActiveLobbies(); //DODO
                     lobbiesResponse(t, lobbies, user);
                     return;
                 }

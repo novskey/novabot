@@ -116,4 +116,8 @@ public class LobbyManager {
     private void addLobby(RaidLobby raidLobby) {
         activeLobbies.put(raidLobby.lobbyCode,raidLobby);
     }
+
+    public void removeLobby(String lobbyCode) {
+        activeLobbies.remove(lobbyCode);
+    }
 }

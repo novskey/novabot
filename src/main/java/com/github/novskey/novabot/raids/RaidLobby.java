@@ -137,7 +137,6 @@ public class RaidLobby {
 					getRole().delete().queue();
 				}
 				raidLobbyLog.info(String.format("Ended raid lobby %s", lobbyCode));
-				novaBot.lobbyManager.activeLobbies.remove(lobbyCode);
 				novaBot.dataManager.endLobby(lobbyCode, spawn.gymId);
 			}
 		};
@@ -516,7 +515,7 @@ public class RaidLobby {
 			getChannel()
 					.sendMessageFormat("%s, %s %s %s", getRole(), StringLocalizer.getLocalString("RaidHasEndedMessage"),
 							15, StringLocalizer.getLocalString("Minutes"))
-					.queueAfter(timeLeft, TimeUnit.MILLISECONDS, success -> end(15));
+					.queueAfter(timeLeft, TimeUnit.MILLISECONDS, success -> end(15), failure -> end(0));
 
 			channel.sendMessage(getStatusMessage()).queue();
 			created = true;
