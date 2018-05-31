@@ -137,7 +137,11 @@ public class RaidLobby {
 					getRole().delete().queue();
 				}
 				raidLobbyLog.info(String.format("Ended raid lobby %s", lobbyCode));
-				novaBot.dataManager.endLobby(lobbyCode, spawn.gymId);
+				if (spawn == null) {
+					novaBot.dataManager.endLobby(lobbyCode, null);
+				} else {
+					novaBot.dataManager.endLobby(lobbyCode, spawn.gymId);
+				}
 			}
 		};
 

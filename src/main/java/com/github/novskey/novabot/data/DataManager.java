@@ -221,9 +221,9 @@ public class DataManager implements IDataBase {
 
     @Override
     public void endLobby(String lobbyCode, String gymId) {
+        novaBot.lobbyManager.removeLobby(lobbyCode);
         dbCache.endLobby(lobbyCode, gymId);
         settingsDbManager.endLobby(lobbyCode, gymId);
-        novaBot.lobbyManager.removeLobby(lobbyCode);
     }
 
     @Override

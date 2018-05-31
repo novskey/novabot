@@ -425,6 +425,9 @@ public class SettingsDBManager implements IDataBase {
         } catch (SQLException e) {
             dbLog.error("Error executing endLobby",e);
         }
+        if (gymId != null) {
+            novaBot.dataManager.updateFortSightings(gymId);
+        }
     }
 
     public ArrayList<RaidLobby> getActiveLobbies() {

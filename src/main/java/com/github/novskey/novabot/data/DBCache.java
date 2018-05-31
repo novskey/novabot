@@ -267,7 +267,7 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void endLobby(String lobbyCode, String gymId) {
+    public void endLobby(String lobbyCode) {
         raidLobbies.remove(lobbyCode);
     }
 
