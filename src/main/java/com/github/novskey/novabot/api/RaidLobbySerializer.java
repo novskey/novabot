@@ -31,7 +31,12 @@ public class RaidLobbySerializer {
                     generator.writeStartObject();
 
                         generator.write("id", lobby.lobbyCode);
-                        generator.write("in_lobby", lobby.containsUser(user));
+                    
+                        if (lobby.containsUser(user)) {
+                            generator.write("in_lobby", false);
+                        } else {
+                            generator.write("in_lobby", lobby.timeForUser(user));
+                        }
                         generator.write("member_count", lobby.memberCount());
 
 
