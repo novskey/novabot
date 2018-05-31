@@ -83,7 +83,11 @@ public class RaidLobbySerializer {
             generator.writeStartObject();
                 generator.write("status", "ok");
                 generator.write("id", value.lobbyCode);
-                generator.write("in_lobby", value.containsUser(user));
+                if (lobby.containsUser(user)) {
+                    generator.write("in_lobby", false);
+                } else {
+                    generator.write("in_lobby", lobby.timeForUser(user));
+                }
                 generator.writeStartObject("raid");
                     generator.write("raid_level", value.spawn.raidLevel);
                     if (value.spawn.bossId != 0) {
