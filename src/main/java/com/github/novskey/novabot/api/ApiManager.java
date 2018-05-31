@@ -295,9 +295,7 @@ public class ApiManager {
 
         protected Map<String, String> queryToMap(String query) {
             Map<String, String> result = new HashMap<>();
-            System.out.println("ASDF1");
             for (String param : query.split("&")) {
-                System.out.println("ASDF2");
                 String[] entry = param.split("=");
                 if (entry.length > 1) {
                     result.put(entry[0], entry[1]);
@@ -305,7 +303,6 @@ public class ApiManager {
                     result.put(entry[0], "");
                 }
             }
-            System.out.println("ASDF3");
             return result;
         }
     }

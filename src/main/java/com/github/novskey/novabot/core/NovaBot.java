@@ -929,12 +929,12 @@ public class NovaBot {
 		    			numberString = " (+" + (groupSize - 1) + ")";
 		    		}
                 alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                		   StringLocalizer.getLocalString("LobbyChatJoined"),
-                		   author.getAsMention() + numberString,
-                		   (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                		   lobby.getChannel().getAsMention(),
-                		   lobby.memberCount(),
-                		   lobby.lobbyCode
+                		    StringLocalizer.getLocalString("LobbyChatJoined"),
+                            lobby.getChannel().getAsMention(),
+                            (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
+                            lobby.memberCount(),
+                            author.getAsMention() + numberString,
+                            lobby.lobbyCode
                 ));
             }
 
