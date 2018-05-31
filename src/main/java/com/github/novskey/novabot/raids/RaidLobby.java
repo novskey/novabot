@@ -578,9 +578,10 @@ public class RaidLobby {
 		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
 
 		if (memberCount() == 0) {
-			getChannel().sendMessageFormat("%s %s %s", StringLocalizer.getLocalString("NoUsersInLobbyMessage"), 10,
-					StringLocalizer.getLocalString("Minutes")).queue();
-			end(10);
+		    // Don't end lobbies, otherwise we can't join again using the same conde
+			//  getChannel().sendMessageFormat("%s %s %s", StringLocalizer.getLocalString("NoUsersInLobbyMessage"), 10,
+			//		  StringLocalizer.getLocalString("Minutes")).queue();
+			//  end(10);
 		} else {
 			sendTimes();
 		}
