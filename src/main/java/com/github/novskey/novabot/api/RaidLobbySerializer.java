@@ -31,11 +31,15 @@ public class RaidLobbySerializer {
                     generator.writeStartObject();
 
                         generator.write("id", lobby.lobbyCode);
-                    
                         if (lobby.containsUser(user)) {
-                            generator.write("in_lobby", false);
+                            String time = lobby.timeForUser(user);
+                            if (time == null) {
+                                generator.write("in_lobby", true);
+                            } else {
+                                generator.write("in_lobby", time);
+                            }
                         } else {
-                            generator.write("in_lobby", lobby.timeForUser(user));
+                            generator.write("in_lobby", false);
                         }
                         generator.write("member_count", lobby.memberCount());
 
@@ -84,9 +88,14 @@ public class RaidLobbySerializer {
                 generator.write("status", "ok");
                 generator.write("id", value.lobbyCode);
                 if (value.containsUser(user)) {
-                    generator.write("in_lobby", false);
+                    String time = value.timeForUser(user);
+                    if (time == null) {
+                        generator.write("in_lobby", true);
+                    } else {
+                        generator.write("in_lobby", time);
+                    }
                 } else {
-                    generator.write("in_lobby", value.timeForUser(user));
+                    generator.write("in_lobby", false);
                 }
                 generator.writeStartObject("raid");
                     generator.write("raid_level", value.spawn.raidLevel);
