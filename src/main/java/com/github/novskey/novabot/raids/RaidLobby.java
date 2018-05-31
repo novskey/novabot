@@ -558,6 +558,15 @@ public class RaidLobby {
 		}
 		return false;
 	}
+	
+	public String timeForUser(String id) {
+		for (RaidLobbyMember member : members) {
+			if (member.memberId.equals(id)) {
+				return member.time;
+			}
+		}
+		return null;
+	}
 
 	public void alertEggHatched() {
 		if (channelId != null) {
