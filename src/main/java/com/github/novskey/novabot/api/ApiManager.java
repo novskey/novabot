@@ -1,5 +1,10 @@
 package com.github.novskey.novabot.api;
 
+import com.github.novskey.novabot.Util.StringLocalizer;
+import com.github.novskey.novabot.core.Config;
+import com.github.novskey.novabot.core.NovaBot;
+import com.github.novskey.novabot.raids.RaidLobby;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -7,9 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.novskey.novabot.core.Config;
-import com.github.novskey.novabot.core.NovaBot;
-import com.github.novskey.novabot.raids.RaidLobby;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -148,6 +150,14 @@ public class ApiManager {
                         } else {
                             lobby.joinLobby(user, count, null);
                         }
+                        novaBot.alertRaidChats(novaBot.getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
+	            		   	StringLocalizer.getLocalString("LobbyChatJoined"),
+                            lobby.getChannel().getAsMention(),
+                            (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
+                            lobby.memberCount(),
+                            novaBot.guild.getMember(event.getUser()).getAsMention() + numberString,
+                            lobby.lobbyCode
+	                    ));
                         okRespones(t);
                         return;
                     } else if (action.equals("settime")) {
