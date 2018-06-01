@@ -159,7 +159,7 @@ public class ApiManager {
                             lobby.getChannel().getAsMention(),
                             (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
                             lobby.memberCount(),
-                            novaBot.guild.getMember(novaBot.guild.getMemberById(user).getAsMention() + numberString,
+                            novaBot.guild.getMemberById(user).getAsMention() + numberString,
                             lobby.lobbyCode
 	                    ));
                         okRespones(t);
