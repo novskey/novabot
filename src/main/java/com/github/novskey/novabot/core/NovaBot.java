@@ -29,6 +29,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import static com.github.novskey.novabot.Util.StringLocalizer.getLocalString;
 import static com.github.novskey.novabot.core.Spawn.printFormat24hr;
@@ -1278,5 +1279,11 @@ public class NovaBot {
 
     public void setSuburbs(SuburbManager suburbs) {
         this.suburbs = suburbs;
+    }
+
+    public Consumer<Throwable> logPMBlocked(User user, Logger localLogger) {
+        localLogger.info(user.getName() + " has messages blocked. Please inform them to pause notifications instead of blocking. Pausing user automatically.");
+        this.dataManager.pauseUser(user.getId());
+        return null;
     }
 }

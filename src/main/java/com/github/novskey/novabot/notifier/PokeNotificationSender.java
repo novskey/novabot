@@ -6,8 +6,10 @@ import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.maps.GeofenceIdentifier;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.exceptions.PermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,15 +112,44 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
             localLog.info(String.format("Checking supporter status of %s", user.getName()));
             novaBot.lastUserRoleChecks.put(userID, currentTime);
             if (checkSupporterStatus(user)) {
-                user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
+                user.openPrivateChannel().queue(
+                        success -> success.sendMessage(message).queue(),
+                        error -> {
+                            if (error instanceof PermissionException) {
+                                PermissionException pe = (PermissionException) error;
+                                Permission missingPermission = pe.getPermission();
+                                novaBot.novabotLog.info("On openPrivateChannel: PermissionError: " + error.getMessage() + " \n Missing permission: " + missingPermission.getName() + "\nUser: " + user.getName());
+                            } else
+                                novaBot.novabotLog.info("Unknown error opening private channel with user: " + user.getName() + "\n" + error.getMessage() + "\nUser: " + user.getName());
+                        }
+                );
             }
-        } else {
-            user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
-        }
+        } else user.openPrivateChannel().queue(
+                success -> success.sendMessage(message).queue(),
+                error -> {
+                    if (error instanceof PermissionException) {
+                        PermissionException pe = (PermissionException) error;
+                        Permission missingPermission = pe.getPermission();
+                        novaBot.novabotLog.info("On openPrivateChannel: PermissionError: " + error.getMessage() + " \n Missing permission: " + missingPermission.getName() + "\nUser: " + user.getName());
+                    } else
+                        novaBot.novabotLog.info("Unknown error opening private channel with user: " + user.getName() + "\n" + error.getMessage() + "\nUser: " + user.getName());
+                }
+        );
     }
 
     private void sendChannelAlert(Message message, String channelId) {
         localLog.info("Sending public alert message to channel " + channelId);
-        novaBot.getNextNotificationBot().getTextChannelById(channelId).sendMessage(message).queue(m -> localLog.info("Successfully sent message."));
+        novaBot.getNextNotificationBot().getTextChannelById(channelId).sendMessage(message).queue(
+
+                success -> localLog.info("Successfully sent message."),
+                error -> {
+                    if (error instanceof PermissionException) {
+                        PermissionException pe = (PermissionException) error;
+                        Permission missingPermission = pe.getPermission();
+                        novaBot.novabotLog.info("On sendMessage: PermissionError: " + error.getMessage() + " \n Missing permission: " + missingPermission.getName() + "\nChannelID: " + channelId);
+                    } else
+                        novaBot.novabotLog.info("Unknown error sending message to channel: " + channelId + "\n" + error.getMessage());
+                }
+        );
     }
 }
