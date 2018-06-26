@@ -82,7 +82,8 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
 
                             raidSpawn.setLobbyCode(getNextId());
 
-                            novaBot.lobbyManager.newRaid(raidSpawn.getLobbyCode(), raidSpawn);
+                            RaidSpawn realRaidSpawn = novaBot.lobbyManager.newRaid(raidSpawn.getLobbyCode(), raidSpawn);
+                            raidSpawn.setLobbyCode(realRaidSpawn.getLobbyCode());
                         }
                     }
                 }

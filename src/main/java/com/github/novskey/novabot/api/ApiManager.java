@@ -79,7 +79,7 @@ public class ApiManager {
                             RaidSpawn raidSpawn = novaBot.dataManager.getRaidForGym(gymId);
                             if (raidSpawn != null) {
                                 raidSpawn.setLobbyCode(RaidNotificationSender.getNextId());
-                                novaBot.lobbyManager.newRaid(raidSpawn.getLobbyCode(), raidSpawn);
+                                raidSpawn = novaBot.lobbyManager.newRaid(raidSpawn.getLobbyCode(), raidSpawn);
                                 lobby = novaBot.lobbyManager.getLobby(raidSpawn.getLobbyCode());
                             }
                         }
@@ -164,10 +164,10 @@ public class ApiManager {
                         } else {
                             lobby.joinLobby(user, count, null);
                         }
-			String numberString = "";
-			if (count > 1) {
-				numberString = " (+" + (count - 1) + ")";
-			}
+                        String numberString = "";
+                        if (count > 1) {
+                            numberString = " (+" + (count - 1) + ")";
+                        }
                         novaBot.alertRaidChats(novaBot.getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
 	            		   	StringLocalizer.getLocalString("LobbyChatJoined"),
                             lobby.getChannel().getAsMention(),
@@ -275,7 +275,6 @@ public class ApiManager {
 
         protected void lobbyResponse(HttpExchange t, RaidLobby lobby, String user) throws IOException {
             String response = serializer.serialize(lobby, user);
-            System.out.println("Response: " + response);
             t.getResponseHeaders().set("Content-Type", "application/json");
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();

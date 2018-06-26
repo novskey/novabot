@@ -100,8 +100,16 @@ public class LobbyManager {
         return lobbies;
     }
 
-    public void newRaid(String lobbyCode, RaidSpawn raidSpawn) {
+    synchronized
+    public RaidSpawn newRaid(String lobbyCode, RaidSpawn raidSpawn) {
+        Boolean contains = false;
+        for (RaidLobby activeLobby : activeLobbies.values()) {
+            if (activeLobby.spawn.gymId == raidSpawn.gymId) {
+                return activeLobby.spawn;
+            }
+        }
         activeLobbies.put(lobbyCode, new RaidLobby(raidSpawn, lobbyCode, novaBot, false));
+        return raidSpawn;
     }
 
     public void addLobbies(ArrayList<RaidLobby> lobbies) {
