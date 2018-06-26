@@ -104,7 +104,7 @@ public class LobbyManager {
     public RaidSpawn newRaid(String lobbyCode, RaidSpawn raidSpawn) {
         Boolean contains = false;
         for (RaidLobby activeLobby : activeLobbies.values()) {
-            if (activeLobby.spawn.gymId == raidSpawn.gymId) {
+            if (activeLobby.spawn.gymId.equals(raidSpawn.gymId)) {
                 return activeLobby.spawn;
             }
         }
