@@ -389,6 +389,16 @@ public class DataManager implements IDataBase {
         }
     }
 
+    public RaidSpawn getRaidForGym(String gymId) {
+        for (ScanDBManager scanDBManager : scanDBManagers) {
+            RaidSpawn raidSpawn = scanDBManager.getRaidForGym(gymId);
+            if (raidSpawn != null) {
+                return raidSpawn;
+            }
+        }
+        return  null;
+    }
+
     public void getCurrentRaids(boolean firstRun) {
         for (ScanDBManager scanDBManager : scanDBManagers) {
             new Thread(() -> scanDBManager.getCurrentRaids(firstRun)).start();

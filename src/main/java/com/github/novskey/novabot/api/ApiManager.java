@@ -3,6 +3,7 @@ package com.github.novskey.novabot.api;
 import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.core.Config;
 import com.github.novskey.novabot.core.NovaBot;
+import com.github.novskey.novabot.notifier.RaidNotificationSender;
 import com.github.novskey.novabot.raids.RaidLobby;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.novskey.novabot.raids.RaidSpawn;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -72,8 +74,21 @@ public class ApiManager {
                     }
 
                     if (lobby == null) {
-                        errorRespones(t, "lobby_not_found", 400);
-                        return;
+
+                        if (gymId != null) { // get raid from gym and create lobby if raid exists
+                            RaidSpawn raidSpawn = novaBot.dataManager.getRaidForGym(gymId);
+                            if (raidSpawn != null) {
+                                raidSpawn.setLobbyCode(RaidNotificationSender.getNextId());
+                                novaBot.getDataManager().getKnownRaids().put(raidSpawn.gymId, raidSpawn);
+                                novaBot.lobbyManager.newRaid(raidSpawn.getLobbyCode(), raidSpawn);
+                                lobby = novaBot.lobbyManager.getLobby(raidSpawn.getLobbyCode());
+                            }
+                        }
+
+                        if (lobby == null) {
+                            errorRespones(t, "lobby_not_found", 400);
+                            return;
+                        }
                     }
 
                     String action = params.get("action");
