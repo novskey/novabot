@@ -169,7 +169,7 @@ public class ScanDBManager {
                         "FROM gym" +
                         "  INNER JOIN gymdetails ON gym.gym_id = gymdetails.gym_id" +
                         "  INNER JOIN raid ON gym.gym_id = raid.gym_id " +
-                        "WHERE raid.gym_id = ? AND raid.end > (? + INTERVAL 1 MINUTE)";
+                        "WHERE gymdetails.gym_id = ? AND raid.end > (? + INTERVAL 1 MINUTE)";
                 break;
             case Monocle:
                 sql = "SELECT" +
@@ -186,7 +186,7 @@ public class ScanDBManager {
                         "FROM forts" +
                         "  INNER JOIN fort_sightings ON forts.id = fort_sightings.fort_id" +
                         "  INNER JOIN raids ON forts.id = raids.fort_id " +
-                        "WHERE raids.fort_id = ? AND raids.time_end > " +
+                        "WHERE forts.external_id = ? AND raids.time_end > " +
                         (scannerDb.getProtocol().equals("mysql")
                                 ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
                                 : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
@@ -207,7 +207,7 @@ public class ScanDBManager {
                         "FROM forts " +
                         "INNER JOIN fort_sightings ON (fort_sightings.fort_id = forts.id AND fort_sightings.last_modified = (SELECT MAX(last_modified) FROM fort_sightings fs2 WHERE fs2.fort_id=forts.id)) " +
                         "INNER JOIN raids ON forts.id = raids.fort_id " +
-                        "WHERE raids.fort_id = ? AND raids.time_end > " +
+                        "WHERE forts.external_id = ? AND raids.time_end > " +
                         (scannerDb.getProtocol().equals("mysql")
                                 ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
                                 : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
@@ -229,7 +229,7 @@ public class ScanDBManager {
                         "FROM gym" +
                         "  INNER JOIN gymdetails ON gym.gym_id = gymdetails.gym_id" +
                         "  INNER JOIN raidinfo ON gym.gym_id = raidinfo.gym_id " +
-                        "WHERE raidinfo.gym_id = ? AND raid_end_ms > (? + INTERVAL 1 MINUTE)";
+                        "WHERE gymdetails.gym_id = ? AND raid_end_ms > (? + INTERVAL 1 MINUTE)";
                 break;
         }
 
