@@ -89,6 +89,7 @@ public class RaidLobby {
 		if (channelId != null && roleId != null) {
 			created = true;
 		} else {
+			end(0);
 			return;
 		}
 		
@@ -102,7 +103,7 @@ public class RaidLobby {
 		getChannel()
 				.sendMessageFormat("%s, %s %s %s", getRole(), StringLocalizer.getLocalString("RaidHasEndedMessage"), 15,
 						StringLocalizer.getLocalString("Minutes"))
-				.queueAfter(timeLeft, TimeUnit.MILLISECONDS, success -> end(15));
+				.queueAfter(timeLeft, TimeUnit.MILLISECONDS, success -> end(15), failure -> end(0));
 
 	}
 
