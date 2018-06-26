@@ -79,7 +79,6 @@ public class ApiManager {
                             RaidSpawn raidSpawn = novaBot.dataManager.getRaidForGym(gymId);
                             if (raidSpawn != null) {
                                 raidSpawn.setLobbyCode(RaidNotificationSender.getNextId());
-                                novaBot.getDataManager().getKnownRaids().put(raidSpawn.gymId, raidSpawn);
                                 novaBot.lobbyManager.newRaid(raidSpawn.getLobbyCode(), raidSpawn);
                                 lobby = novaBot.lobbyManager.getLobby(raidSpawn.getLobbyCode());
                             }
