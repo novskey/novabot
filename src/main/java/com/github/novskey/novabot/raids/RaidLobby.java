@@ -668,7 +668,7 @@ public class RaidLobby {
 
 	private void updateLobbyChat() {
 		if (memberCount() == 0) {
-			if (lobbyChatIds != null && lobbyChatIds.length == 0) {
+			if (lobbyChatIds != null && lobbyChatIds.length != 0) {
 				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
 				for (String lobbyChatId : lobbyChatIds) {
 					for (String channelId: channelIds) {
@@ -680,7 +680,7 @@ public class RaidLobby {
 			}
 		} else {
 			Message message = spawn.buildMessage(novaBot.getFormatting(), members);
-			if (lobbyChatIds != null && lobbyChatIds.length == 0) {
+			if (lobbyChatIds != null && lobbyChatIds.length != 0) {
 				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
 				for (String lobbyChatId : lobbyChatIds) {
 					for (String channelId: channelIds) {
@@ -694,41 +694,22 @@ public class RaidLobby {
 				for (String channelId: channelIds) {
 					novaBot.guild.getTextChannelById(channelId).sendMessage(message).queue(
 							m -> {
+								if (lobbyChatIds == null) {
+									lobbyChatIds = new String[0];
+								}
+								ArrayUtils.add(lobbyChatIds, m.getId());
+								novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
 								m.addReaction(novaBot.NUMBER_1).queue();
 								m.addReaction(novaBot.NUMBER_2).queue();
 								m.addReaction(novaBot.NUMBER_3).queue();
 								m.addReaction(novaBot.NUMBER_4).queue();
 								m.addReaction(novaBot.NUMBER_5).queue();
-                                ArrayUtils.add(lobbyChatIds, m.getId());
 							}
 					);
 				}
 			}
 		}
-
-        /*alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                StringLocalizer.getLocalString("LobbyChatJoined"),
-                lobby.getChannel().getAsMention(),
-                (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                lobby.memberCount(),
-                author.getAsMention() + numberString,
-                lobby.lobbyCode
-        ));*/
     }
-
-	/*public void alertRaidChats(String[] raidChatIds, String message) {
-		for (String raidChatId : raidChatIds) {
-			guild.getTextChannelById(raidChatId).sendMessageFormat(message).queue(
-					m -> {
-						m.addReaction(NUMBER_1).queue();
-						m.addReaction(NUMBER_2).queue();
-						m.addReaction(NUMBER_3).queue();
-						m.addReaction(NUMBER_4).queue();
-						m.addReaction(NUMBER_5).queue();
-					}
-			);
-		}
-	}*/
 
 	private Role getRole() {
 		return novaBot.jda.getRoleById(roleId);

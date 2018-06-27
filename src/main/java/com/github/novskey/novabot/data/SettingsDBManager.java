@@ -1668,7 +1668,7 @@ public class SettingsDBManager implements IDataBase {
     public void setLobbyChats(int lobbyId, String[] lobbyChatIds) {
         deleteAllLobbyChats(lobbyId);
 
-        if (lobbyChatIds.length > 0) {
+        if (lobbyChatIds == null || lobbyChatIds.length > 0) {
             String sql = "INSERT INTO raidlobby_lobbychat (lobby_id, message_id) "
                     + "VALUES ";
             boolean first = true;
