@@ -159,7 +159,7 @@ public class RaidSpawn extends Spawn {
 
     public Message buildMessage(String formatFile, final HashSet<RaidLobbyMember> members) {
 
-        if (builtMessages.get(formatFile) == null && members == null) {
+        if (builtMessages.get(formatFile) == null || members != null) {
 
             getProperties().put("time_left", timeLeft(raidEnd));
             getProperties().put("time_left_start", timeLeft(battleStart));
