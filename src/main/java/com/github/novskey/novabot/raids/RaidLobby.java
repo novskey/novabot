@@ -43,11 +43,13 @@ public class RaidLobby {
 	private NovaBot novaBot;
 
 	ScheduledExecutor shutDownService = null;
+	ScheduledExecutor stopService = null;
 
 	public long nextTimeLeftUpdate = 15;
 	public String inviteCode;
 	private boolean delete = false;
 	private boolean created = false;
+	private boolean stopped = false;
 
 	public RaidLobby(RaidSpawn raidSpawn, String lobbyCode, String[] lobbyChatIds, NovaBot novaBot, boolean restored) {
 		this.spawn = raidSpawn;
@@ -71,7 +73,7 @@ public class RaidLobby {
 		if (!restored) {
 			novaBot.dataManager.newLobby(lobbyCode, spawn.gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatIds);
 		}
-        end((int) minutes + 15);
+		stop((int) minutes + 15);
 	}
 
 	public RaidLobby(RaidSpawn spawn, String lobbyCode, NovaBot novaBot, String channelId, String roleId, String inviteCode, String[] lobbyChatIds, boolean restored) {
@@ -123,6 +125,20 @@ public class RaidLobby {
 				});
 			}
 		}
+	}
+
+	public void stop(int delay) {
+
+		stopped = true;
+
+		Runnable stopTask = () -> {
+			end(15);
+			updateLobbyChat();
+		};
+
+		stopService = new ScheduledExecutor(1);
+		stopService.schedule(stopTask, delay, TimeUnit.MINUTES);
+		stopService.shutdown();
 	}
 
 	public void end(int delay) {
@@ -442,6 +458,10 @@ public class RaidLobby {
 	}
 	
 	public void joinLobby(String userId, int userCount, String userTime) {
+
+		if (stopped)
+			return;
+
 		if (spawn.raidEnd.isBefore(ZonedDateTime.now(UtilityFunctions.UTC)))
 			return;
 
@@ -668,7 +688,7 @@ public class RaidLobby {
 	}
 
 	private void updateLobbyChat() {
-		if (memberCount() == 0) {
+		if (memberCount() == 0 || stopped) {
 			if (lobbyChatIds != null && lobbyChatIds.length != 0) {
 				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
 				for (String lobbyChatId : lobbyChatIds) {
