@@ -697,7 +697,7 @@ public class RaidLobby {
 								if (lobbyChatIds == null) {
 									lobbyChatIds = new String[0];
 								}
-								ArrayUtils.add(lobbyChatIds, m.getId());
+								lobbyChatIds = ArrayUtils.add(lobbyChatIds, m.getId());
 								novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
 								m.addReaction(novaBot.NUMBER_1).queue();
 								m.addReaction(novaBot.NUMBER_2).queue();
