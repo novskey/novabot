@@ -673,9 +673,8 @@ public class RaidLobby {
 				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
 				for (String lobbyChatId : lobbyChatIds) {
 					for (String channelId: channelIds) {
-						novaBot.guild.getTextChannelById(channelId).getMessageById(lobbyChatId).queue(
-								(message) -> message.delete().queue()
-						);
+						novaBot.guild.getTextChannelById(channelId).deleteMessageById(lobbyChatId).queue();
+
 					}
 				}
 				lobbyChatIds = null;
@@ -687,9 +686,7 @@ public class RaidLobby {
 				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
 				for (String lobbyChatId : lobbyChatIds) {
 					for (String channelId: channelIds) {
-						novaBot.guild.getTextChannelById(channelId).getMessageById(lobbyChatId).queue(
-								(m) -> m.editMessage(message).queue()
-						);
+						novaBot.guild.getTextChannelById(channelId).editMessageById(lobbyChatId, message).queue();
 					}
 				}
 			} else {
