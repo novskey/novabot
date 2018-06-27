@@ -129,9 +129,8 @@ public class RaidLobby {
 
 	public void stop(int delay) {
 
-		stopped = true;
-
 		Runnable stopTask = () -> {
+			stopped = true;
 			end(15);
 			updateLobbyChat();
 		};
