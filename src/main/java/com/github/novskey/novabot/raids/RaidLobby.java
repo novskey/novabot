@@ -34,6 +34,7 @@ public class RaidLobby {
 	private static final Logger raidLobbyLog = LoggerFactory.getLogger("raid-lobbies");
 	String roleId = null;
 	String channelId = null;
+	String lobbyChatId = null;
 
 	public final String lobbyCode;
 
@@ -49,10 +50,11 @@ public class RaidLobby {
 	private boolean delete = false;
 	private boolean created = false;
 
-	public RaidLobby(RaidSpawn raidSpawn, String lobbyCode, NovaBot novaBot, boolean restored) {
+	public RaidLobby(RaidSpawn raidSpawn, String lobbyCode, String lobbyChatId, NovaBot novaBot, boolean restored) {
 		this.spawn = raidSpawn;
 		this.lobbyCode = lobbyCode;
 		this.novaBot = novaBot;
+		this.lobbyChatId = lobbyChatId;
 
 		long timeLeft;
 		if (spawn != null) {
@@ -67,14 +69,13 @@ public class RaidLobby {
 		}
 
 		if (!restored) {
-			novaBot.dataManager.newLobby(lobbyCode, spawn.gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members);
+			novaBot.dataManager.newLobby(lobbyCode, spawn.gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatId);
 		}
         end((int) minutes + 15);
 	}
 
-	public RaidLobby(RaidSpawn spawn, String lobbyCode, NovaBot novaBot, String channelId, String roleId,
-			String inviteCode, boolean restored) {
-		this(spawn, lobbyCode, novaBot, restored);
+	public RaidLobby(RaidSpawn spawn, String lobbyCode, NovaBot novaBot, String channelId, String roleId, String inviteCode, String lobbyChatId, boolean restored) {
+		this(spawn, lobbyCode, lobbyChatId, novaBot, restored);
 		this.channelId = channelId;
 		this.roleId = roleId;
 		this.inviteCode = inviteCode;
@@ -107,7 +108,7 @@ public class RaidLobby {
 	public void alertRaidNearlyOver() {
 		getChannel().sendMessageFormat("%s %s %s!", getRole(), StringLocalizer.getLocalString("RaidEndSoonMessage"),
 				spawn.timeLeft(spawn.raidEnd)).queue();
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
 	}
 
 	public void createInvite() {
@@ -118,7 +119,7 @@ public class RaidLobby {
 				channel.createInvite().queue(invite -> {
 					inviteCode = invite.getCode();
 					novaBot.invites.add(invite);
-					novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
+					novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
 				});
 			}
 		}
@@ -319,7 +320,7 @@ public class RaidLobby {
 				member.time = time;
 			}
 		}
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
 		sendTimes();
 	}
 
@@ -499,7 +500,7 @@ public class RaidLobby {
 			channel.createInvite().queue(inv -> {
 				inviteCode = inv.getCode();
 				novaBot.invites.add(inv);
-				novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
+				novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
 			});
 
 			long timeLeft = Duration.between(ZonedDateTime.now(UtilityFunctions.UTC), spawn.raidEnd).toMillis();
@@ -545,7 +546,7 @@ public class RaidLobby {
 
 		sendTimes();
 
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
 	}
 
 	public boolean containsUser(String id) {
@@ -589,7 +590,7 @@ public class RaidLobby {
 		if (memberToRemove != null) {
             members.remove(memberToRemove);
         }
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
 
 		if (memberCount() != 0) {
 		    sendTimes();

@@ -108,7 +108,7 @@ public class LobbyManager {
                 return activeLobby.spawn;
             }
         }
-        activeLobbies.put(lobbyCode, new RaidLobby(raidSpawn, lobbyCode, novaBot, false));
+        activeLobbies.put(lobbyCode, new RaidLobby(raidSpawn, lobbyCode, null, novaBot, false));
         return raidSpawn;
     }
 
