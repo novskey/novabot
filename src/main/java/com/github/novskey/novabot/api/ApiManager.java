@@ -272,7 +272,11 @@ public class ApiManager {
             } catch (Exception e) {
                 apiLog.error("Found unhandled error: " + e.getMessage());
                 e.printStackTrace();
-                t.close();
+                try {
+                    errorRespones(t, "internal_server_error", 500);
+                } catch (Exception e2) {
+                    t.close();
+                }
             }
         }
     }

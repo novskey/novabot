@@ -69,7 +69,7 @@ public class RaidLobby {
 		if (!restored) {
 			novaBot.dataManager.newLobby(lobbyCode, spawn.gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members);
 		}
-        end((int) minutes + 20);
+        end((int) minutes + 15);
 	}
 
 	public RaidLobby(RaidSpawn spawn, String lobbyCode, NovaBot novaBot, String channelId, String roleId,
@@ -90,8 +90,7 @@ public class RaidLobby {
 		if (channelId != null && roleId != null) {
 			created = true;
 		} else {
-			end(0);
-			return;
+			created = false;
 		}
 		
 		if (nextTimeLeftUpdate == 15) {
@@ -104,7 +103,7 @@ public class RaidLobby {
 		getChannel()
 				.sendMessageFormat("%s, %s %s %s", getRole(), StringLocalizer.getLocalString("RaidHasEndedMessage"), 15,
 						StringLocalizer.getLocalString("Minutes"))
-				.queueAfter(timeLeft, TimeUnit.MILLISECONDS, success -> end(15), failure -> end(0));
+				.queueAfter(timeLeft, TimeUnit.MILLISECONDS);
 
 	}
 
@@ -521,7 +520,7 @@ public class RaidLobby {
 			getChannel()
 					.sendMessageFormat("%s, %s %s %s", getRole(), StringLocalizer.getLocalString("RaidHasEndedMessage"),
 							15, StringLocalizer.getLocalString("Minutes"))
-					.queueAfter(timeLeft, TimeUnit.MILLISECONDS, success -> end(15), failure -> end(0));
+					.queueAfter(timeLeft, TimeUnit.MILLISECONDS);
 
 			channel.sendMessage(getStatusMessage()).queue();
 			created = true;
@@ -584,20 +583,19 @@ public class RaidLobby {
 				StringLocalizer.getLocalString("LeftTheLobby"), StringLocalizer.getLocalString("ThereAreNow"),
 				memberCount(), StringLocalizer.getLocalString("UsersInTheLobby")).queue();
 
+		RaidLobbyMember memberToRemove = null;
 		for (RaidLobbyMember member : members) {
 			if (member.memberId.equals(id)) {
-				members.remove(member);
+                memberToRemove = member;
 			}
 		}
+		if (memberToRemove != null) {
+            members.remove(memberToRemove);
+        }
 		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
 
-		if (memberCount() == 0) {
-		    // Don't end lobbies, otherwise we can't join again using the same conde
-			//  getChannel().sendMessageFormat("%s %s %s", StringLocalizer.getLocalString("NoUsersInLobbyMessage"), 10,
-			//		  StringLocalizer.getLocalString("Minutes")).queue();
-			//  end(10);
-		} else {
-			sendTimes();
+		if (memberCount() != 0) {
+		    sendTimes();
 		}
 	}
 
