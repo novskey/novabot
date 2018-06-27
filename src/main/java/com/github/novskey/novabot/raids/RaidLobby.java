@@ -433,7 +433,9 @@ public class RaidLobby {
 				member.count = userCount;
 			}
 		}
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
 		sendTimes();
+		
 	}
 	
 	public void joinLobby(String userId, int userCount, String userTime) {
