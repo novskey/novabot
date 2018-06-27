@@ -115,7 +115,7 @@ public class DataManager implements IDataBase {
         dbCache.pokemons = settingsDbManager.dumpPokemon();
         dbCache.raids = settingsDbManager.dumpRaids();
         dbCache.presets = settingsDbManager.dumpPresets();
-        dbCache.raidLobbies = settingsDbManager.dumpRaidLobbies();
+        //dbCache.raidLobbies = settingsDbManager.dumpRaidLobbies();
         dbCache.spawnInfo = settingsDbManager.dumpSpawnInfo();
         loadTokens();
     }
