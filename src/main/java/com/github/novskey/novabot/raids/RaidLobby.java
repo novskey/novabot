@@ -414,7 +414,7 @@ public class RaidLobby {
 		String timesClickString = getClickTimeString();
 				
 		getChannel()
-		.sendMessageFormat("%s %s\n%s\n\n%s\n%s", ping,
+		.sendMessageFormat("**%s %s\n%s**\n\n*%s*\n%s", ping,
 				StringLocalizer.getLocalString("CurrentLobbyTimes") + ":",
 				timesString,
 				StringLocalizer.getLocalString("SetTimeInfo"),
