@@ -41,87 +41,151 @@ public class ApiManager {
 
     static class ApiSearchHandler extends ApiManager.ApiHandler implements HttpHandler {
         @Override
-        public void handle(HttpExchange t) throws IOException {
-            String query = t.getRequestURI().getQuery();
-            if (query == null) {
-                errorRespones(t, "invalid_token", 401);
-                return;
-            }
-            Map<String, String> params = queryToMap(t.getRequestURI().getQuery());
-            String token = params.get("token");
-            String user = checkToken(token);
+        public void handle(HttpExchange t) {
+            try {
+                String query = t.getRequestURI().getQuery();
+                if (query == null) {
+                    errorRespones(t, "invalid_token", 401);
+                    return;
+                }
+                Map<String, String> params = queryToMap(t.getRequestURI().getQuery());
+                String token = params.get("token");
+                String user = checkToken(token);
 
-            if (user != null) {
-                String gymId = params.get("gymid");
-                String lobbyCode = params.get("id");
+                if (user != null) {
+                    String gymId = params.get("gymid");
+                    String lobbyCode = params.get("id");
 
-                if (lobbyCode != null || gymId != null) {
+                    if (lobbyCode != null || gymId != null) {
 
-                    if (lobbyCode != null) {
-                        try {
-                            lobbyCode = String.format("%04d", Integer.parseInt(lobbyCode));
-                        } catch (Exception e) {
-                            errorRespones(t, "invalid_params", 400);
-                            return;
-                        }
-                    }
-
-                    RaidLobby lobby;
-                    if (lobbyCode != null) {
-                        lobby = novaBot.lobbyManager.getLobby(lobbyCode);
-                    } else {
-                        lobby = novaBot.lobbyManager.getLobbyByGymId(gymId);
-                    }
-
-                    if (lobby == null) {
-
-                        if (gymId != null) { // get raid from gym and create lobby if raid exists
-                            RaidSpawn raidSpawn = novaBot.dataManager.getRaidForGym(gymId);
-                            if (raidSpawn != null) {
-                                raidSpawn.setLobbyCode(RaidNotificationSender.getNextId());
-                                raidSpawn = novaBot.lobbyManager.newRaid(raidSpawn.getLobbyCode(), raidSpawn);
-                                lobby = novaBot.lobbyManager.getLobby(raidSpawn.getLobbyCode());
-                            }
-                        }
-
-                        if (lobby == null) {
-                            errorRespones(t, "lobby_not_found", 400);
-                            return;
-                        }
-                    }
-
-                    String action = params.get("action");
-                    if (action == null) {
-                        action = "list";
-                    }
-
-                    if (action.equals("signup")) {
-
-                        if (lobby.containsUser(user)) {
-                            errorRespones(t, "user_in_lobby", 400);
-                            return;
-                        }
-
-                        // COUNT
-                        int count;
-                        if (params.get("count") != null) {
+                        if (lobbyCode != null) {
                             try {
-                                count = Integer.parseInt(params.get("count"));
+                                lobbyCode = String.format("%04d", Integer.parseInt(lobbyCode));
                             } catch (Exception e) {
                                 errorRespones(t, "invalid_params", 400);
                                 return;
                             }
-                            if (count <= 0 || count > 10) {
-                                errorRespones(t, "invalid_params", 400);
-                            }
-                        } else {
-                            count = 1;
                         }
 
+                        RaidLobby lobby;
+                        if (lobbyCode != null) {
+                            lobby = novaBot.lobbyManager.getLobby(lobbyCode);
+                        } else {
+                            lobby = novaBot.lobbyManager.getLobbyByGymId(gymId);
+                        }
 
-                        // TIME
-                        String time = params.get("time");
-                        if (time != null) {
+                        if (lobby == null) {
+
+                            if (gymId != null) { // get raid from gym and create lobby if raid exists
+                                RaidSpawn raidSpawn = novaBot.dataManager.getRaidForGym(gymId);
+                                if (raidSpawn != null) {
+                                    raidSpawn.setLobbyCode(RaidNotificationSender.getNextId());
+                                    raidSpawn = novaBot.lobbyManager.newRaid(raidSpawn.getLobbyCode(), raidSpawn);
+                                    lobby = novaBot.lobbyManager.getLobby(raidSpawn.getLobbyCode());
+                                }
+                            }
+
+                            if (lobby == null) {
+                                errorRespones(t, "lobby_not_found", 400);
+                                return;
+                            }
+                        }
+
+                        String action = params.get("action");
+                        if (action == null) {
+                            action = "list";
+                        }
+
+                        if (action.equals("signup")) {
+
+                            if (lobby.containsUser(user)) {
+                                errorRespones(t, "user_in_lobby", 400);
+                                return;
+                            }
+
+                            // COUNT
+                            int count;
+                            if (params.get("count") != null) {
+                                try {
+                                    count = Integer.parseInt(params.get("count"));
+                                } catch (Exception e) {
+                                    errorRespones(t, "invalid_params", 400);
+                                    return;
+                                }
+                                if (count <= 0 || count > 10) {
+                                    errorRespones(t, "invalid_params", 400);
+                                }
+                            } else {
+                                count = 1;
+                            }
+
+
+                            // TIME
+                            String time = params.get("time");
+                            if (time != null) {
+                                String[] splited = time.split(":");
+                                if (splited.length != 2) {
+                                    errorRespones(t, "invalid_params", 400);
+                                }
+                                ;
+
+                                int hour;
+                                int minute;
+                                boolean valid = false;
+                                try {
+                                    hour = Integer.parseInt(splited[0]);
+                                    minute = Integer.parseInt(splited[1]);
+
+                                    if (hour < 0 || hour > 60 || minute < 0 || minute > 60) {
+                                        throw new Exception();
+                                    }
+
+                                } catch (Exception e) {
+                                    errorRespones(t, "invalid_params", 400);
+                                    return;
+                                }
+
+                                Config config = novaBot.getConfig();
+                                int startHour = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getHour();
+                                int startMinute = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getMinute();
+                                int endHour = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getHour();
+                                int endMinute = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getMinute();
+
+                                if (hour > endHour ||
+                                        hour < startHour ||
+                                        (hour == endHour && minute > endMinute) ||
+                                        (hour == startHour && minute < startMinute)
+                                        ) {
+                                    errorRespones(t, "time_outside_raid", 400);
+                                    return;
+                                }
+
+                                String userTime = String.format("%02d", hour) + ":" + String.format("%02d", minute);
+                                lobby.joinLobby(user, count, userTime);
+                            } else {
+                                lobby.joinLobby(user, count, null);
+                            }
+                            String numberString = "";
+                            if (count > 1) {
+                                numberString = " (+" + (count - 1) + ")";
+                            }
+                            novaBot.alertRaidChats(novaBot.getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
+                                    StringLocalizer.getLocalString("LobbyChatJoined"),
+                                    lobby.getChannel().getAsMention(),
+                                    (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
+                                    lobby.memberCount(),
+                                    novaBot.guild.getMemberById(user).getAsMention() + numberString,
+                                    lobby.lobbyCode
+                            ));
+                            okRespones(t);
+                            return;
+                        } else if (action.equals("settime")) {
+                            if (!lobby.containsUser(user)) {
+                                errorRespones(t, "user_not_in_lobby", 400);
+                                return;
+                            }
+
+                            String time = params.get("time");
                             String[] splited = time.split(":");
                             if (splited.length != 2) {
                                 errorRespones(t, "invalid_params", 400);
@@ -160,112 +224,55 @@ public class ApiManager {
                             }
 
                             String userTime = String.format("%02d", hour) + ":" + String.format("%02d", minute);
-                            lobby.joinLobby(user, count, userTime);
-                        } else {
-                            lobby.joinLobby(user, count, null);
-                        }
-                        String numberString = "";
-                        if (count > 1) {
-                            numberString = " (+" + (count - 1) + ")";
-                        }
-                        novaBot.alertRaidChats(novaBot.getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-	            		   	StringLocalizer.getLocalString("LobbyChatJoined"),
-                            lobby.getChannel().getAsMention(),
-                            (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                            lobby.memberCount(),
-                            novaBot.guild.getMemberById(user).getAsMention() + numberString,
-                            lobby.lobbyCode
-	                    ));
-                        okRespones(t);
-                        return;
-                    } else if (action.equals("settime")) {
-                        if (!lobby.containsUser(user)) {
-                            errorRespones(t, "user_not_in_lobby", 400);
+                            lobby.setTime(user, userTime);
+                            okRespones(t);
                             return;
-                        }
-
-                        String time = params.get("time");
-                        String[] splited = time.split(":");
-                        if (splited.length != 2) {
-                            errorRespones(t, "invalid_params", 400);
-                        };
-
-                        int hour;
-                        int minute;
-                        boolean valid = false;
-                        try {
-                            hour = Integer.parseInt(splited[0]);
-                            minute = Integer.parseInt(splited[1]);
-
-                            if (hour < 0 || hour > 60 || minute < 0 || minute > 60) {
-                                throw new Exception();
+                        } else if (action.equals("setcount")) {
+                            if (!lobby.containsUser(user)) {
+                                errorRespones(t, "user_not_in_lobby", 400);
+                                return;
                             }
 
-                        } catch (Exception e) {
-                            errorRespones(t, "invalid_params", 400);
+                            int count;
+                            try {
+                                count = Integer.parseInt(params.get("count"));
+                            } catch (Exception e) {
+                                errorRespones(t, "invalid_params", 400);
+                                return;
+                            }
+                            if (count <= 0 || count > 10) {
+                                errorRespones(t, "invalid_params", 400);
+                            }
+                            lobby.setCount(user, count);
+                            okRespones(t);
+                            return;
+                        } else if (action.equals("leave")) {
+                            if (!lobby.containsUser(user)) {
+                                errorRespones(t, "user_not_in_lobby", 400);
+                                return;
+                            }
+
+                            lobby.leaveLobby(user);
+                            okRespones(t);
+                            return;
+                        } else {
+                            lobbyResponse(t, lobby, user);
                             return;
                         }
 
-                        Config config = novaBot.getConfig();
-                        int startHour = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getHour();
-                        int startMinute = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getMinute();
-                        int endHour = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getHour();
-                        int endMinute = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getMinute();
-
-                        if (		hour > endHour ||
-                                hour < startHour ||
-                                (hour == endHour && minute > endMinute) ||
-                                (hour == startHour && minute < startMinute)
-                                ) {
-                            errorRespones(t, "time_outside_raid", 400);
-                            return;
-                        }
-
-                        String userTime = String.format("%02d", hour) + ":" + String.format("%02d", minute);
-                        lobby.setTime(user, userTime);
-                        okRespones(t);
-                        return;
-                    } else if (action.equals("setcount")) {
-                        if (!lobby.containsUser(user)) {
-                            errorRespones(t, "user_not_in_lobby", 400);
-                            return;
-                        }
-
-                        int count;
-                        try {
-                            count = Integer.parseInt(params.get("count"));
-                        } catch (Exception e) {
-                            errorRespones(t, "invalid_params", 400);
-                            return;
-                        }
-                        if (count <= 0 || count > 10) {
-                            errorRespones(t, "invalid_params", 400);
-                        }
-                        lobby.setCount(user, count);
-                        okRespones(t);
-                        return;
-                    } else if (action.equals("leave")) {
-                        if (!lobby.containsUser(user)) {
-                            errorRespones(t, "user_not_in_lobby", 400);
-                            return;
-                        }
-
-                        lobby.leaveLobby(user);
-                        okRespones(t);
-                        return;
                     } else {
-                        lobbyResponse(t, lobby, user);
+                        ArrayList<RaidLobby> lobbies = novaBot.lobbyManager.getActiveLobbies();
+                        lobbiesResponse(t, lobbies, user);
                         return;
                     }
-
                 } else {
-                    ArrayList<RaidLobby> lobbies =  novaBot.lobbyManager.getActiveLobbies();
-                    lobbiesResponse(t, lobbies, user);
+                    errorRespones(t, "invalid_token", 401);
                     return;
                 }
-            } else {
-                errorRespones(t, "invalid_token", 401);
-                return;
+            } catch (Exception e) {
+                apiLog.error("Found unhandled error: " + e.getMessage());
+                e.printStackTrace();
+                t.close();
             }
         }
     }

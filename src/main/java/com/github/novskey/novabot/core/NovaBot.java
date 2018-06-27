@@ -326,7 +326,7 @@ public class NovaBot {
                 String joinMsg = getLocalString("JoinRaidLobbyMessage");
                 joinMsg = joinMsg.replaceAll("<channel>", lobby.getChannel().getAsMention());
                 joinMsg = joinMsg.replaceAll("<lobbysize>", String.valueOf(lobby.memberCount()));
-                channel.sendMessageFormat("%s %s", joinMsg).queue();
+                channel.sendMessageFormat("%s %s", author ,joinMsg).queue();
             }
 
             return;

@@ -580,15 +580,15 @@ public class RaidLobby {
 
 	public void leaveLobby(String id) {
 		novaBot.guild.getController().removeRolesFromMember(novaBot.guild.getMemberById(id), getRole()).queue();
+		getChannel().sendMessageFormat("%s %s, %s %s %s.", novaBot.guild.getMemberById(id),
+				StringLocalizer.getLocalString("LeftTheLobby"), StringLocalizer.getLocalString("ThereAreNow"),
+				memberCount(), StringLocalizer.getLocalString("UsersInTheLobby")).queue();
+
 		for (RaidLobbyMember member : members) {
 			if (member.memberId.equals(id)) {
 				members.remove(member);
 			}
 		}
-		getChannel().sendMessageFormat("%s %s, %s %s %s.", novaBot.guild.getMemberById(id),
-				StringLocalizer.getLocalString("LeftTheLobby"), StringLocalizer.getLocalString("ThereAreNow"),
-				memberCount(), StringLocalizer.getLocalString("UsersInTheLobby")).queue();
-
 		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
 
 		if (memberCount() == 0) {
