@@ -456,7 +456,7 @@ public class RaidLobby {
 
 		TextChannel channel = null;
 
-		if (!created && shutDownService == null) {
+		if (!created) {
 			roleId = novaBot.guild.getController().createRole().complete().getId();
 
 			Role role = novaBot.jda.getRoleById(roleId);
