@@ -13,14 +13,16 @@ public class DbLobby {
     public String roleId;
     public int nextTimeLeftUpdate;
     public String inviteCode;
+    public String lobbyChatId;
     public HashSet<RaidLobbyMember> members = new HashSet<RaidLobbyMember>();
 
-    public DbLobby(String gymId, String channelId, String roleId, int nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members ) {
+    public DbLobby(String gymId, String channelId, String roleId, int nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members, String lobbyChatId) {
         this.gymId = gymId;
         this.channelId = channelId;
         this.roleId = roleId;
         this.nextTimeLeftUpdate = nextTimeLeftUpdate;
         this.inviteCode = inviteCode;
         this.members = members;
+        this.lobbyChatId = lobbyChatId;
     }
 }

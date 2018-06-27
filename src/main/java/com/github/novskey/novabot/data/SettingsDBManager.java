@@ -435,7 +435,7 @@ public class SettingsDBManager implements IDataBase {
 
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "SELECT lobby_id,gym_id,channel_id,role_id,next_timeleft_update,invite_code FROM raidlobby;")
+                     "SELECT lobby_id,gym_id,channel_id,role_id,next_timeleft_update,invite_code,lobby_chat_id FROM raidlobby;")
         ) {
 
             ResultSet rs = statement.executeQuery();
@@ -449,6 +449,7 @@ public class SettingsDBManager implements IDataBase {
                 String roleId = rs.getString(4);
                 int nextTimeLeftUpdate = rs.getInt(5);
                 String inviteCode = rs.getString(6);
+                String lobbyChatId = rs.getString(7);
 
                 dbLog.info(String.format("Found lobby with info %s,%s,%s,%s in the db, checking for known raid", lobbyCode, gymId, channelId, roleId));
 
@@ -458,10 +459,10 @@ public class SettingsDBManager implements IDataBase {
                 if (spawn == null) {
                     dbLog.warn(String.format("Couldn't find a known raid for gym id %s which was found as an active raid lobbyo, deleting", gymId));
 
-                    RaidLobby lobby = new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, true);
+                    RaidLobby lobby = new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, lobbyChatId, true);
                 } else {
                     dbLog.info(String.format("Found a raid for gym id %s, lobby code %s", gymId, lobbyCode));
-                    RaidLobby lobby = new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, true);
+                    RaidLobby lobby = new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, lobbyChatId, true);
                     lobby.nextTimeLeftUpdate = nextTimeLeftUpdate;
                     lobby.loadMembers(getMembers(lobbyId));
 
@@ -961,10 +962,10 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members) {
+    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members, String lobbyChatId) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO raidlobby (lobby_id, gym_id, channel_id, role_id, next_timeleft_update,invite_code) VALUES (?,?,?,?,?,?)")
+                     "INSERT INTO raidlobby (lobby_id, gym_id, channel_id, role_id, next_timeleft_update, invite_code, lobby_chat_id) VALUES (?,?,?,?,?,?,?)")
         ) {
             statement.setInt(1, Integer.parseInt(lobbyCode));
             statement.setString(2, gymId);
@@ -972,6 +973,7 @@ public class SettingsDBManager implements IDataBase {
             statement.setString(4, roleId);
             statement.setInt(5, (int) nextTimeLeftUpdate);
             statement.setString(6, inviteCode);
+            statement.setString(7, lobbyChatId);
             statement.executeUpdate();
         } catch (SQLException e) {
             dbLog.error("Error executing newLobby",e);
@@ -1147,16 +1149,17 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId) {
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId, String lobbyChatId) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE raidlobby SET next_timeleft_update = ?, invite_code = ?, role_id = ?, channel_id = ? WHERE lobby_id = ?")
+                     "UPDATE raidlobby SET next_timeleft_update = ?, invite_code = ?, role_id = ?, channel_id = ?, lobby_chat_id = ? WHERE lobby_id = ?")
         ) {
             statement.setInt(1, nextTimeLeftUpdate);
             statement.setString(2, inviteCode);
             statement.setString(3, roleId);
             statement.setString(4, channelId);
-            statement.setInt(5, Integer.parseInt(lobbyCode));
+            statement.setString(5, lobbyChatId);
+            statement.setInt(6, Integer.parseInt(lobbyCode));
             statement.executeUpdate();
         } catch (SQLException e) {
             dbLog.error("Error executing updateLobby",e);
@@ -1397,7 +1400,7 @@ public class SettingsDBManager implements IDataBase {
         return presets;
     }
 
-    public ConcurrentHashMap<String,DbLobby> dumpRaidLobbies() {
+    /*public ConcurrentHashMap<String,DbLobby> dumpRaidLobbies() {
         ConcurrentHashMap<String, DbLobby> lobbies = new ConcurrentHashMap<>();
 
         try (Connection connection = getNbConnection();
@@ -1422,7 +1425,7 @@ public class SettingsDBManager implements IDataBase {
         }
 
         return lobbies;
-    }
+    }*/
 
     public ConcurrentHashMap<SpawnPoint,SpawnInfo> dumpSpawnInfo() {
         ConcurrentHashMap<SpawnPoint, SpawnInfo> spawnInfo = new ConcurrentHashMap<>();

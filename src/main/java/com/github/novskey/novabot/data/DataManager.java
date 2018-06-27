@@ -268,9 +268,9 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members) {
-        dbCache.newLobby(lobbyCode, gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members);
-        settingsDbManager.newLobby(lobbyCode, gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members);
+    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members, String lobbyChatId) {
+        dbCache.newLobby(lobbyCode, gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatId);
+        settingsDbManager.newLobby(lobbyCode, gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatId);
     }
 
     @Override
@@ -327,9 +327,9 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId) {
-        dbCache.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members, gymId);
-        settingsDbManager.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members, gymId);
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId, String lobbyChatId) {
+        dbCache.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members, gymId, lobbyChatId);
+        settingsDbManager.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members, gymId, lobbyChatId);
     }
 
     @Override

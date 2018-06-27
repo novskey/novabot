@@ -70,7 +70,7 @@ public interface IDataBase {
 
     void logNewUser(String userID);
 
-    void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members);
+    void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members, String lobbyChatId);
 
     boolean notContainsUser(String userID);
 
@@ -90,7 +90,7 @@ public interface IDataBase {
 
     void unPauseUser(String id);
 
-    void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId);
+    void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId, String lobbyChatId);
 
     int purgeUnknownSpawnpoints();
 
