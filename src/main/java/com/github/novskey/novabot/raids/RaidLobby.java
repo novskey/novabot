@@ -51,6 +51,7 @@ public class RaidLobby {
 
 	public RaidLobby(RaidSpawn raidSpawn, String lobbyCode, String[] lobbyChatIds, NovaBot novaBot, boolean restored) {
 		this.spawn = raidSpawn;
+		this.spawn.setLobbyCode(lobbyCode);
 		this.lobbyCode = lobbyCode;
 		this.novaBot = novaBot;
 		this.lobbyChatIds = lobbyChatIds;
@@ -677,6 +678,8 @@ public class RaidLobby {
 						);
 					}
 				}
+				lobbyChatIds = null;
+				novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
 			}
 		} else {
 			Message message = spawn.buildMessage(novaBot.getFormatting(), members);
@@ -685,7 +688,7 @@ public class RaidLobby {
 				for (String lobbyChatId : lobbyChatIds) {
 					for (String channelId: channelIds) {
 						novaBot.guild.getTextChannelById(channelId).getMessageById(lobbyChatId).queue(
-								m -> m.editMessage(message).queue()
+								(m) -> m.editMessage(message).queue()
 						);
 					}
 				}
@@ -693,7 +696,7 @@ public class RaidLobby {
 				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
 				for (String channelId: channelIds) {
 					novaBot.guild.getTextChannelById(channelId).sendMessage(message).queue(
-							m -> {
+							(m) -> {
 								if (lobbyChatIds == null) {
 									lobbyChatIds = new String[0];
 								}

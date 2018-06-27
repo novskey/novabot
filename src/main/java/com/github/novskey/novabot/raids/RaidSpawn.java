@@ -194,7 +194,7 @@ public class RaidSpawn extends Spawn {
                         }
                     }
                     for(Map.Entry<String,Integer> time : times.entrySet()) {
-                        lobbyString += "\n  -" + time.getKey() + ": " + time.getValue();
+                        lobbyString += "\n  - " + time.getKey() + ": " + time.getValue();
                     }
                     lobbyString += "\n\n*" + StringLocalizer.getLocalString("JoinLobbyInfo") + "*";
                 } else {
