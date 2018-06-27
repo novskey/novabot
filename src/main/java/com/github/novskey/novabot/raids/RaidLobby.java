@@ -73,7 +73,7 @@ public class RaidLobby {
 		if (!restored) {
 			novaBot.dataManager.newLobby(lobbyCode, spawn.gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatIds);
 		}
-		stop((int) minutes + 15);
+		stop((int) minutes);
 	}
 
 	public RaidLobby(RaidSpawn spawn, String lobbyCode, NovaBot novaBot, String channelId, String roleId, String inviteCode, String[] lobbyChatIds, boolean restored) {
