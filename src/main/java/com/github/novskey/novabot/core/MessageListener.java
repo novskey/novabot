@@ -211,14 +211,6 @@ public class MessageListener extends ListenerAdapter {
 		    		if (groupCount > 1) {
 		    			numberString = " (+" + (groupCount - 1) + ")";
 		    		}
-	            novaBot.alertRaidChats(novaBot.getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-	            		   	StringLocalizer.getLocalString("LobbyChatJoined"),
-                            lobby.getChannel().getAsMention(),
-                            (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                            lobby.memberCount(),
-                            novaBot.guild.getMember(event.getUser()).getAsMention() + numberString,
-                            lobby.lobbyCode
-	            ));
 	        } else if (event.getChannelType() == ChannelType.PRIVATE) {
 	        		event.getChannel().sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyAllreadyInLoby"), event.getUser()).queue();
 	        }

@@ -380,8 +380,8 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members, String lobbyChatId) {
-        raidLobbies.put(lobbyCode, new DbLobby(gymId,channelId,roleId, (int) nextTimeLeftUpdate,inviteCode,members,lobbyChatId));
+    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members, String[] lobbyChatIds) {
+        raidLobbies.put(lobbyCode, new DbLobby(gymId,channelId,roleId, (int) nextTimeLeftUpdate,inviteCode,members,lobbyChatIds));
     }
 
     @Override
@@ -448,7 +448,7 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId, String lobbyChatId) {
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId, String[] lobbyChatIds) {
         DbLobby lobby = raidLobbies.get(lobbyCode);
 
         if (lobby == null) return;
@@ -458,7 +458,7 @@ public class DBCache implements IDataBase {
         lobby.roleId = roleId;
         lobby.channelId = channelId;
         lobby.members = members;
-        lobby.lobbyChatId = lobbyChatId;
+        lobby.lobbyChatIds = lobbyChatIds;
     }
 
     @Override

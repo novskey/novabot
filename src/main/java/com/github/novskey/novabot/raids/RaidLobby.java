@@ -2,6 +2,7 @@ package com.github.novskey.novabot.raids;
 
 import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.Util.UtilityFunctions;
+import com.github.novskey.novabot.core.AlertChannel;
 import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.core.ScheduledExecutor;
 import com.github.novskey.novabot.core.Types;
@@ -19,10 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -34,7 +32,7 @@ public class RaidLobby {
 	private static final Logger raidLobbyLog = LoggerFactory.getLogger("raid-lobbies");
 	String roleId = null;
 	String channelId = null;
-	String lobbyChatId = null;
+	public String[] lobbyChatIds = null;
 
 	public final String lobbyCode;
 
@@ -50,11 +48,11 @@ public class RaidLobby {
 	private boolean delete = false;
 	private boolean created = false;
 
-	public RaidLobby(RaidSpawn raidSpawn, String lobbyCode, String lobbyChatId, NovaBot novaBot, boolean restored) {
+	public RaidLobby(RaidSpawn raidSpawn, String lobbyCode, String[] lobbyChatIds, NovaBot novaBot, boolean restored) {
 		this.spawn = raidSpawn;
 		this.lobbyCode = lobbyCode;
 		this.novaBot = novaBot;
-		this.lobbyChatId = lobbyChatId;
+		this.lobbyChatIds = lobbyChatIds;
 
 		long timeLeft;
 		if (spawn != null) {
@@ -69,13 +67,13 @@ public class RaidLobby {
 		}
 
 		if (!restored) {
-			novaBot.dataManager.newLobby(lobbyCode, spawn.gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatId);
+			novaBot.dataManager.newLobby(lobbyCode, spawn.gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatIds);
 		}
         end((int) minutes + 15);
 	}
 
-	public RaidLobby(RaidSpawn spawn, String lobbyCode, NovaBot novaBot, String channelId, String roleId, String inviteCode, String lobbyChatId, boolean restored) {
-		this(spawn, lobbyCode, lobbyChatId, novaBot, restored);
+	public RaidLobby(RaidSpawn spawn, String lobbyCode, NovaBot novaBot, String channelId, String roleId, String inviteCode, String[] lobbyChatIds, boolean restored) {
+		this(spawn, lobbyCode, lobbyChatIds, novaBot, restored);
 		this.channelId = channelId;
 		this.roleId = roleId;
 		this.inviteCode = inviteCode;
@@ -108,7 +106,7 @@ public class RaidLobby {
 	public void alertRaidNearlyOver() {
 		getChannel().sendMessageFormat("%s %s %s!", getRole(), StringLocalizer.getLocalString("RaidEndSoonMessage"),
 				spawn.timeLeft(spawn.raidEnd)).queue();
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
 	}
 
 	public void createInvite() {
@@ -119,7 +117,7 @@ public class RaidLobby {
 				channel.createInvite().queue(invite -> {
 					inviteCode = invite.getCode();
 					novaBot.invites.add(invite);
-					novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
+					novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
 				});
 			}
 		}
@@ -320,7 +318,8 @@ public class RaidLobby {
 				member.time = time;
 			}
 		}
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
+		updateLobbyChat();
 		sendTimes();
 	}
 
@@ -434,7 +433,8 @@ public class RaidLobby {
 				member.count = userCount;
 			}
 		}
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId);
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
+		updateLobbyChat();
 		sendTimes();
 
 	}
@@ -502,7 +502,7 @@ public class RaidLobby {
 			channel.createInvite().queue(inv -> {
 				inviteCode = inv.getCode();
 				novaBot.invites.add(inv);
-				novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
+				novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
 			});
 
 			long timeLeft = Duration.between(ZonedDateTime.now(UtilityFunctions.UTC), spawn.raidEnd).toMillis();
@@ -548,7 +548,8 @@ public class RaidLobby {
 
 		sendTimes();
 
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
+		updateLobbyChat();
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
 	}
 
 	public boolean containsUser(String id) {
@@ -587,11 +588,12 @@ public class RaidLobby {
 		if (memberToRemove != null) {
 			members.remove(memberToRemove);
         	}
-		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatId);
+		novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
 
 		if (memberCount() != 0) {
 			sendTimes();
 		}
+		updateLobbyChat();
 
 		novaBot.guild.getController().removeRolesFromMember(novaBot.guild.getMemberById(id), getRole()).queue();
 		getChannel().sendMessageFormat("%s %s, %s %s %s.", novaBot.guild.getMemberById(id),
@@ -662,6 +664,69 @@ public class RaidLobby {
 			raidLobbyLog.warn("Couldn't load members, couldnt find role by Id or ID was null");
 		}
 	}
+
+	private void updateLobbyChat() {
+		if (memberCount() == 0) {
+			if (lobbyChatIds != null && lobbyChatIds.length == 0) {
+				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
+				for (String lobbyChatId : lobbyChatIds) {
+					for (String channelId: channelIds) {
+						novaBot.guild.getTextChannelById(channelId).getMessageById(lobbyChatId).queue(
+								(message) -> message.delete().queue()
+						);
+					}
+				}
+			}
+		} else {
+			Message message = spawn.buildMessage(novaBot.getFormatting(), members);
+			if (lobbyChatIds != null && lobbyChatIds.length == 0) {
+				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
+				for (String lobbyChatId : lobbyChatIds) {
+					for (String channelId: channelIds) {
+						novaBot.guild.getTextChannelById(channelId).getMessageById(lobbyChatId).queue(
+								m -> m.editMessage(message).queue()
+						);
+					}
+				}
+			} else {
+				String[] channelIds = novaBot.getConfig().getRaidChats(spawn.getGeofences());
+				for (String channelId: channelIds) {
+					novaBot.guild.getTextChannelById(channelId).sendMessage(message).queue(
+							m -> {
+								m.addReaction(novaBot.NUMBER_1).queue();
+								m.addReaction(novaBot.NUMBER_2).queue();
+								m.addReaction(novaBot.NUMBER_3).queue();
+								m.addReaction(novaBot.NUMBER_4).queue();
+								m.addReaction(novaBot.NUMBER_5).queue();
+							}
+					);
+				}
+			}
+		}
+
+        /*alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
+                StringLocalizer.getLocalString("LobbyChatJoined"),
+                lobby.getChannel().getAsMention(),
+                (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
+                lobby.memberCount(),
+                author.getAsMention() + numberString,
+                lobby.lobbyCode
+        ));*/
+    }
+
+	/*public void alertRaidChats(String[] raidChatIds, String message) {
+		for (String raidChatId : raidChatIds) {
+			guild.getTextChannelById(raidChatId).sendMessageFormat(message).queue(
+					m -> {
+						m.addReaction(NUMBER_1).queue();
+						m.addReaction(NUMBER_2).queue();
+						m.addReaction(NUMBER_3).queue();
+						m.addReaction(NUMBER_4).queue();
+						m.addReaction(NUMBER_5).queue();
+					}
+			);
+		}
+	}*/
 
 	private Role getRole() {
 		return novaBot.jda.getRoleById(roleId);

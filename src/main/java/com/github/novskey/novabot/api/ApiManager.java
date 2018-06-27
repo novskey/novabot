@@ -169,14 +169,6 @@ public class ApiManager {
                             if (count > 1) {
                                 numberString = " (+" + (count - 1) + ")";
                             }
-                            novaBot.alertRaidChats(novaBot.getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                                    StringLocalizer.getLocalString("LobbyChatJoined"),
-                                    lobby.getChannel().getAsMention(),
-                                    (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                                    lobby.memberCount(),
-                                    novaBot.guild.getMemberById(user).getAsMention() + numberString,
-                                    lobby.lobbyCode
-                            ));
                             okRespones(t);
                             return;
                         } else if (action.equals("settime")) {

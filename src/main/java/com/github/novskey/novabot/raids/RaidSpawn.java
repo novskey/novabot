@@ -17,7 +17,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.*;
 
 import static com.github.novskey.novabot.maps.Geofencing.getGeofence;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -154,6 +154,10 @@ public class RaidSpawn extends Spawn {
     }
 
     public Message buildMessage(String formatFile) {
+        return buildMessage(formatFile, null);
+    }
+
+    public Message buildMessage(String formatFile, final HashSet<RaidLobbyMember> members) {
 
         if (builtMessages.get(formatFile) == null) {
 
@@ -170,18 +174,42 @@ public class RaidSpawn extends Spawn {
             final EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(getColor(formatFile));
 
+            String lobbyString;
+            if (raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()) {
+                if (members != null) {
+                    lobbyString = "\n**" + StringLocalizer.getLocalString("Times") + "**:";
+                    TreeMap<String, Integer> times = new TreeMap<String, Integer>();
+                    for (RaidLobbyMember member : members) {
+                        String time;
+                        if (member.time == null) {
+                            time = StringLocalizer.getLocalString("NoTime");
+                        } else {
+                            time = member.time;
+                        }
+
+                        if (times.containsKey(time)) {
+                            times.put(time, times.get(time) + member.count);
+                        } else {
+                            times.put(time, member.count);
+                        }
+                    }
+                    lobbyString += "\n(`!joinraid " + lobbyString + "`)";
+                    for(Map.Entry<String,Integer> time : times.entrySet()) {
+                        lobbyString += "  -" + time.getKey() + ": " + time.getValue();
+                    }
+                } else {
+                    lobbyString = "\n\n*" + StringLocalizer.getLocalString("JoinLobbyInfo") + "*";
+                }
+            } else {
+                lobbyString = "";
+            }
+
             if (bossId == 0) {
                 formatKey = "raidEgg";
-                embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
-                        raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()
-                                ? "\n\n*" + StringLocalizer.getLocalString("JoinLobbyInfo") + "*"
-                                : "")));
+                embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + lobbyString));
             } else {
                 formatKey = "raidBoss";
-                embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
-                        raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()
-                                ? "\n\n*" + StringLocalizer.getLocalString("JoinLobbyInfo") + "*"
-                                : "")));
+                embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + lobbyString));
             }
             embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleFormatting(formatFile, formatKey)), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, formatKey)));
             embedBuilder.setThumbnail(getIcon());

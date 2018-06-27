@@ -105,21 +105,6 @@ public class NovaBot {
         this(new CommandLineOptions());
     }
 
-
-    public void alertRaidChats(String[] raidChatIds, String message) {
-        for (String raidChatId : raidChatIds) {
-            guild.getTextChannelById(raidChatId).sendMessageFormat(message).queue(
-                m -> { 
-                    	m.addReaction(NUMBER_1).queue();
-                    	m.addReaction(NUMBER_2).queue();
-                    	m.addReaction(NUMBER_3).queue();
-                    	m.addReaction(NUMBER_4).queue();
-                    	m.addReaction(NUMBER_5).queue();
-                }
-            );
-        }
-    }
-
     public DataManager getDataManager() {
         return dataManager;
     }
@@ -313,15 +298,6 @@ public class NovaBot {
                 }
 
                 lobby.joinLobby(author.getId(), groupSize, null);
-
-                String alertMsg = getLocalString("AlertRaidChatsMessage");
-                alertMsg = alertMsg.replaceAll("<user>", author.getAsMention());
-                alertMsg = alertMsg.replaceAll("<boss-or-egg>", (lobby.spawn.bossId == 0 ? String.format("%s %s %s", getLocalString("Level"), lobby.spawn.raidLevel, getLocalString("Egg")) : lobby.spawn.getProperties().get("pkmn")));
-                alertMsg = alertMsg.replaceAll("<channel>", lobby.getChannel().getAsMention());
-                alertMsg = alertMsg.replaceAll("<membercount>", String.valueOf(lobby.memberCount()));
-                alertMsg = alertMsg.replaceAll("<lobbycode>", groupCode);
-
-                alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), alertMsg);
 
                 String joinMsg = getLocalString("JoinRaidLobbyMessage");
                 joinMsg = joinMsg.replaceAll("<channel>", lobby.getChannel().getAsMention());
@@ -928,14 +904,6 @@ public class NovaBot {
 		    		if (groupSize > 1) {
 		    			numberString = " (+" + (groupSize - 1) + ")";
 		    		}
-                alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                		    StringLocalizer.getLocalString("LobbyChatJoined"),
-                            lobby.getChannel().getAsMention(),
-                            (lobby.spawn.bossId == 0 ? String.format("lvl %s", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                            lobby.memberCount(),
-                            author.getAsMention() + numberString,
-                            lobby.lobbyCode
-                ));
             }
 
 //        } else if (msg.equals("!activeraids")) {
