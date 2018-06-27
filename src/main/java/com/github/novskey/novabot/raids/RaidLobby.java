@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -698,6 +699,7 @@ public class RaidLobby {
 								m.addReaction(novaBot.NUMBER_3).queue();
 								m.addReaction(novaBot.NUMBER_4).queue();
 								m.addReaction(novaBot.NUMBER_5).queue();
+                                ArrayUtils.add(lobbyChatIds, m.getId());
 							}
 					);
 				}

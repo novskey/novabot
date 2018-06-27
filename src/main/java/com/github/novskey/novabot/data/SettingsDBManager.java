@@ -1158,7 +1158,7 @@ public class SettingsDBManager implements IDataBase {
             statement.setString(2, inviteCode);
             statement.setString(3, roleId);
             statement.setString(4, channelId);
-            statement.setInt(6, Integer.parseInt(lobbyCode));
+            statement.setInt(5, Integer.parseInt(lobbyCode));
             statement.executeUpdate();
         } catch (SQLException e) {
             dbLog.error("Error executing updateLobby",e);
