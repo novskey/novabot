@@ -174,13 +174,13 @@ public class RaidSpawn extends Spawn {
                 formatKey = "raidEgg";
                 embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
                         raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()
-                                ? "\n\n" + StringLocalizer.getLocalString("JoinLobbyInfo")
+                                ? "\n\n*" + StringLocalizer.getLocalString("JoinLobbyInfo") + "*"
                                 : "")));
             } else {
                 formatKey = "raidBoss";
                 embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getBodyFormatting(formatFile, formatKey) + (
                         raidLevel >= 3 && novaBot.getConfig().isRaidOrganisationEnabled()
-                                ? "\n\n" + StringLocalizer.getLocalString("JoinLobbyInfo")
+                                ? "\n\n*" + StringLocalizer.getLocalString("JoinLobbyInfo") + "*"
                                 : "")));
             }
             embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleFormatting(formatFile, formatKey)), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, formatKey)));
