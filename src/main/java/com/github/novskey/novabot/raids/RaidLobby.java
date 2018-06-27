@@ -89,21 +89,18 @@ public class RaidLobby {
 		
 		if (channelId != null && roleId != null) {
 			created = true;
-		} else {
-			created = false;
-		}
-		
-		if (nextTimeLeftUpdate == 15) {
-			getChannel()
-					.sendMessageFormat("%s %s %s %s!", getRole(), StringLocalizer.getLocalString("RaidEndSoonMessage"),
-							15, StringLocalizer.getLocalString("Minutes"))
-					.queueAfter(timeLeft - (15 * 60 * 1000), TimeUnit.MILLISECONDS);
-		}
+            if (nextTimeLeftUpdate == 15) {
+                getChannel()
+                        .sendMessageFormat("%s %s %s %s!", getRole(), StringLocalizer.getLocalString("RaidEndSoonMessage"),
+                                15, StringLocalizer.getLocalString("Minutes"))
+                        .queueAfter(timeLeft - (15 * 60 * 1000), TimeUnit.MILLISECONDS);
+            }
 
-		getChannel()
-				.sendMessageFormat("%s, %s %s %s", getRole(), StringLocalizer.getLocalString("RaidHasEndedMessage"), 15,
-						StringLocalizer.getLocalString("Minutes"))
-				.queueAfter(timeLeft, TimeUnit.MILLISECONDS);
+            getChannel()
+                    .sendMessageFormat("%s, %s %s %s", getRole(), StringLocalizer.getLocalString("RaidHasEndedMessage"), 15,
+                            StringLocalizer.getLocalString("Minutes"))
+                    .queueAfter(timeLeft, TimeUnit.MILLISECONDS);
+		}
 
 	}
 
