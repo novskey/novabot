@@ -597,6 +597,7 @@ public class RaidLobby {
 					spawn.getProperties().get("pkmn")).queue();
 			getChannel().sendMessage(getStatusMessage()).queue();
 		}
+		updateLobbyChat();
 	}
 
 	public void leaveLobby(String id) {
