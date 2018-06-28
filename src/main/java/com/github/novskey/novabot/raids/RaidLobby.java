@@ -698,7 +698,7 @@ public class RaidLobby {
 					}
 				}
 				lobbyChatIds = null;
-				novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
+				novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, this.channelId, members, spawn.gymId, lobbyChatIds);
 			}
 		} else {
 			Message message = spawn.buildMessage(novaBot.getFormatting(), members);
@@ -718,7 +718,7 @@ public class RaidLobby {
 									lobbyChatIds = new String[0];
 								}
 								lobbyChatIds = ArrayUtils.add(lobbyChatIds, m.getId());
-								novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, channelId, members, spawn.gymId, lobbyChatIds);
+								novaBot.dataManager.updateLobby(lobbyCode, (int) nextTimeLeftUpdate, inviteCode, roleId, this.channelId, members, spawn.gymId, lobbyChatIds);
 								m.addReaction(novaBot.NUMBER_1).queue();
 								m.addReaction(novaBot.NUMBER_2).queue();
 								m.addReaction(novaBot.NUMBER_3).queue();
