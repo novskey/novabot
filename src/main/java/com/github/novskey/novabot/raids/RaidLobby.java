@@ -596,7 +596,7 @@ public class RaidLobby {
                 }
             }
             if (maxHour != -1) {
-				userTimeReal = maxHour + ":" + maxMinute;
+				userTimeReal = String.format("%02d", maxHour) + ":" + String.format("%02d", maxMinute);
 				timeString = StringLocalizer.getLocalString("AutoSetLobbyTime").replace("<time>", userTimeReal) + "\n";
 			}
 
