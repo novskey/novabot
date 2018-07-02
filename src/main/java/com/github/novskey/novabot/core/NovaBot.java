@@ -297,7 +297,7 @@ public class NovaBot {
                     return;
                 }
 
-                lobby.joinLobby(author.getId(), groupSize, null);
+                lobby.joinLobby(author.getId(), groupSize, null, false);
 
                 String joinMsg = getLocalString("JoinRaidLobbyMessage");
                 joinMsg = joinMsg.replaceAll("<channel>", lobby.getChannel().getAsMention());
@@ -899,7 +899,7 @@ public class NovaBot {
                     return;
                 }
 
-                lobby.joinLobby(author.getId(), groupSize, null);
+                lobby.joinLobby(author.getId(), groupSize, null, false);
 		    		String numberString = "";
 		    		if (groupSize > 1) {
 		    			numberString = " (+" + (groupSize - 1) + ")";

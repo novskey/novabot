@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -456,7 +457,7 @@ public class RaidLobby {
 
 	}
 	
-	public void joinLobby(String userId, int userCount, String userTime) {
+	public void joinLobby(String userId, int userCount, String userTime, boolean forceTime) {
 
 		if (stopped)
 			return;
@@ -468,8 +469,6 @@ public class RaidLobby {
 
 		if (member == null)
 			return;
-
-		members.add(new RaidLobbyMember(userId, userCount, userTime));
 
 		if (delete)
 			delete = false;
@@ -563,7 +562,48 @@ public class RaidLobby {
 		if (userCount > 1) {
 			numberString = " (+" + (userCount - 1) + ")";
 		}
-		channel.sendMessageFormat("%s%s, %s!\n%s %s %s.", member, numberString, StringLocalizer.getLocalString("WelcomeMessage"),
+		String timeString = "";
+		String userTimeReal = userTime;
+		if (!forceTime && userTime == null) {
+            TreeMap<String, Integer> times = new TreeMap<String, Integer>();
+            for (RaidLobbyMember memberI : members) {
+                if (memberI.time != null) {
+                    if (times.containsKey(memberI.time)) {
+                        times.put(memberI.time, times.get(memberI.time) + memberI.count);
+                    } else {
+                        times.put(memberI.time, memberI.count);
+                    }
+                }
+            }
+            int maxHour = -1;
+            int maxMinute = -1;
+            int maxCount = 0;
+            for(Map.Entry<String,Integer> time : times.entrySet()) {
+                if (time.getValue() >= maxCount) {
+                    String[] splited = time.getKey().split(":");
+                    int hour = Integer.parseInt(splited[0]);
+                    int minute = Integer.parseInt(splited[1]);
+                    int currentHour = ZonedDateTime.now().plusMinutes(5).withZoneSameInstant(novaBot.getConfig().getTimeZone()).getHour();
+                    int currentMinute = ZonedDateTime.now().plusMinutes(5).withZoneSameInstant(novaBot.getConfig().getTimeZone()).getMinute();
+
+                    if ((hour > currentHour) || (hour == currentHour && minute > currentMinute)) {
+                        if (maxHour == -1 || ((hour < maxHour) || (hour == maxHour && minute < maxMinute))) {
+							maxHour = hour;
+							maxMinute = minute;
+							maxCount = time.getValue();
+						}
+                    }
+                }
+            }
+            if (maxHour != -1) {
+				userTimeReal = maxHour + ":" + maxMinute;
+				timeString = StringLocalizer.getLocalString("AutoSetLobbyTime").replace("<time>", userTimeReal) + "\n";
+			}
+
+		}
+        members.add(new RaidLobbyMember(userId, userCount, userTimeReal));
+
+        channel.sendMessageFormat("%s%s, %s!\n%s %s %s. %s", member, numberString, StringLocalizer.getLocalString("WelcomeMessage"), timeString,
 				WordUtils.capitalize(StringLocalizer.getLocalString("ThereAreNow")), memberCount(),
 				StringLocalizer.getLocalString("UsersInTheLobby")).queue();
 

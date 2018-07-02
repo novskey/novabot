@@ -201,7 +201,7 @@ public class MessageListener extends ListenerAdapter {
 	
 	        if (!lobby.containsUser(event.getUser().getId())) {
 	
-	            lobby.joinLobby(event.getUser().getId(), groupCount, null);
+	            lobby.joinLobby(event.getUser().getId(), groupCount, null, false);
 	
 	            if (event.getChannelType() == ChannelType.PRIVATE) {
 	                event.getChannel().sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyPlaced"), event.getUser(), lobby.getChannel(), lobby.memberCount()).queue();
@@ -240,7 +240,7 @@ public class MessageListener extends ListenerAdapter {
                             RaidLobby lobby = novaBot.lobbyManager.getLobbyByChannelId(newInvite.getChannel().getId());
 
                             if (lobby != null) {
-                                lobby.joinLobby(member.getUser().getId(), 1, null);
+                                lobby.joinLobby(member.getUser().getId(), 1, null, false);
                             }
                             break;
                         }

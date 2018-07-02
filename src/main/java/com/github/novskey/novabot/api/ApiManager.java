@@ -161,9 +161,9 @@ public class ApiManager {
                                 }
 
                                 String userTime = String.format("%02d", hour) + ":" + String.format("%02d", minute);
-                                lobby.joinLobby(user, count, userTime);
+                                lobby.joinLobby(user, count, userTime, true);
                             } else {
-                                lobby.joinLobby(user, count, null);
+                                lobby.joinLobby(user, count, null, true);
                             }
                             String numberString = "";
                             if (count > 1) {
