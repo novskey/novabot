@@ -57,8 +57,10 @@ public class DBCache implements IDataBase {
     }
 
     @Override
-    public void addUser(String userID, String botToken) {
-        users.put(userID,new User(userID));
+    public User addUser(String userID, String botToken) {
+        User user = new User(userID);
+        users.put(userID,user);
+        return user;
     }
 
     @Override
@@ -487,6 +489,11 @@ public class DBCache implements IDataBase {
             spawnInfo.put(point,info);
         }
         info.zoneId = zoneId;
+    }
+
+    @Override
+    public void verifyUser(String id) {
+        users.get(id).setVerified(true);
     }
 
     private HashSet<String> getLocationNames(Location[] locations) {

@@ -19,6 +19,7 @@ import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
 import net.dv8tion.jda.core.*;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,16 +195,22 @@ public class NovaBot {
         if (!msg.startsWith(getLocalString("Prefix"))) {
             return;
         }
-
         com.github.novskey.novabot.data.User user = dataManager.getUser(author.getId());
 
         if (user == null) {
-            dataManager.addUser(author.getId(), getNextUserBotToken());
+            user = dataManager.addUser(author.getId(), getNextUserBotToken());
         }else{
             if (user.getBotToken() == null){
                 dataManager.setBotToken(author.getId(),getNextUserBotToken());
             }
         }
+
+        if (!user.isVerified() && channel.getType() == ChannelType.PRIVATE){
+            return;
+        }else if (!user.isVerified() && channel.getType() != ChannelType.PRIVATE){
+            dataManager.verifyUser(author.getId());
+        }
+
 
         if (msg.equals(getLocalString("ApiQuotasCommand"))){
             if (isAdmin(author)){
@@ -1423,5 +1430,109 @@ public class NovaBot {
 
     public void setSuburbs(SuburbManager suburbs) {
         this.suburbs = suburbs;
+    }
+
+    public void parseReactionAdd(boolean mainBot, MessageReactionAddEvent event) {
+        User author = event.getUser();
+        MessageChannel channel = event.getChannel();
+        com.github.novskey.novabot.data.User user = dataManager.getUser(author.getId());
+
+        if (user == null) {
+            user = dataManager.addUser(author.getId(), getNextUserBotToken());
+        }else{
+            if (user.getBotToken() == null){
+                dataManager.setBotToken(author.getId(),getNextUserBotToken());
+            }
+        }
+
+        if (!user.isVerified() && channel.getType() == ChannelType.PRIVATE){
+            return;
+        }else if (!user.isVerified() && channel.getType() != ChannelType.PRIVATE){
+            dataManager.verifyUser(author.getId());
+        }
+
+        if (!mainBot || !getConfig().isRaidOrganisationEnabled()) return;
+
+        if (event.getUser().isBot()) return;
+
+        Message message = event.getChannel().getMessageById(event.getMessageId()).complete();
+
+        String content;
+        if (message.getEmbeds().size() > 0) {
+            content = message.getEmbeds().get(0).getDescription();
+        } else {
+            content = message.getContentDisplay();
+        }
+
+        if (!message.getAuthor().isBot()) return;
+
+        if (content.contains(StringLocalizer.getLocalString("SetTimeCommand"))) {
+            novabotLog.debug("Set time reaction added to a bot message that contains an embed!");
+
+            String reaction = event.getReactionEmote().getName();
+
+            int commandIndex = content.indexOf(reaction) + reaction.length() + 1;
+            String time = content.substring(commandIndex, commandIndex + 5).trim();
+            String channeldID = message.getChannel().getId();
+            String userId = event.getUser().getId();
+
+            novabotLog.info("Message clicked was for time " + time + " in channeldId " + channeldID);
+
+            message.getChannel()
+                    .sendMessageFormat("%s %s", event.getUser(),
+                            StringLocalizer.getLocalString("TimeSet"))
+                    .queue();
+            RaidLobby lobby = lobbyManager.getLobbyByChannelId(channeldID);
+            lobby.setTime(userId, time);
+
+        } else if (content.contains(StringLocalizer.getLocalString("JoinRaidCommand"))) {
+
+            int groupCount = 1;
+            if (event.getReactionEmote().getName().equals(NUMBER_1)) {
+                groupCount = 1;
+            } else if (event.getReactionEmote().getName().equals(NUMBER_2)) {
+                groupCount = 2;
+            } else if (event.getReactionEmote().getName().equals(NUMBER_3)) {
+                groupCount = 3;
+            } else if (event.getReactionEmote().getName().equals(NUMBER_4)) {
+                groupCount = 4;
+            } else if (event.getReactionEmote().getName().equals(NUMBER_5)) {
+                groupCount = 5;
+            } else {
+                return;
+            }
+
+            novabotLog.debug("Join reaction added to a bot message that contains an embed!");
+
+            int    joinIndex = content.indexOf(StringLocalizer.getLocalString("JoinRaidCommand")) + 10;
+            String lobbyCode = content.substring(joinIndex, content.substring(joinIndex).indexOf(" ") + joinIndex).trim();
+
+            novabotLog.info("Message clicked was for lobbycode " + lobbyCode + " with group size of " + groupCount);
+
+            RaidLobby lobby = lobbyManager.getLobby(lobbyCode);
+
+            if (lobby == null) {
+                if (event.getChannelType() == ChannelType.PRIVATE) {
+                    event.getChannel().sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyEnded"), event.getUser());
+                }
+                return;
+            }
+
+            if (!lobby.containsUser(event.getUser().getId())) {
+
+                lobby.joinLobby(event.getUser().getId(), groupCount, null, false);
+
+                if (event.getChannelType() == ChannelType.PRIVATE) {
+                    event.getChannel().sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyPlaced"), event.getUser(), lobby.getChannel(), lobby.memberCount()).queue();
+                }
+
+                String numberString = "";
+                if (groupCount > 1) {
+                    numberString = " (+" + (groupCount - 1) + ")";
+                }
+            } else if (event.getChannelType() == ChannelType.PRIVATE) {
+                event.getChannel().sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyAllreadyInLoby"), event.getUser()).queue();
+            }
+        }
     }
 }

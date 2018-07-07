@@ -24,7 +24,7 @@ public interface IDataBase {
 
     void addRaid(String userID, Raid raid);
 
-    void addUser(String userID, String botToken);
+    User addUser(String userID, String botToken);
 
     void clearPreset(String id, String[] presets);
 
@@ -101,4 +101,7 @@ public interface IDataBase {
     void saveToken(String userId, String token, int hours);
 
     void clearTokens(String userId);
+
+    void verifyUser(String id);
+
 }

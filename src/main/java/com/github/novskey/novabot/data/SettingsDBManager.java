@@ -109,7 +109,7 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void addUser(final String userID, String botToken) {
+    public User addUser(final String userID, String botToken) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO users (id, bot_token) VALUES (?,?)"))
         {
@@ -121,6 +121,7 @@ public class SettingsDBManager implements IDataBase {
         } catch (SQLException e) {
             dbLog.error("Error executing addUser", e);
         }
+        return new User(userID,false,botToken,false);
     }
 
 
@@ -551,7 +552,7 @@ public class SettingsDBManager implements IDataBase {
     @Override
     public User getUser(String id) {
         try (Connection connection = getNbConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT id, paused, bot_token FROM users WHERE id = ?"))
+             PreparedStatement statement = connection.prepareStatement("SELECT id, paused, bot_token, verified FROM users WHERE id = ?"))
         {
             statement.setString(1, id);
             final ResultSet rs = statement.getResultSet();
@@ -559,8 +560,9 @@ public class SettingsDBManager implements IDataBase {
                 String   userId = rs.getString(1);
                 boolean  paused = rs.getBoolean(2);
                 String botToken = rs.getString(3);
+                boolean verified = rs.getBoolean(4);
 
-                return new User(userId,paused,botToken);
+                return new User(userId,paused,botToken,verified);
             }
         } catch (SQLException e) {
             dbLog.error("Error executing notContainsUser",e);
@@ -1278,20 +1280,37 @@ public class SettingsDBManager implements IDataBase {
       }
   }
 
+    @Override
+    public void verifyUser(String id) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement("" +
+                     "UPDATE users SET " +
+                     "verified = TRUE WHERE id = ?"
+             ))
+        {
+            statement.setString(1,id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing verifyUser",e);
+        }
+    }
+
     public ConcurrentHashMap<String, User> dumpUsers() {
         ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
         try (Connection connection = getNbConnection();
              Statement statement = connection.createStatement())
         {
-            ResultSet rs = statement.executeQuery("SELECT id, paused, bot_token FROM users");
+            ResultSet rs = statement.executeQuery("SELECT id, paused, bot_token, verified FROM users");
 
             while (rs.next()){
                 String id = rs.getString(1);
                 boolean paused = rs.getBoolean(2);
                 String botToken = rs.getObject(3, String.class);
+                boolean verified = rs.getBoolean(4);
 
-                users.put(id, new User(id, paused,botToken));
+                users.put(id, new User(id, paused,botToken,verified));
             }
         } catch (SQLException e) {
             dbLog.error("Error executing dumpUsers",e);

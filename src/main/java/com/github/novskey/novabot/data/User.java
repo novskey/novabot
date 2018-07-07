@@ -17,5 +17,6 @@ public class User {
     String userID;
     boolean paused = false;
     String botToken;
+    boolean verified = false;
 
 }
