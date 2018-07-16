@@ -214,7 +214,7 @@ public class ScanDBManager  {
                       "WHERE " + knownIdQMarks + " raids.time_end > " +
                       (scannerDb.getProtocol().equals("mysql")
                        ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
-                       : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
+                       : "CAST(extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE)) AS INTEGER)");
                 break;
             case Hydro74000Monocle:
                 sql = "SELECT forts.name," +
@@ -235,7 +235,7 @@ public class ScanDBManager  {
                       "WHERE " + knownIdQMarks + " raids.time_end > " +
                       (scannerDb.getProtocol().equals("mysql")
                        ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
-                       : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
+                       : "CAST(extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE)) AS INTEGER)");
                 break;
             case PhilMap:
                 sql = "SELECT" +
@@ -411,7 +411,7 @@ public class ScanDBManager  {
                       "WHERE expire_timestamp > " +
                             (scannerDb.getProtocol().equals("mysql")
                              ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
-                             : "extract(epoch from now())" + blacklistQuery
+                             : "CAST(extract(epoch from now()) AS INTEGER)" + blacklistQuery
                      );
 //                                : "extract(epoch from (now() - INTERVAL ? SECOND))");
                 break;
@@ -436,11 +436,11 @@ public class ScanDBManager  {
                       "WHERE updated >= " +
                             (scannerDb.getProtocol().equals("mysql")
                              ? "UNIX_TIMESTAMP(? - INTERVAL 1 SECOND)"
-                             : "extract(epoch from (?::timestamptz - INTERVAL '1' SECOND)) ") +
+                             : "CAST(extract(epoch from (?::timestamptz - INTERVAL '1' SECOND)) AS INTEGER) ") +
                             "AND expire_timestamp > " +
                             (scannerDb.getProtocol().equals("mysql")
                              ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
-                             : "extract(epoch from now())")
+                             : "CAST(extract(epoch from now()) AS INTEGER)")
                       + blacklistQuery;
                 break;
             case RocketMap:
