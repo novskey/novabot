@@ -8,6 +8,8 @@ import com.github.novskey.novabot.core.TimeUnit;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
+
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,7 @@ public class ScanDBManager  {
     private final ScannerDb scannerDb;
     private ZonedDateTime lastChecked;
     private long lastCheckedID = 0;
+    private long lastPokestopsTS = Instant.now().getEpochSecond();
     private java.lang.String scanUrl;
     private ZonedDateTime lastCheckedRaids;
     private StringBuilder blacklistQuery = new StringBuilder();
@@ -725,6 +728,91 @@ public class ScanDBManager  {
             dbLog.error("Error executing getNewPokemon",e);
         }
         dbLog.info(String.format("Returned %s rows, %s new pokemon", rows, newSpawns));
+//        return pokeSpawns;
+    }
+    
+
+    public void getUpdatedPokestops() {
+        dbLog.info("Getting new research tasks");
+
+        String sql = null;
+        switch (scannerDb.getScannerType()) {
+            case Hydro74000Monocle:
+                sql = "" +
+                      " SELECT " +
+                      "       lat," +
+                      "       lon," +
+                      "       name," +
+                      "       quest," +
+                      "       reward," +
+                      "       quest_submitter" +
+                      " FROM pokestops" +
+                      " WHERE (quest IS NOT NULL OR reward IS NOT NULL) AND" +
+                      " updated >= ? AND updated < ?" //parameter 1 and 2
+                      ;
+                break;
+            default:
+            	throw new RuntimeException("Assertion error");
+        }
+        
+        //We subtract 2 seconds to allow a (generous) 2 second period for new submissions to enter the database.
+        long nextTS = Instant.now().getEpochSecond() - 2;
+        
+        int rows = 0;
+        int newSpawns = 0;
+        try (Connection connection = getScanConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            int offset = 1;
+
+            switch (scannerDb.getScannerType()) {
+                case Hydro74000Monocle:
+                	statement.setLong(offset++, lastPokestopsTS);
+                	statement.setLong(offset++, nextTS);
+                	break;
+                default:
+                	throw new RuntimeException("Assertion error");
+            }
+
+            dbLog.info("Executing query:" + statement);
+            final ResultSet rs = statement.executeQuery();
+            dbLog.info("Query complete");
+
+            rows = 0;
+
+            while (rs.next()) {
+                ResearchTaskSpawn researchtask = null;
+               
+                switch (scannerDb.getScannerType()) {
+                    case Hydro74000Monocle:
+                        double lat = rs.getDouble(1);
+                        double lon = rs.getDouble(2);
+                        String name = rs.getString(3);
+                        String quest = rs.getString(4);
+                        String reward = rs.getString(5);
+                        String quest_submitter = rs.getString(6);
+                        researchtask = new ResearchTaskSpawn(lat,lon,name,quest,reward,quest_submitter);
+
+                        break;
+                    default:
+                    	throw new RuntimeException("Assertion error");
+                }
+
+                try {
+                    dbLog.info(researchtask.toString());
+                    
+                    novaBot.notificationsManager.researchTaskQueue.add(researchtask);
+                    newSpawns++;
+                } catch (Exception e) {
+                    dbLog.error("Error executing GetUpdatedPokestops",e);
+                }
+            }
+        } catch (SQLException e) {
+            dbLog.error("Error executing GetUpdatedPokestops",e);
+        }
+        dbLog.info(String.format("Returned %s rows, %s updated pokestops", rows, newSpawns));
+        
+        lastPokestopsTS = nextTS;
 //        return pokeSpawns;
     }
 

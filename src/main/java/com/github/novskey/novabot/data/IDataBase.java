@@ -8,6 +8,8 @@ import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.researchtask.ResearchTask;
+import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
 
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ public interface IDataBase {
 
     void addRaid(String userID, Raid raid);
 
+    void addResearchTask(String userID, ResearchTask researchtask);
+
     void addUser(String userID, String botToken);
 
     void clearPreset(String id, String[] presets);
@@ -35,6 +39,8 @@ public interface IDataBase {
     void clearPokemon(String id, ArrayList<Pokemon> pokemons);
 
     void clearRaid(String id, ArrayList<Raid> raids);
+    
+    void clearResearchTasks(String id, ArrayList<ResearchTask> researchtasks);
 
     void clearTokens(ArrayList<String> toRemove);
 
@@ -49,6 +55,8 @@ public interface IDataBase {
     void deletePreset(String userId, String preset, Location location);
 
     void deleteRaid(String userID, Raid raid);
+    
+    void deleteResearchTask(String userID, ResearchTask researchTask);
 
     void endLobby(String lobbyCode);
 
@@ -61,6 +69,8 @@ public interface IDataBase {
     ArrayList<String> getUserIDsToNotify(String preset, Spawn spawn);
 
     ArrayList<String> getUserIDsToNotify(PokeSpawn pokeSpawn);
+
+	ArrayList<String> getUserIDsToNotify(ResearchTaskSpawn raidSpawn);
 
     UserPref getUserPref(String id);
 
@@ -79,6 +89,8 @@ public interface IDataBase {
     void resetPresets(String id);
 
     void resetRaids(String id);
+
+    void resetResearchTasks(String id);
 
     void resetUser(String id);
 

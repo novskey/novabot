@@ -8,6 +8,8 @@ import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.researchtask.ResearchTask;
+import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -113,6 +115,7 @@ public class DataManager implements IDataBase {
         dbCache.pokemons = settingsDbManager.dumpPokemon();
         dbCache.raids = settingsDbManager.dumpRaids();
         dbCache.presets = settingsDbManager.dumpPresets();
+        dbCache.researchtasks = settingsDbManager.dumpResearchTasks();
         dbCache.raidLobbies = settingsDbManager.dumpRaidLobbies();
         dbCache.spawnInfo = settingsDbManager.dumpSpawnInfo();
     }
@@ -234,6 +237,11 @@ public class DataManager implements IDataBase {
 
     @Override
     public ArrayList<String> getUserIDsToNotify(RaidSpawn raidSpawn) {
+        return dbCache.getUserIDsToNotify(raidSpawn);
+    }
+
+    @Override
+    public ArrayList<String> getUserIDsToNotify(ResearchTaskSpawn raidSpawn) {
         return dbCache.getUserIDsToNotify(raidSpawn);
     }
 
@@ -364,9 +372,39 @@ public class DataManager implements IDataBase {
         }
     }
 
+    public void getUpdatedPokestops() {
+        for (ScanDBManager scanDBManager : scanDBManagers) {
+            new Thread(scanDBManager::getUpdatedPokestops).start();
+        }
+    }
+
     public void getCurrentRaids(boolean firstRun) {
         for (ScanDBManager scanDBManager : scanDBManagers) {
             new Thread(() -> scanDBManager.getCurrentRaids(firstRun)).start();
         }
     }
+
+	@Override
+	public void addResearchTask(String userID, ResearchTask researchtask) {
+		dbCache.addResearchTask(userID, researchtask);
+		settingsDbManager.addResearchTask(userID, researchtask);
+	}
+
+	@Override
+	public void clearResearchTasks(String id, ArrayList<ResearchTask> researchtasks) {
+		dbCache.clearResearchTasks(id, researchtasks);
+		settingsDbManager.clearResearchTasks(id, researchtasks);
+	}
+
+	@Override
+	public void deleteResearchTask(String userID, ResearchTask researchTask) {
+		dbCache.deleteResearchTask(userID, researchTask);
+		settingsDbManager.deleteResearchTask(userID, researchTask);
+	}
+
+	@Override
+	public void resetResearchTasks(String id) {
+		dbCache.resetResearchTasks(id);
+		settingsDbManager.resetResearchTasks(id);
+	}
 }

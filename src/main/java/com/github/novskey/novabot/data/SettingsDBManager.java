@@ -8,6 +8,9 @@ import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.researchtask.ResearchTask;
+import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +98,23 @@ public class SettingsDBManager implements IDataBase {
             statement.setInt(4, raid.raidLevel);
             statement.setString(5,raid.gymName);
             statement.setString(6, raid.location.toDbString());
+
+            dbLog.debug(statement.toString());
+            statement.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            dbLog.warn(e.getMessage());
+        } catch (SQLException e2) {
+            dbLog.error("Error executing addRaid", e2);
+        }
+    }
+
+    @Override
+    public void addResearchTask(final String userID, final ResearchTask researchtask) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO researchtask (user_id,reward,location) VALUES (?,?,?)")) {
+            statement.setString(1, userID);
+            statement.setString(2, researchtask.reward);
+            statement.setString(3, researchtask.location.toDbString());
 
             dbLog.debug(statement.toString());
             statement.executeUpdate();
@@ -238,6 +258,27 @@ public class SettingsDBManager implements IDataBase {
             statement.executeUpdate(String.format("DELETE FROM raid WHERE user_id=%s AND boss_id IN %s;", "'" + id + "'", idsString.toString()));
         } catch (SQLException e) {
             dbLog.error("Error executing clearRaid",e);
+        }
+    }
+    
+
+    @Override
+    public void clearResearchTasks(final String id, final ArrayList<ResearchTask> researchtasks) {
+        StringBuilder rewards = new StringBuilder("(");
+        for (int i = 0; i < researchtasks.size(); ++i) {
+            if (i == researchtasks.size() - 1) {
+            	rewards.append(researchtasks.get(i).reward);
+            } else {
+            	rewards.append(researchtasks.get(i).reward).append(",");
+            }
+        }
+        rewards.append(")");
+
+        try (Connection connection = getNbConnection();
+             Statement statement = connection.createStatement()) {
+            statement.executeUpdate(String.format("DELETE FROM researchtask WHERE user_id=%s AND reward IN %s;", "'" + id + "'", rewards.toString()));
+        } catch (SQLException e) {
+            dbLog.error("Error executing clearResearchTask",e);
         }
     }
 
@@ -405,6 +446,24 @@ public class SettingsDBManager implements IDataBase {
             statement.setString(1, userID);
             statement.setDouble(2, raid.bossId);
             statement.setString(3, raid.location.toDbString());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing deleteRaid",e);
+        }
+    }
+
+    @Override
+    public void deleteResearchTask(final String userID, final ResearchTask researchtask) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement("" +
+                     "DELETE FROM researchtask " +
+                     "WHERE ((user_id=?) " +
+                     "AND (reward=?) " +
+                     "AND (LOWER(location)=LOWER(?)))")
+        ) {
+            statement.setString(1, userID);
+            statement.setString(2, researchtask.reward);
+            statement.setString(3, researchtask.location.toDbString());
             statement.executeUpdate();
         } catch (SQLException e) {
             dbLog.error("Error executing deleteRaid",e);
@@ -634,6 +693,58 @@ public class SettingsDBManager implements IDataBase {
             }
         } catch (SQLException e) {
             dbLog.error("Error executing getUserIDsToNotify(RaidSpawn)",e);
+        }
+        dbLog.debug("Found " + ids.size() + " to notify");
+        return ids;
+    }
+
+    @Override
+    public ArrayList<String> getUserIDsToNotify(final ResearchTaskSpawn researchTaskSpawn) {
+        final ArrayList<String> ids = new ArrayList<>();
+
+        int geofences = researchTaskSpawn.getGeofences().size();
+
+        StringBuilder geofenceQMarks = new StringBuilder();
+        for (int i = 0; i < geofences; ++i) {
+            geofenceQMarks.append("?");
+            if (i != geofences - 1) {
+                geofenceQMarks.append(",");
+            }
+        }
+        if (geofences > 0) geofenceQMarks.append(",");
+
+        String sql;
+        sql = String.format(
+                "SELECT DISTINCT(user_id) " +
+                "FROM researchtask " +
+                "WHERE (SELECT paused FROM users WHERE users.id = raid.user_id) = FALSE " +
+                "AND LOWER(location) IN (%s%s'all') " +
+                "AND (reward=?) ", 
+                geofenceQMarks.toString(), (novaBot.suburbsEnabled() ? "?, " : "")
+                           );
+
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            for (int i = 0; i < geofences; i++) {
+                statement.setString(i + 1, researchTaskSpawn.getGeofences().get(i).name.toLowerCase());
+            }
+            int offset = 1;
+            if (novaBot.suburbsEnabled()) {
+                statement.setString(geofences + offset, researchTaskSpawn.getProperties().get(novaBot.getConfig().getGoogleSuburbField()).toLowerCase());
+                offset++;
+            }
+            statement.setString(geofences + offset, researchTaskSpawn.getProperties().get("reward"));
+            offset++;
+
+            dbLog.debug(statement.toString());
+            System.out.println(statement);
+            final ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            dbLog.error("Error executing getUserIDsToNotify(ResearchTaskSpawn)",e);
         }
         dbLog.debug("Found " + ids.size() + " to notify");
         return ids;
@@ -1070,10 +1181,23 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
+    public void resetResearchTasks(String id) {
+        try (Connection connection = getNbConnection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM researchtask WHERE user_id = ?")) {
+            statement.setString(1,id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing resetRaids",e);
+        }
+    }
+
+
+    @Override
     public void resetUser(final String id) {
         resetRaids(id);
         resetPokemon(id);
         resetPresets(id);
+        resetResearchTasks(id);
     }
 
     @Override
@@ -1396,6 +1520,37 @@ public class SettingsDBManager implements IDataBase {
         }
 
         return presets;
+    }
+    public ConcurrentHashMap<String,Set<ResearchTask>> dumpResearchTasks() {
+        ConcurrentHashMap<String, Set<ResearchTask>> rts = new ConcurrentHashMap<>();
+
+        try (Connection connection = getNbConnection();
+             Statement statement = connection.createStatement())
+        {
+            ResultSet rs = statement.executeQuery("SELECT user_id, reward, location FROM researchtask");
+
+            while (rs.next()){
+                String userId = rs.getString(1);
+                String reward = rs.getString(2);
+                Location location = Location.fromDbString(rs.getString(3).toLowerCase(),novaBot);
+
+                if (location == null){
+                    dbLog.warn("Location is null, not dumping researchtask setting");
+                    continue;
+                }
+
+                Set<ResearchTask> userSettings = rts.get(userId);
+                if(userSettings == null){
+                    userSettings = ConcurrentHashMap.newKeySet();
+                    rts.put(userId,userSettings);
+                }
+                userSettings.add(new ResearchTask(reward,location));
+            }
+        } catch (SQLException e) {
+            dbLog.error("Error executing dumpPresets",e);
+        }
+
+        return rts;
     }
 
     public ConcurrentHashMap<String,DbLobby> dumpRaidLobbies() {

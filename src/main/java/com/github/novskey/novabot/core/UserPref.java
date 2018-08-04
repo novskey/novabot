@@ -4,6 +4,7 @@ import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.data.Preset;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
+import com.github.novskey.novabot.researchtask.ResearchTask;
 
 import java.util.*;
 
@@ -11,6 +12,7 @@ public class UserPref {
     private final TreeMap<String, TreeSet<Pokemon>> pokemonPrefs = new TreeMap<>();
     private final TreeMap<String, TreeMap<String,TreeSet<Raid>>> raidPrefs = new TreeMap<>();
     private final TreeMap<String, TreeSet<String>> presetPrefs = new TreeMap<>();
+    private final TreeMap<String, TreeSet<ResearchTask>> researchTaskPrefs = new TreeMap<>();
     private final NovaBot novaBot;
 
     public UserPref(NovaBot novaBot) {
@@ -66,6 +68,21 @@ public class UserPref {
                 set.add(raid);
                 this.raidPrefs.get(location.toWords()).put(raid.gymName,set);
             }
+        }
+    }
+
+    public void addResearchTask(final ResearchTask rt) {
+        Location location = rt.getLocation();
+
+        if (location == null) return;
+
+
+        if (!this.researchTaskPrefs.containsKey(location.toWords())) {
+            final TreeSet<ResearchTask> set = new TreeSet<>(Comparator.comparing(ResearchTask::toString));
+            set.add(rt);
+            this.researchTaskPrefs.put(location.toWords(), set);
+        } else {
+            this.researchTaskPrefs.get(location.toWords()).add(rt);
         }
     }
 
@@ -272,6 +289,21 @@ public class UserPref {
             }
         });
 
+        researchTaskPrefs.forEach((location, rts) -> {
+            if (!prefMap.containsKey(location)) {
+                final TreeSet<String> set = new TreeSet<>();
+
+                for (ResearchTask rt : rts) {
+                    set.add("  " + rtPrefString(rt));
+                }
+                prefMap.put(location, set);
+            } else {
+                for (ResearchTask rt : rts) {
+                    prefMap.get(location).add("  " + rtPrefString(rt));
+                }
+            }
+        });
+
         presetPrefs.forEach((location, presets) -> {
             if (!prefMap.containsKey(location)) {
                 TreeSet<String> set = new TreeSet<>();
@@ -383,6 +415,10 @@ public class UserPref {
 
     private String presetString(String preset) {
         return preset + " preset";
+    }
+
+    private String rtPrefString(ResearchTask rt) {
+        return rt.reward + " research tasks";
     }
 
     public void addPreset(Preset preset) {

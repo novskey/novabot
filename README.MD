@@ -1,5 +1,7 @@
 # novabot
 
+novabot uses Lombok
+
 novabot is a [Discord](https://discordapp.com) bot that uses data from [RocketMap](https://github.com/RocketMap/RocketMap) and Monocle ([ZeChrales](https://github.com/ZeChrales/Monocle) and [Hydro74000](https://github.com/Hydro74000/Monocle) forks) to provide a complete, configurable package for Pokemon Go communities.
 novabot's features include:
 

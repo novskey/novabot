@@ -10,6 +10,8 @@ import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
+import com.github.novskey.novabot.researchtask.ResearchTask;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -26,6 +28,7 @@ public class DBCache implements IDataBase {
     public ConcurrentHashMap<String, Set<Preset>> presets = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, Set<Pokemon>> pokemons = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, Set<Raid>> raids = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, Set<ResearchTask>> researchtasks = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, DbLobby> raidLobbies = new ConcurrentHashMap<>();
     public ConcurrentHashMap<SpawnPoint, SpawnInfo> spawnInfo = new ConcurrentHashMap<>();
     private NovaBot novaBot;
@@ -50,6 +53,12 @@ public class DBCache implements IDataBase {
     public void addRaid(String userID, Raid raid) {
         raids.computeIfAbsent(userID, k -> ConcurrentHashMap.newKeySet());
         raids.get(userID).add(raid);
+    }
+
+    @Override
+    public void addResearchTask(String userID, ResearchTask researchtask) {
+        researchtasks.computeIfAbsent(userID, k -> ConcurrentHashMap.newKeySet());
+        researchtasks.get(userID).add(researchtask);
     }
 
     @Override
@@ -118,6 +127,17 @@ public class DBCache implements IDataBase {
         raids.forEach(r -> bossIds.add(r.bossId));
         if (settings != null){
             settings.removeIf(raid -> bossIds.contains(raid.bossId));
+        }
+    }
+
+    @Override
+    public void clearResearchTasks(String id, ArrayList<ResearchTask> researchtasks) {
+        Set<ResearchTask> settings = this.researchtasks.get(id);
+
+        HashSet<String> rewards = new HashSet<>();
+        researchtasks.forEach(r -> rewards.add(r.reward));
+        if (settings != null){
+            settings.removeIf(researchTask -> rewards.contains(researchTask.reward));
         }
     }
 
@@ -261,6 +281,16 @@ public class DBCache implements IDataBase {
             settings.remove(raid);
         }
     }
+    
+
+    @Override
+    public void deleteResearchTask(String userID, ResearchTask obj) {
+        Set<ResearchTask> settings = researchtasks.get(userID);
+
+        if (settings != null){
+            settings.remove(obj);
+        }
+    }
 
     @Override
     public void endLobby(String lobbyCode) {
@@ -298,6 +328,21 @@ public class DBCache implements IDataBase {
                                                                           (raidSetting.eggLevel == raidSpawn.raidLevel))))
             );
             return matchingIds.anyMatch(raid -> raidSpawn.getSpawnLocation ().intersect(raid.location));
+        }).keySet());
+    }
+
+    @Override
+    public ArrayList<String> getUserIDsToNotify(ResearchTaskSpawn researchTaskSpawn) {
+        ConcurrentMap<String, Set<ResearchTask>> unPausedUsers = UtilityFunctions.concurrentFilterByKey(researchtasks, id -> {
+            User user = users.get(id);
+            return !(user == null || user.paused);
+        });
+
+        return new ArrayList<>(UtilityFunctions.filterByValue(unPausedUsers, researchTasksSet -> {
+            Stream<ResearchTask> matchingIds = researchTasksSet.stream().filter(researchTaskSetting ->
+                                                                        (researchTaskSetting.reward.equalsIgnoreCase(researchTaskSpawn.reward))
+            );
+            return matchingIds.anyMatch(researchTaskSetting -> researchTaskSpawn.getSpawnLocation().intersect(researchTaskSetting.location));
         }).keySet());
     }
 
@@ -349,12 +394,14 @@ public class DBCache implements IDataBase {
         Set<Pokemon> pokeSettings = pokemons.get(id);
         Set<Raid> raidSettings = raids.get(id);
         Set<Preset> presetSettings = presets.get(id);
+        Set<ResearchTask> researchTaskSettings = researchtasks.get(id);
 
         UserPref userPref = new UserPref(novaBot);
 
         if(pokeSettings != null) pokeSettings.forEach(userPref::addPokemon);
         if(raidSettings != null) raidSettings.forEach(userPref::addRaid);
         if(presetSettings != null) presetSettings.forEach(userPref::addPreset);
+        if(researchTaskSettings != null) researchTaskSettings.forEach(userPref::addResearchTask);
 
         return userPref;
     }
@@ -410,10 +457,16 @@ public class DBCache implements IDataBase {
     }
 
     @Override
+    public void resetResearchTasks(String id) {
+        researchtasks.remove(id);
+    }
+
+    @Override
     public void resetUser(String id) {
         resetPokemon(id);
         resetRaids(id);
         resetPresets(id);
+        resetResearchTasks(id);
     }
 
     @Override

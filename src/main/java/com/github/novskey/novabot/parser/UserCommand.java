@@ -4,6 +4,8 @@ import com.github.novskey.novabot.core.Location;
 import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
+import com.github.novskey.novabot.researchtask.ResearchTask;
+
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -98,7 +100,7 @@ public class UserCommand
         }
         return locations;
     }
-
+    
     private String[] toStrings(final Object[] params) {
         final String[] strings = new String[params.length];
         for (int i = 0; i < params.length; ++i) {
@@ -175,6 +177,17 @@ public class UserCommand
             pokemons[i] = new Pokemon(pokeNames[i]);
         }
         return pokemons;
+    }
+
+    public String[] getUniqueRewards() {
+        Argument rewardsArg = getArg(ArgType.Rewards);
+        if(rewardsArg == null) {
+            return new String[] {};
+        }
+
+        String[] rewards;
+        rewards = this.toStrings(rewardsArg.getParams());
+        return rewards;
     }
 
     public boolean containsBlacklisted() {
@@ -268,6 +281,33 @@ public class UserCommand
         }
         final Raid[] raidArray = new Raid[raids.size()];
         return raids.toArray(raidArray);
+    }
+    
+    public ResearchTask[] buildResearchTasks() {
+        Location[] locations = { Location.ALL };
+        String[] rewards = {};
+
+        for (final Argument arg : this.args) {
+            switch (arg.getType()) {
+                case Locations:
+                    locations = this.toLocations(arg.getParams());
+                    break;
+                case Rewards:
+                	rewards = this.toStrings(arg.getParams());
+                	break;
+            }
+        }
+
+        final ArrayList<ResearchTask> rts = new ArrayList<>();
+        for (String reward : rewards) {
+            for (final Location location : locations) {
+            	ResearchTask rt = new ResearchTask(reward,location);
+                System.out.println(rt);
+                rts.add(rt);
+            }
+        }
+        final ResearchTask[] raidArray = new ResearchTask[rts.size()];
+        return rts.toArray(raidArray);
     }
 
     public String getCpMessage() {

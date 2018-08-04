@@ -4,6 +4,7 @@ import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.core.ScheduledExecutor;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,7 @@ public class NotificationsManager {
     private final boolean testing;
     public final LinkedBlockingQueue<PokeSpawn> pokeQueue = new LinkedBlockingQueue<>();
     public final LinkedBlockingQueue<RaidSpawn> raidQueue = new LinkedBlockingQueue<>();
+    public final LinkedBlockingQueue<ResearchTaskSpawn> researchTaskQueue = new LinkedBlockingQueue<>();
 
     public NotificationsManager(NovaBot novaBot, boolean testing) {
         this.novaBot = novaBot;
@@ -26,6 +28,7 @@ public class NotificationsManager {
 
         if (novaBot.getConfig().useScanDb() && novaBot.getConfig().pokemonEnabled()) {
 
+        	//pokenotifier also pulls up pokestops
             executor.scheduleAtFixedRate(new PokeNotifier(this, novaBot, testing), 0L, novaBot.getConfig().getPokePollingDelay(), TimeUnit.SECONDS);
 
             for (int i = 1; i <= novaBot.getConfig().getPokemonThreads(); i++) {

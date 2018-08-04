@@ -12,6 +12,7 @@ public class CommandLineOptions {
     private String formatting = "formatting.ini";
     private String raidChannels = "raidchannels.ini";
     private String pokeChannels = "pokechannels.ini";
+    private String researchTaskChannels = "researchtaskchannels.ini";
     private String presets = "presets.ini";
     private String globalFilter = "globalfilter.json";
     private String locale = "en";

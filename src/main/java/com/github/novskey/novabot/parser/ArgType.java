@@ -14,6 +14,7 @@ public enum ArgType
     IV,
     Level,
     Locations,
+    Rewards,
     Pokemon,
     Preset,
     Status,
@@ -33,6 +34,8 @@ public enum ArgType
                 return "number";
             case Locations:
                 return "location";
+            case Rewards:
+            	return "rewards";
             case Pokemon:
                 return "pokemon";
             case Unknown:

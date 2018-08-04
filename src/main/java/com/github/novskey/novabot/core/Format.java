@@ -10,6 +10,7 @@ class Format {
         formatting.put("pokemon", new HashMap<>());
         formatting.put("raidEgg", new HashMap<>());
         formatting.put("raidBoss", new HashMap<>());
+        formatting.put("researchTask", new HashMap<>());
     }
 
     public void addFormatting(String type, String key, String value) {

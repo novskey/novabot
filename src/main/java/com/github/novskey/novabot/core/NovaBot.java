@@ -18,6 +18,9 @@ import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.LobbyManager;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
+import com.github.novskey.novabot.researchtask.ResearchTask;
+import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
+
 import net.dv8tion.jda.core.*;
 import net.dv8tion.jda.core.entities.*;
 import org.slf4j.Logger;
@@ -51,6 +54,7 @@ public class NovaBot {
     private final String formatting;
     private final String raidChannels;
     private final String pokeChannels;
+    private final String researchTaskChannels;
     private final String presets;
     private final String globalFilter;
     public TextChannel roleLog;
@@ -90,6 +94,7 @@ public class NovaBot {
         this.formatting = cliopt.getFormatting();
         this.raidChannels = cliopt.getRaidChannels();
         this.pokeChannels = cliopt.getPokeChannels();
+        this.researchTaskChannels = cliopt.getResearchTaskChannels();
         this.presets = cliopt.getPresets();
         this.globalFilter = cliopt.getGlobalFilter();
         this.cliopt = cliopt;
@@ -145,7 +150,7 @@ public class NovaBot {
         if (testing) {
             cliopt.setConfig("config.example.ini");
         }
-        setConfig(new Config(getConfigName(), getGkeys(), getFormatting(), getRaidChannels(), getPokeChannels(),
+        setConfig(new Config(getConfigName(), getGkeys(), getFormatting(), getRaidChannels(), getPokeChannels(), getResearchTaskChannels(),
                              getSupporterLevels(), getPresets(), getGlobalFilter()));
     }
 
@@ -604,6 +609,83 @@ public class NovaBot {
                     final String message2 = String.format("%s %s %s", author.getAsMention(), getLocalString("ClearRaidLocationMessage"),Location.listToString(locations2));
                     channel.sendMessage(message2).queue();
                     break;
+                }
+            }
+        }
+
+        if (matchingCommand.contains("researchtask")) {
+            ResearchTask[] rts = userCommand.buildResearchTasks();
+
+            switch (matchingCommand) {
+                case "addresearchtaskcommand": {
+                	/*
+                    NotificationLimit limit = getConfig().getNotificationLimit(guild.getMember(author));
+
+                    boolean isSupporter = isSupporter(author.getId());
+
+                    if (limit != null && limit.raidLimit != null && dataManager.countRaids(author.getId(), raids, getConfig().countLocationsInLimits())> limit.raidLimit) {
+                        channel.sendMessageFormat("%s %s %s %s. " +
+                                (limit.raidLimit > 0 ? getLocalString("ExceededNonZeroRaidLimitMessage") : ""),
+                                author,
+                                getLocalString("ExceedLimitMessageStart"),
+                                limit.raidLimit,
+                                getLocalString("ExceedRaidLimitMessageEnd")).queue();
+                        return;
+                    } else if (limit == null && isSupporter) {
+                        novabotLog.error(String.format("LIMIT IS NULL: %s, is supporter: %s", author.getName(), true));
+                    }
+                    */
+
+                    for (ResearchTask rt : rts) {
+                        novabotLog.debug("adding research task " + rt);
+                        dataManager.addResearchTask(author.getId(), rt);
+                    }
+
+                    if (rts.length == 0){
+                        channel.sendMessageFormat("%s, please include the reward of the research task",author).queue();
+                        return;
+                    }
+
+                    String message2 = String.format("%s, %s %s", author.getAsMention(), getLocalString("YouWillNowBeNotifiedOf"), ResearchTask.getResearchTasksString(rts));
+
+                    final Argument locationsArg = userCommand.getArg(ArgType.Locations);
+                    Location[] locations = {Location.ALL};
+                    if (locationsArg != null) {
+                        locations = userCommand.getLocations();
+                    }
+                    message2 += String.format(" %s %s", getLocalString("In"),Location.listToString(locations));
+                    channel.sendMessage(message2).queue();
+
+                    return;
+                }
+                case "delresearchtaskcommand": {
+                    for (ResearchTask rt : rts) {
+                        novabotLog.debug("deleting research task " + rt);
+                        dataManager.deleteResearchTask(author.getId(), rt);
+                    }
+                    if (rts.length == 0){
+                        channel.sendMessageFormat("%s, please include the reward of the research task",author).queue();
+                        return;
+                    }
+                    String message2 = String.format("%s, %s %s", author.getAsMention(), getLocalString("YouWillNoLongerBeNotifiedOf"), ResearchTask.getResearchTasksString(rts));
+
+                    final Argument locationsArg = userCommand.getArg(ArgType.Locations);
+                    Location[] locations = {Location.ALL};
+                    if (locationsArg != null) {
+                        locations = userCommand.getLocations();
+                    }
+                    message2 += String.format(" %s %s",getLocalString("In"),Location.listToString(locations));
+                    channel.sendMessage(message2).queue();
+
+                    return;
+                }
+                case "clearresearchtaskcommand": {
+                    novabotLog.debug("clearing research tasks " + UtilityFunctions.arrayToString(rts));
+                    dataManager.clearResearchTasks(author.getId(), new ArrayList<>(Arrays.asList(rts)));
+
+                    String message2 = String.format("%s %s %s %s %s", author.getAsMention(), getLocalString("YouWillNoLongerBeNotifiedOf"),Arrays.toString(userCommand.getUniqueRewards()), getLocalString("ResearchTasks"), getLocalString("InAnyLocations"));
+                    channel.sendMessage(message2).queue();
+                    return;
                 }
             }
         }
@@ -1297,6 +1379,10 @@ public class NovaBot {
 
     public String getPokeChannels() {
         return pokeChannels;
+    }
+
+    public String getResearchTaskChannels() {
+        return researchTaskChannels;
     }
 
     public String getPresets() {

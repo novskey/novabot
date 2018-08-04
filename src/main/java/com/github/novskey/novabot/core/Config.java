@@ -9,6 +9,7 @@ import com.github.novskey.novabot.notifier.RaidNotificationSender;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,16 +39,18 @@ import java.util.*;
 @Slf4j
 public class Config {
 
-    private static final String[] formatKeys = new String[]{"pokemon", "raidEgg", "raidBoss"};
+    private static final String[] formatKeys = new String[]{"pokemon", "raidEgg", "raidBoss", "researchTask"};
     private static final String[] formattingVars = new String[]{"title", "titleUrl", "body", "content", "showMap", "mapZoom", "mapWidth", "mapHeight","showColor"};
     private static final HashSet<String> filterTypes = new HashSet<>(Arrays.asList("atk", "def", "sta", "level", "iv", "cp"));
     private JsonObject globalFilter = null;
     private final HashMap<String, JsonObject> pokeFilters = new HashMap<>();
     private final HashMap<String, JsonObject> raidFilters = new HashMap<>();
+    private final HashMap<String, JsonObject> researchTaskFilters = new HashMap<>();
     private final HashMap<String, NotificationLimit> roleLimits = new HashMap<>();
     private final HashMap<String, Format> formats = new HashMap<>();
     private AlertChannels pokeChannels = new AlertChannels();
     private final AlertChannels raidChannels = new AlertChannels();
+    private AlertChannels researchTaskChannels = new AlertChannels();
     private TreeMap<String, String> presets = new TreeMap<>();
     private ArrayList<Integer> raidBosses = new ArrayList<>(Arrays.asList(2, 5, 8, 11, 28, 31, 34, 38, 62, 65, 68, 71, 73, 76, 82, 91, 94, 105, 123, 129, 131, 137, 139, 143, 144, 145, 146, 150, 243, 244, 245, 248, 249, 302, 303, 359));
     private ArrayList<Integer> blacklist = new ArrayList<>();
@@ -101,7 +104,7 @@ public class Config {
     private ArrayList<String> specialSpawnRoles = new ArrayList<>();
     private ArrayList<Integer> restrictedSpawns = new ArrayList<>();
 
-    public Config(String configName, String gkeys, String formatting, String raidChannelsFile, String pokeChannelsFile,
+    public Config(String configName, String gkeys, String formatting, String raidChannelsFile, String pokeChannelsFile, String researchTaskChannelsFile,
                   String supporterLevelsFile, String presetsFile, String globalFilterFile) {
 
         Ini configIni = null;
@@ -154,6 +157,10 @@ public class Config {
             loadRaidChannels(raidChannelsFile, formatting);
             log.info("Finished loading " + raidChannelsFile);
         }
+        
+        log.info(String.format("Loading %s...", researchTaskChannelsFile));
+        loadResearchTaskChannels(researchTaskChannelsFile, formatting);
+        log.info("Finished loading " + researchTaskChannelsFile);
 
         log.info(String.format("Loading %s...", supporterLevelsFile));
         loadSupporterRoles(supporterLevelsFile);
@@ -375,6 +382,18 @@ public class Config {
         return matching;
     }
 
+    public ArrayList<String> findMatchingPresets(ResearchTaskSpawn researchTaskSpawn) {
+        ArrayList<String> matching = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : getPresets().entrySet()) {
+            JsonObject filter = getPokeFilters().get(entry.getValue());
+            if (filter != null && matchesFilter(filter, researchTaskSpawn, entry.getValue())) {
+                matching.add(entry.getKey());
+            }
+        }
+        return matching;
+    }
+
     public String formatStr(HashMap<String, String> properties, String toFormat) {
         if (toFormat == null) {
             return null;
@@ -424,6 +443,10 @@ public class Config {
 
     public ArrayList<AlertChannel> getNonGeofencedRaidChannels() {
         return raidChannels.getNonGeofencedChannels();
+    }
+    
+    public ArrayList<AlertChannel> getNonGeofencedResearchTaskChannels() {
+        return researchTaskChannels.getNonGeofencedChannels();
     }
 
     public NotificationLimit getNotificationLimit(Member member) {
@@ -485,6 +508,11 @@ public class Config {
         String[] chatIdStrings = new String[chatIds.size()];
         return chatIds.toArray(chatIdStrings);
     }
+
+    public ArrayList<AlertChannel> getResearchTaskChannels(GeofenceIdentifier identifier) {
+        return researchTaskChannels.getChannelsByGeofence(identifier);
+    }
+
 
     public List<String> getSupporterRoles() {
         String[] rolesArr = new String[roleLimits.size()];
@@ -611,6 +639,33 @@ public class Config {
             return processPokeElement(pokeFilter, pokeSpawn, filterName);
         }
 
+        return false;
+    }
+    
+
+    public boolean matchesFilter(JsonObject filter, ResearchTaskSpawn researchTaskSpawn, String filterName) {
+        ArrayList<String> topLevelSearchStrs = new ArrayList<>();
+        topLevelSearchStrs.add(researchTaskSpawn.getReward());
+        topLevelSearchStrs.add(researchTaskSpawn.getTask());
+        topLevelSearchStrs.add("Default");
+
+        RaidNotificationSender.notificationLog.info("Filter: " + filter);
+        
+        JsonElement researchTaskFilter;
+        for (String searchStr: topLevelSearchStrs) {
+        	researchTaskFilter        = searchFilter(filter,searchStr);
+            PokeNotificationSender.notificationLog.info(searchStr + ": " + researchTaskFilter);
+
+            if (researchTaskFilter == null) {
+            	PokeNotificationSender.notificationLog.info(String.format("couldn't find filter for '%s'",searchStr));
+            } else {
+                if (researchTaskFilter.isJsonObject()) {
+                	//Ignore these.
+                } else {
+                	return checkAsBoolean(researchTaskFilter,searchStr);
+                }
+            }
+        }
         return false;
     }
 
@@ -1146,6 +1201,126 @@ public class Config {
             }
         } catch (NoSuchFileException e) {
             log.warn(String.format("Couldn't find raidchannels file: %s, ignoring.", raidChannelsFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void loadResearchTaskChannels(String researchTaskChannelsFile, String formatting) {
+
+
+        Path file = Paths.get(researchTaskChannelsFile);
+
+        try (Scanner in = new Scanner(file)) {
+
+            String                      channelId           = null;
+            String                      filterName          = null;
+            String                      formattingName      = formatting;
+            HashSet<GeofenceIdentifier> geofenceIdentifiers = null;
+
+            boolean first = true;
+
+            while (in.hasNext()) {
+                String line = in.nextLine().toLowerCase();
+
+                if (line.length() == 0 || line.charAt(0) == ';') {
+                    continue;
+                }
+
+                if (line.charAt(0) == '[') {
+                    ResearchTaskChannel channel;
+
+                    if (channelId != null) {
+                        channel = new ResearchTaskChannel(channelId);
+
+                        if (filterName != null) {
+                            channel.setFilterName(filterName);
+
+                            channel.setGeofences(geofenceIdentifiers);
+
+                            channel.setFormattingName(formattingName);
+                            
+                            researchTaskChannels.add(channel);
+                        } else {
+                            System.out.println("couldn't find filter name");
+                        }
+
+                    } else if (!first) {
+                        System.out.println("couldn't find channel id");
+                    }
+
+                    int end = line.indexOf("]");
+                    channelId = line.substring(1, end).trim();
+
+                    first = false;
+                } else {
+                    int equalsIndex = line.indexOf("=");
+
+                    if (!(equalsIndex == -1)) {
+                        String parameter = line.substring(0, equalsIndex).trim();
+                        String value     = line.substring(equalsIndex + 1).trim();
+
+                        switch (parameter) {
+                            case "geofences":
+                                if (value.equals("all")) {
+                                    geofenceIdentifiers = null;
+                                    continue;
+                                }
+                                geofenceIdentifiers = new HashSet<>();
+
+                                ArrayList<String> geofences;
+
+                                if (value.charAt(0) == '[') {
+                                    geofences = UtilityFunctions.parseList(value);
+                                } else {
+                                    geofences = new ArrayList<>();
+                                    geofences.add(value);
+                                }
+
+                                for (String s : geofences) {
+                                    geofenceIdentifiers.addAll(GeofenceIdentifier.fromString(s));
+                                }
+                                break;
+                            case "filter":
+                                filterName = value;
+
+                                if (!getResearchTaskFilters().containsKey(filterName)) {
+                                    loadFilter(filterName, getResearchTaskFilters());
+                                }
+                                break;
+                            case "formatting":
+                                formattingName = value;
+
+                                if (!formats.containsKey(formattingName)) {
+                                    loadFormatting(formattingName);
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+
+            ResearchTaskChannel channel;
+            if (channelId != null) {
+                channel = new ResearchTaskChannel(channelId);
+
+                if (filterName != null) {
+                    channel.setFilterName(filterName);
+
+                    channel.setFormattingName(formattingName);
+
+                    channel.setGeofences(geofenceIdentifiers);
+                    
+                    researchTaskChannels.add(channel);
+                } else {
+                    System.out.println("couldn't find filter name");
+                }
+
+            } else {
+                System.out.println("couldn't find channel id");
+            }
+        } catch (NoSuchFileException e) {
+            log.warn(String.format("Couldn't find researchtaskchannels file: %s, ignoring.", researchTaskChannelsFile));
         } catch (IOException e) {
             e.printStackTrace();
         }

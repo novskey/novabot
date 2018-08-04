@@ -147,6 +147,9 @@ public class Parser {
             } else if (valid.contains(ArgType.Float) && getFloat(trimmed.replace("iv","")) != null) {
                 argument.setType(ArgType.Float);
                 argument.setParams(new Object[]{getFloat(trimmed.replace("iv",""))});
+            } else if (valid.contains(ArgType.Rewards)) {
+                argument.setType(ArgType.Rewards);
+                argument.setParams(new Object[]{trimmed});
             } else {
                 argument.setType(ArgType.Unknown);
                 argument.setParams(new Object[]{null});
@@ -223,6 +226,10 @@ public class Parser {
                             args.add(loc);
                         }
                         break;
+                    case Rewards:
+                    	String reward = trimmed;
+                    	args.add(reward);
+                    	break;
                     case GymName:
                         if (novaBot.dataManager.getGymNames().contains(trimmed)) {
                             args.add(trimmed);

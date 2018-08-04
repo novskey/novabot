@@ -158,6 +158,28 @@ public class Commands {
             commands.put(StringLocalizer.getLocalString("ClearRaidCommand"), clearRaid);
             commands.put(StringLocalizer.getLocalString("ClearRaidLocationCommand"), clearLocation);
         }
+        
+        {
+	        //Research tasks
+        	final Command addrt = new Command()
+                    .setValidArgTypes(new HashSet<>(Arrays.asList(CommandStr, Rewards, Locations)))
+        			.setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Rewards, Locations)))
+        			.addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Rewards, Locations)));
+
+            final Command delrt = new Command()
+                    .setValidArgTypes(addrt.getValidArgTypes())
+                    .setRequiredArgTypes(addrt.getRequiredArgTypes())
+                    .setValidArgCombinations(addrt.getValidArgCombinations());
+
+            Command clearrt = new Command()
+                    .setValidArgTypes(new HashSet<>(Arrays.asList(CommandStr, Rewards)))
+                    .setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Rewards)))
+                    .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Rewards)));
+	
+	        commands.put(StringLocalizer.getLocalString("AddResearchTaskCommand"), addrt);
+	        commands.put(StringLocalizer.getLocalString("DelResearchTaskCommand"), delrt);
+	        commands.put(StringLocalizer.getLocalString("ClearResearchTaskCommand"), clearrt);
+        }
 
         if(config.statsEnabled()) {
             final Command stats = new Command()
