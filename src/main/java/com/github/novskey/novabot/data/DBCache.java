@@ -337,10 +337,13 @@ public class DBCache implements IDataBase {
             User user = users.get(id);
             return !(user == null || user.paused);
         });
+        
+        String rewardLower = researchTaskSpawn.reward == null ? "null" : researchTaskSpawn.reward.toLowerCase();
 
         return new ArrayList<>(UtilityFunctions.filterByValue(unPausedUsers, researchTasksSet -> {
             Stream<ResearchTask> matchingIds = researchTasksSet.stream().filter(researchTaskSetting ->
-                                                                        (researchTaskSetting.reward.equalsIgnoreCase(researchTaskSpawn.reward))
+                                                                        (rewardLower.equals(researchTaskSetting.reward) ||
+                                                                        rewardLower.contains(" "+researchTaskSetting.reward))
             );
             return matchingIds.anyMatch(researchTaskSetting -> researchTaskSpawn.getSpawnLocation().intersect(researchTaskSetting.location));
         }).keySet());

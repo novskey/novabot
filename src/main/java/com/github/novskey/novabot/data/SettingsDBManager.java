@@ -267,9 +267,9 @@ public class SettingsDBManager implements IDataBase {
         StringBuilder rewards = new StringBuilder("(");
         for (int i = 0; i < researchtasks.size(); ++i) {
             if (i == researchtasks.size() - 1) {
-            	rewards.append(researchtasks.get(i).reward);
+                rewards.append("'").append(researchtasks.get(i).reward.replace("'", "\\'")).append("'");
             } else {
-            	rewards.append(researchtasks.get(i).reward).append(",");
+            	rewards.append("'").append(researchtasks.get(i).reward.replace("'", "\\'")).append("',");
             }
         }
         rewards.append(")");
