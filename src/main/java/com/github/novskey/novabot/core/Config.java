@@ -1241,6 +1241,10 @@ public class Config {
                             channel.setFormattingName(formattingName);
                             
                             researchTaskChannels.add(channel);
+                            
+                            channelId           = null;
+                            filterName          = null;
+                            geofenceIdentifiers = null;
                         } else {
                             System.out.println("couldn't find filter name");
                         }
@@ -1312,6 +1316,10 @@ public class Config {
                     channel.setGeofences(geofenceIdentifiers);
                     
                     researchTaskChannels.add(channel);
+
+                    channelId           = null;
+                    filterName          = null;
+                    geofenceIdentifiers = null;
                 } else {
                     System.out.println("couldn't find filter name");
                 }
