@@ -31,23 +31,6 @@ public class LobbyManager {
         return activeLobbies.get(lobbyCode);
     }
 
-    public void getLobbiesFromDb(HashMap<String, String> activeLobbyCodes) {
-
-        lobbyManagerLog.info("Loading active lobbies based on lobby codes found in the DB");
-
-        for (Map.Entry<String, String> entry : activeLobbyCodes.entrySet()) {
-            String lobbyCode = entry.getKey();
-            String gymId     = entry.getValue();
-
-            RaidSpawn raidSpawn = novaBot.dataManager.settingsDbManager.knownRaids.get(gymId);
-
-            if (raidSpawn != null) {
-                lobbyManagerLog.info("Found an active raid/egg for gymId: %s, previous lobby code %s. Restoring the lobby");
-                raidSpawn.setLobbyCode(lobbyCode);
-            }
-        }
-    }
-
     public boolean isLobbyChannel(String id) {
         Collection<RaidLobby> raidLobbies = activeLobbies.values();
         for (RaidLobby raidLobby : raidLobbies) {
@@ -105,8 +88,28 @@ public class LobbyManager {
         return lobbies;
     }
 
-    public void newRaid(String lobbyCode, RaidSpawn raidSpawn) {
-        activeLobbies.put(lobbyCode, new RaidLobby(raidSpawn, lobbyCode, novaBot, false));
+    public ArrayList<RaidLobby> getActiveLobbies() {
+        ArrayList<RaidLobby> lobbies = new ArrayList<>();
+
+        for (RaidLobby lobby : activeLobbies.values()) {
+            if(lobby.memberCount() > 0) {
+                lobbies.add(lobby);
+            }
+        }
+
+        return lobbies;
+    }
+
+    synchronized
+    public RaidSpawn newRaid(String lobbyCode, RaidSpawn raidSpawn) {
+        Boolean contains = false;
+        for (RaidLobby activeLobby : activeLobbies.values()) {
+            if (activeLobby.spawn.gymId.equals(raidSpawn.gymId)) {
+                return activeLobby.spawn;
+            }
+        }
+        activeLobbies.put(lobbyCode, new RaidLobby(raidSpawn, lobbyCode, null, novaBot, false));
+        return raidSpawn;
     }
 
     public void addLobbies(ArrayList<RaidLobby> lobbies) {
@@ -120,5 +123,9 @@ public class LobbyManager {
 
     private void addLobby(RaidLobby raidLobby) {
         activeLobbies.put(raidLobby.lobbyCode,raidLobby);
+    }
+
+    public void removeLobby(String lobbyCode) {
+        activeLobbies.remove(lobbyCode);
     }
 }

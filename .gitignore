@@ -70,3 +70,13 @@ fabric.properties
 target/
 config.ini
 logs/
+/bin/
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.project
+.idea

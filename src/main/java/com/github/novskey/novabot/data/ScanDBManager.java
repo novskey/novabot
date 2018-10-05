@@ -12,6 +12,7 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.transform.Result;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.*;
@@ -26,7 +27,7 @@ import static com.github.novskey.novabot.data.DataManager.MySQL_DRIVER;
 import static com.github.novskey.novabot.data.DataManager.PgSQL_DRIVER;
 
 @Data
-public class ScanDBManager  {
+public class ScanDBManager {
 
     private Logger dbLog;
 
@@ -40,14 +41,14 @@ public class ScanDBManager  {
     private com.github.novskey.novabot.data.DataSource scanDataSource;
     private HashSet<String> gymNames = new HashSet<>();
 
-    public ScanDBManager (NovaBot novabot, ScannerDb scannerDb, int id){
+    public ScanDBManager(NovaBot novabot, ScannerDb scannerDb, int id) {
         this.novaBot = novabot;
         this.scannerDb = scannerDb;
         dbLog = LoggerFactory.getLogger("Scan-DB-" + id);
         lastChecked = ZonedDateTime.now(UtilityFunctions.UTC);
         lastCheckedRaids = ZonedDateTime.now(UtilityFunctions.UTC);
         scanDbConnect();
-        if(novabot.getConfig().raidsEnabled()) {
+        if (novabot.getConfig().raidsEnabled()) {
             gymNames = fetchGymNames();
         }
     }
@@ -73,16 +74,16 @@ public class ScanDBManager  {
              Statement statement = connection.createStatement()) {
             ResultSet rs = statement.executeQuery(sql);
 
-            while (rs.next()){
+            while (rs.next()) {
                 String gymName = rs.getString(1);
-                if(gymName != null) {
+                if (gymName != null) {
                     names.add(gymName.toLowerCase().trim());
                 }
             }
 
             dbLog.info(String.format("Found %d gym names", names.size()));
         } catch (SQLException e) {
-            dbLog.error("Error executing getGymNames",e);
+            dbLog.error("Error executing getGymNames", e);
         }
 
         return names;
@@ -98,30 +99,30 @@ public class ScanDBManager  {
             case SkoodatRocketMap:
             case PhilMap:
                 sql = "  SELECT COUNT(*) " +
-                      "FROM pokemon " +
-                      "WHERE pokemon_id = ? AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? " + intervalType.toDbString() + ")";
+                        "FROM pokemon " +
+                        "WHERE pokemon_id = ? AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? " + intervalType.toDbString() + ")";
                 break;
             case Hydro74000Monocle:
             case Monocle:
                 sql = "  SELECT COUNT(*) " +
-                      "FROM sightings " +
-                      "WHERE pokemon_id = ? " +
-                      "AND expire_timestamp > " +
-                      (scannerDb.getProtocol().equals("postgresql") ?
-                       "extract(epoch from (now() - INTERVAL '" + intervalLength + "' " + intervalType.toDbString() + "))":
-                       "UNIX_TIMESTAMP(now() - INTERVAL '" + intervalLength + "'" + intervalType.toDbString() + ")");
+                        "FROM sightings " +
+                        "WHERE pokemon_id = ? " +
+                        "AND expire_timestamp > " +
+                        (scannerDb.getProtocol().equals("postgresql") ?
+                                "extract(epoch from (now() - INTERVAL '" + intervalLength + "' " + intervalType.toDbString() + "))" :
+                                "UNIX_TIMESTAMP(now() - INTERVAL '" + intervalLength + "'" + intervalType.toDbString() + ")");
                 break;
         }
 
         try (Connection connection = getScanConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
-            switch (scannerDb.getScannerType()){
+            switch (scannerDb.getScannerType()) {
                 case RocketMap:
                 case SloppyRocketMap:
                 case SkoodatRocketMap:
                 case PhilMap:
-                    statement.setInt(2,intervalLength);
+                    statement.setInt(2, intervalLength);
                     break;
                 default:
                     break;
@@ -137,10 +138,183 @@ public class ScanDBManager  {
                 numSpawns = rs.getInt(1);
             }
         } catch (SQLException e) {
-            dbLog.error("Error executing countSpawns",e);
+            dbLog.error("Error executing countSpawns", e);
         }
 
         return numSpawns;
+    }
+
+    public RaidSpawn getRaidForGym(String gymId) {
+
+        dbLog.info("Getting raid for gymId: " + gymId);
+        String sql = null;
+
+        switch (scannerDb.getScannerType()) {
+            case SloppyRocketMap:
+            case SkoodatRocketMap:
+            case RocketMap:
+                sql = "SELECT" +
+                        "  gymdetails.name," +
+                        "  gymdetails.gym_id," +
+                        "  gym.latitude," +
+                        "  gym.longitude," +
+                        "  gym.team_id," +
+                        "  raid.end AS end," +
+                        "  raid.start AS battle," +
+                        "  raid.pokemon_id," +
+                        "  raid.cp, " +
+                        "  raid.level, " +
+                        "  raid.move_1, " +
+                        "  raid.move_2 " +
+                        "FROM gym" +
+                        "  INNER JOIN gymdetails ON gym.gym_id = gymdetails.gym_id" +
+                        "  INNER JOIN raid ON gym.gym_id = raid.gym_id " +
+                        "WHERE gymdetails.gym_id = ? AND raid.end > (? + INTERVAL 1 MINUTE)";
+                break;
+            case Monocle:
+                sql = "SELECT" +
+                        "  forts.external_id," +
+                        "  forts.lat," +
+                        "  forts.lon," +
+                        "  fort_sightings.team," +
+                        "  raids.time_end AS end," +
+                        "  raids.time_battle AS battle," +
+                        "  raids.pokemon_id," +
+                        "  raids.level, " +
+                        "  raids.move_1, " +
+                        "  raids.move_2 " +
+                        "FROM forts" +
+                        "  INNER JOIN fort_sightings ON forts.id = fort_sightings.fort_id" +
+                        "  INNER JOIN raids ON forts.id = raids.fort_id " +
+                        "WHERE forts.external_id = ? AND raids.time_end > " +
+                        (scannerDb.getProtocol().equals("mysql")
+                                ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
+                                : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
+                break;
+            case Hydro74000Monocle:
+                sql = "SELECT forts.name," +
+                        " forts.external_id," +
+                        " forts.lat," +
+                        " forts.lon," +
+                        " fort_sightings.team," +
+                        " raids.time_end AS END," +
+                        " raids.time_battle AS battle," +
+                        " raids.pokemon_id," +
+                        " raids.cp," +
+                        " raids.level," +
+                        " raids.move_1," +
+                        " raids.move_2 " +
+                        "FROM forts " +
+                        "INNER JOIN fort_sightings ON (fort_sightings.fort_id = forts.id AND fort_sightings.last_modified = (SELECT MAX(last_modified) FROM fort_sightings fs2 WHERE fs2.fort_id=forts.id)) " +
+                        "INNER JOIN raids ON forts.id = raids.fort_id " +
+                        "WHERE forts.external_id = ? AND raids.time_end > " +
+                        (scannerDb.getProtocol().equals("mysql")
+                                ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
+                                : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
+                break;
+            case PhilMap:
+                sql = "SELECT" +
+                        "  gymdetails.name," +
+                        "  gymdetails.gym_id," +
+                        "  gym.latitude," +
+                        "  gym.longitude," +
+                        "  gym.team_id," +
+                        "  raidinfo.raid_end_ms AS end," +
+                        "  raidinfo.raid_battle_ms AS battle," +
+                        "  raidinfo.pokemon_id," +
+                        "  raidinfo.cp, " +
+                        "  raidinfo.raid_level, " +
+                        "  raidinfo.move_1, " +
+                        "  raidinfo.move_2 " +
+                        "FROM gym" +
+                        "  INNER JOIN gymdetails ON gym.gym_id = gymdetails.gym_id" +
+                        "  INNER JOIN raidinfo ON gym.gym_id = raidinfo.gym_id " +
+                        "WHERE gymdetails.gym_id = ? AND raid_end_ms > (? + INTERVAL 1 MINUTE)";
+                break;
+        }
+
+        try (Connection connection = getScanConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, gymId);
+            switch (scannerDb.getScannerType()) {
+                case RocketMap:
+                case SkoodatRocketMap:
+                case SloppyRocketMap:
+                case PhilMap:
+                    statement.setObject(2, lastCheckedRaids.toLocalDateTime(), Types.TIMESTAMP);
+                    break;
+                case Monocle:
+                case Hydro74000Monocle:
+                    LocalDateTime localDateTime = lastCheckedRaids.withZoneSameInstant(novaBot.getConfig().getTimeZone()).toLocalDateTime();
+                    String timeStamp = String.format("%s %s", localDateTime.toLocalDate(), localDateTime.toLocalTime());
+
+                    statement.setString(2, timeStamp);
+                    break;
+            }
+
+            dbLog.info("Executing query: " + statement);
+            final ResultSet rs = statement.executeQuery();
+            dbLog.info("Query complete");
+
+            if (rs.next()) {
+                RaidSpawn raidSpawn = null;
+
+                switch (scannerDb.getScannerType()) {
+                    case RocketMap:
+                    case SkoodatRocketMap:
+                    case SloppyRocketMap:
+                    case PhilMap:
+                        String name = rs.getString(1);
+                        double lat = rs.getDouble(3);
+                        double lon = rs.getDouble(4);
+                        Team team = Team.fromId(rs.getInt(5));
+                        ZonedDateTime raidEnd = ZonedDateTime.ofLocal(rs.getTimestamp(6).toLocalDateTime(), UtilityFunctions.UTC, null);
+                        ZonedDateTime battleStart = ZonedDateTime.ofLocal(rs.getTimestamp(7).toLocalDateTime(), UtilityFunctions.UTC, null);
+                        int bossId = rs.getInt(8);
+                        int bossCp = rs.getInt(9);
+                        int raidLevel = rs.getInt(10);
+                        int move_1 = rs.getInt(11);
+                        int move_2 = rs.getInt(12);
+
+                        raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel);
+                        break;
+                    case Hydro74000Monocle:
+                        name = rs.getString(1);
+                        lat = rs.getDouble(3);
+                        lon = rs.getDouble(4);
+                        team = Team.fromId((Integer) rs.getObject(5));
+                        raidEnd = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getInt(6)), UtilityFunctions.UTC);
+                        battleStart = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getInt(7)), UtilityFunctions.UTC);
+                        bossId = rs.getInt(8);
+                        bossCp = rs.getInt(9);
+                        raidLevel = rs.getInt(10);
+                        move_1 = rs.getInt(11);
+                        move_2 = rs.getInt(12);
+
+                        raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel);
+                        break;
+                    case Monocle:
+                        lat = rs.getDouble(2);
+                        lon = rs.getDouble(3);
+                        team = Team.fromId(rs.getInt(4));
+                        raidEnd = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getInt(5)), UtilityFunctions.UTC);
+                        battleStart = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getInt(6)), UtilityFunctions.UTC);
+                        bossId = rs.getInt(7);
+                        raidLevel = rs.getInt(8);
+                        move_1 = rs.getInt(9);
+                        move_2 = rs.getInt(10);
+
+                        raidSpawn = new RaidSpawn("unkn", gymId, lat, lon, team, raidEnd, battleStart, bossId, (bossId > 0 ? Pokemon.getRaidBossCp(bossId, raidLevel) : 0), move_1, move_2, raidLevel);
+                        break;
+                }
+
+                return raidSpawn;
+            }
+        } catch (SQLException e) {
+            dbLog.error("Error executing getRaidForGym", e);
+        }
+        return null;
     }
 
     public void getCurrentRaids(boolean firstRun) {
@@ -159,7 +333,7 @@ public class ScanDBManager  {
             if (scannerDb.getScannerType() == ScannerType.PhilMap || scannerDb.getScannerType() == RocketMap || scannerDb.getScannerType() == SkoodatRocketMap || scannerDb.getScannerType() == SloppyRocketMap) {
                 knownIdQMarks.append("gym.gym_id NOT IN (");
             } else {
-                knownIdQMarks.append("forts.id NOT in (");
+                knownIdQMarks.append("forts.external_id NOT in (");
             }
             for (int i = 0; i < novaBot.getDataManager().getKnownRaids().size(); ++i) {
                 knownIdQMarks.append("?");
@@ -179,82 +353,82 @@ public class ScanDBManager  {
             case SkoodatRocketMap:
             case RocketMap:
                 sql = "SELECT" +
-                      "  gymdetails.name," +
-                      "  gymdetails.gym_id," +
-                      "  gym.latitude," +
-                      "  gym.longitude," +
-                      "  gym.team_id," +
-                      "  raid.end AS end," +
-                      "  raid.start AS battle," +
-                      "  raid.pokemon_id," +
-                      "  raid.cp, " +
-                      "  raid.level, " +
-                      "  raid.move_1, " +
-                      "  raid.move_2 " +
-                      "FROM gym" +
-                      "  INNER JOIN gymdetails ON gym.gym_id = gymdetails.gym_id" +
-                      "  INNER JOIN raid ON gym.gym_id = raid.gym_id " +
-                      "WHERE " + knownIdQMarks + " raid.end > (? + INTERVAL 1 MINUTE)";
+                        "  gymdetails.name," +
+                        "  gymdetails.gym_id," +
+                        "  gym.latitude," +
+                        "  gym.longitude," +
+                        "  gym.team_id," +
+                        "  raid.end AS end," +
+                        "  raid.start AS battle," +
+                        "  raid.pokemon_id," +
+                        "  raid.cp, " +
+                        "  raid.level, " +
+                        "  raid.move_1, " +
+                        "  raid.move_2 " +
+                        "FROM gym" +
+                        "  INNER JOIN gymdetails ON gym.gym_id = gymdetails.gym_id" +
+                        "  INNER JOIN raid ON gym.gym_id = raid.gym_id " +
+                        "WHERE " + knownIdQMarks + " raid.end > (? + INTERVAL 1 MINUTE)";
                 break;
             case Monocle:
                 sql = "SELECT" +
-                      "  forts.id," +
-                      "  forts.lat," +
-                      "  forts.lon," +
-                      "  fort_sightings.team," +
-                      "  raids.time_end AS end," +
-                      "  raids.time_battle AS battle," +
-                      "  raids.pokemon_id," +
-                      "  raids.level, " +
-                      "  raids.move_1, " +
-                      "  raids.move_2 " +
-                      "FROM forts" +
-                      "  INNER JOIN fort_sightings ON forts.id = fort_sightings.fort_id" +
-                      "  INNER JOIN raids ON forts.id = raids.fort_id " +
-                      "WHERE " + knownIdQMarks + " raids.time_end > " +
-                      (scannerDb.getProtocol().equals("mysql")
-                       ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
-                       : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
+                        "  forts.external_id," +
+                        "  forts.lat," +
+                        "  forts.lon," +
+                        "  fort_sightings.team," +
+                        "  raids.time_end AS end," +
+                        "  raids.time_battle AS battle," +
+                        "  raids.pokemon_id," +
+                        "  raids.level, " +
+                        "  raids.move_1, " +
+                        "  raids.move_2 " +
+                        "FROM forts" +
+                        "  INNER JOIN fort_sightings ON forts.id = fort_sightings.fort_id" +
+                        "  INNER JOIN raids ON forts.id = raids.fort_id " +
+                        "WHERE " + knownIdQMarks + " raids.time_end > " +
+                        (scannerDb.getProtocol().equals("mysql")
+                                ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
+                                : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
                 break;
             case Hydro74000Monocle:
                 sql = "SELECT forts.name," +
-                      " forts.id," +
-                      " forts.lat," +
-                      " forts.lon," +
-                      " fort_sightings.team," +
-                      " raids.time_end AS END," +
-                      " raids.time_battle AS battle," +
-                      " raids.pokemon_id," +
-                      " raids.cp," +
-                      " raids.level," +
-                      " raids.move_1," +
-                      " raids.move_2 " +
-                      "FROM forts " +
-                      "INNER JOIN fort_sightings ON (fort_sightings.fort_id = forts.id AND fort_sightings.last_modified = (SELECT MAX(last_modified) FROM fort_sightings fs2 WHERE fs2.fort_id=forts.id)) " +
-                      "INNER JOIN raids ON forts.id = raids.fort_id " +
-                      "WHERE " + knownIdQMarks + " raids.time_end > " +
-                      (scannerDb.getProtocol().equals("mysql")
-                       ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
-                       : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
+                        " forts.external_id," +
+                        " forts.lat," +
+                        " forts.lon," +
+                        " fort_sightings.team," +
+                        " raids.time_end AS END," +
+                        " raids.time_battle AS battle," +
+                        " raids.pokemon_id," +
+                        " raids.cp," +
+                        " raids.level," +
+                        " raids.move_1," +
+                        " raids.move_2 " +
+                        "FROM forts " +
+                        "INNER JOIN fort_sightings ON (fort_sightings.fort_id = forts.id AND fort_sightings.last_modified = (SELECT MAX(last_modified) FROM fort_sightings fs2 WHERE fs2.fort_id=forts.id)) " +
+                        "INNER JOIN raids ON forts.id = raids.fort_id " +
+                        "WHERE " + knownIdQMarks + " raids.time_end > " +
+                        (scannerDb.getProtocol().equals("mysql")
+                                ? "UNIX_TIMESTAMP(? + INTERVAL 1 MINUTE)"
+                                : "extract(epoch from (?::timestamptz + INTERVAL '1' MINUTE))");
                 break;
             case PhilMap:
                 sql = "SELECT" +
-                      "  gymdetails.name," +
-                      "  gymdetails.gym_id," +
-                      "  gym.latitude," +
-                      "  gym.longitude," +
-                      "  gym.team_id," +
-                      "  raidinfo.raid_end_ms AS end," +
-                      "  raidinfo.raid_battle_ms AS battle," +
-                      "  raidinfo.pokemon_id," +
-                      "  raidinfo.cp, " +
-                      "  raidinfo.raid_level, " +
-                      "  raidinfo.move_1, " +
-                      "  raidinfo.move_2 " +
-                      "FROM gym" +
-                      "  INNER JOIN gymdetails ON gym.gym_id = gymdetails.gym_id" +
-                      "  INNER JOIN raidinfo ON gym.gym_id = raidinfo.gym_id " +
-                      "WHERE " + knownIdQMarks + " raid_end_ms > (? + INTERVAL 1 MINUTE)";
+                        "  gymdetails.name," +
+                        "  gymdetails.gym_id," +
+                        "  gym.latitude," +
+                        "  gym.longitude," +
+                        "  gym.team_id," +
+                        "  raidinfo.raid_end_ms AS end," +
+                        "  raidinfo.raid_battle_ms AS battle," +
+                        "  raidinfo.pokemon_id," +
+                        "  raidinfo.cp, " +
+                        "  raidinfo.raid_level, " +
+                        "  raidinfo.move_1, " +
+                        "  raidinfo.move_2 " +
+                        "FROM gym" +
+                        "  INNER JOIN gymdetails ON gym.gym_id = gymdetails.gym_id" +
+                        "  INNER JOIN raidinfo ON gym.gym_id = raidinfo.gym_id " +
+                        "WHERE " + knownIdQMarks + " raid_end_ms > (? + INTERVAL 1 MINUTE)";
                 break;
         }
 
@@ -329,7 +503,7 @@ public class ScanDBManager  {
                         break;
                     case Hydro74000Monocle:
                         name = rs.getString(1);
-                        gymId = String.valueOf(rs.getInt(2));
+                        gymId = rs.getString(2);
                         lat = rs.getDouble(3);
                         lon = rs.getDouble(4);
                         team = Team.fromId((Integer) rs.getObject(5));
@@ -344,7 +518,7 @@ public class ScanDBManager  {
                         raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel);
                         break;
                     case Monocle:
-                        gymId = String.valueOf(rs.getInt(1));
+                        gymId = rs.getString(1);
                         lat = rs.getDouble(2);
                         lon = rs.getDouble(3);
                         team = Team.fromId(rs.getInt(4));
@@ -367,10 +541,14 @@ public class ScanDBManager  {
             }
         } catch (SQLException e) {
             lastCheckedRaids = ZonedDateTime.now(UtilityFunctions.UTC);
-            dbLog.error("Error executing getCurrentRaids",e);
+            dbLog.error("Error executing getCurrentRaids", e);
         }
         dbLog.info(String.format("Returned %s rows", rows));
-
+        if (firstRun) {
+            if (novaBot.getConfig().isRaidOrganisationEnabled()) {
+                novaBot.lobbyManager.addLobbies(novaBot.dataManager.getActiveLobbies());
+            }
+        }
     }
 
     public HashSet<String> getGymNames() {
@@ -397,147 +575,147 @@ public class ScanDBManager  {
         switch (scannerDb.getScannerType()) {
             case Monocle:
                 sql = "" +
-                      "SELECT pokemon_id," +
-                      "       lat," +
-                      "       lon," +
-                      "       expire_timestamp," +
-                      "       atk_iv," +
-                      "       def_iv," +
-                      "       sta_iv," +
-                      "       move_1," +
-                      "       move_2," +
-                      "       display " +
-                      "FROM sightings " +
-                      "WHERE expire_timestamp > " +
-                            (scannerDb.getProtocol().equals("mysql")
-                             ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
-                             : "extract(epoch from now())" + blacklistQuery
-                     );
+                        "SELECT pokemon_id," +
+                        "       lat," +
+                        "       lon," +
+                        "       expire_timestamp," +
+                        "       atk_iv," +
+                        "       def_iv," +
+                        "       sta_iv," +
+                        "       move_1," +
+                        "       move_2," +
+                        "       display " +
+                        "FROM sightings " +
+                        "WHERE expire_timestamp > " +
+                        (scannerDb.getProtocol().equals("mysql")
+                                ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
+                                : "extract(epoch from now())" + blacklistQuery
+                        );
 //                                : "extract(epoch from (now() - INTERVAL ? SECOND))");
                 break;
             case Hydro74000Monocle:
                 sql = "" +
-                      "SELECT pokemon_id," +
-                      "       lat," +
-                      "       lon," +
-                      "       expire_timestamp," +
-                      "       atk_iv," +
-                      "       def_iv," +
-                      "       sta_iv," +
-                      "       move_1," +
-                      "       move_2," +
-                      "       gender," +
-                      "       form," +
-                      "       cp," +
-                      "       level, " +
-                      "       weather_boosted_condition, " +
-                      "       encounter_id " +
-                      "FROM sightings " +
-                      "WHERE updated >= " +
-                            (scannerDb.getProtocol().equals("mysql")
-                             ? "UNIX_TIMESTAMP(? - INTERVAL 1 SECOND)"
-                             : "extract(epoch from (?::timestamptz - INTERVAL '1' SECOND)) ") +
-                            "AND expire_timestamp > " +
-                            (scannerDb.getProtocol().equals("mysql")
-                             ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
-                             : "extract(epoch from now())")
-                      + blacklistQuery;
+                        "SELECT pokemon_id," +
+                        "       lat," +
+                        "       lon," +
+                        "       expire_timestamp," +
+                        "       atk_iv," +
+                        "       def_iv," +
+                        "       sta_iv," +
+                        "       move_1," +
+                        "       move_2," +
+                        "       gender," +
+                        "       form," +
+                        "       cp," +
+                        "       level, " +
+                        "       weather_boosted_condition, " +
+                        "       encounter_id " +
+                        "FROM sightings " +
+                        "WHERE updated >= " +
+                        (scannerDb.getProtocol().equals("mysql")
+                                ? "UNIX_TIMESTAMP(? - INTERVAL 1 SECOND)"
+                                : "extract(epoch from (?::timestamptz - INTERVAL '1' SECOND)) ") +
+                        "AND expire_timestamp > " +
+                        (scannerDb.getProtocol().equals("mysql")
+                                ? "UNIX_TIMESTAMP(now() - INTERVAL ? SECOND)"
+                                : "extract(epoch from now())")
+                        + blacklistQuery;
                 break;
             case RocketMap:
                 sql = "" +
-                      "SELECT pokemon_id," +
-                      "       latitude," +
-                      "       longitude," +
-                      "       disappear_time," +
-                      "       individual_attack, " +
-                      "       individual_defense," +
-                      "       individual_stamina," +
-                      "       move_1," +
-                      "       move_2," +
-                      "       weight," +
-                      "       height," +
-                      "       gender," +
-                      "       form," +
-                      "       cp, " +
-                      "       cp_multiplier, " +
-                      "       weather_boosted_condition " +
-                      "FROM pokemon " +
-                      "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
-                      "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" + blacklistQuery;
-                      ;
+                        "SELECT pokemon_id," +
+                        "       latitude," +
+                        "       longitude," +
+                        "       disappear_time," +
+                        "       individual_attack, " +
+                        "       individual_defense," +
+                        "       individual_stamina," +
+                        "       move_1," +
+                        "       move_2," +
+                        "       weight," +
+                        "       height," +
+                        "       gender," +
+                        "       form," +
+                        "       cp, " +
+                        "       cp_multiplier, " +
+                        "       weather_boosted_condition " +
+                        "FROM pokemon " +
+                        "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
+                        "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" + blacklistQuery;
+                ;
                 break;
             case PhilMap:
                 sql = "" +
-                      "SELECT pokemon_id," +
-                      "       latitude," +
-                      "       longitude," +
-                      "       disappear_time," +
-                      "       individual_attack, " +
-                      "       individual_defense," +
-                      "       individual_stamina," +
-                      "       move_1," +
-                      "       move_2," +
-                      "       weight," +
-                      "       height," +
-                      "       gender," +
-                      "       form," +
-                      "       cp, " +
-                      "       cp_multiplier, " +
-                      "       weather_boosted " +
-                      "FROM pokemon " +
-                      "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
-                      "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" + blacklistQuery;
+                        "SELECT pokemon_id," +
+                        "       latitude," +
+                        "       longitude," +
+                        "       disappear_time," +
+                        "       individual_attack, " +
+                        "       individual_defense," +
+                        "       individual_stamina," +
+                        "       move_1," +
+                        "       move_2," +
+                        "       weight," +
+                        "       height," +
+                        "       gender," +
+                        "       form," +
+                        "       cp, " +
+                        "       cp_multiplier, " +
+                        "       weather_boosted " +
+                        "FROM pokemon " +
+                        "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
+                        "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" + blacklistQuery;
                 break;
             case SloppyRocketMap:
                 sql = "" +
-                      "SELECT pokemon_id," +
-                      "       latitude," +
-                      "       longitude," +
-                      "       disappear_time," +
-                      "       individual_attack, " +
-                      "       individual_defense," +
-                      "       individual_stamina," +
-                      "       move_1," +
-                      "       move_2," +
-                      "       weight," +
-                      "       height," +
-                      "       gender," +
-                      "       form," +
-                      "       catch_prob_1," +
-                      "       catch_prob_2," +
-                      "       catch_prob_3," +
-                      "       cp, " +
-                      "       cp_multiplier, " +
-                      "       weather_boosted_condition " +
-                      "FROM pokemon " +
-                      "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
-                      "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" +
-                      blacklistQuery;
+                        "SELECT pokemon_id," +
+                        "       latitude," +
+                        "       longitude," +
+                        "       disappear_time," +
+                        "       individual_attack, " +
+                        "       individual_defense," +
+                        "       individual_stamina," +
+                        "       move_1," +
+                        "       move_2," +
+                        "       weight," +
+                        "       height," +
+                        "       gender," +
+                        "       form," +
+                        "       catch_prob_1," +
+                        "       catch_prob_2," +
+                        "       catch_prob_3," +
+                        "       cp, " +
+                        "       cp_multiplier, " +
+                        "       weather_boosted_condition " +
+                        "FROM pokemon " +
+                        "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
+                        "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" +
+                        blacklistQuery;
                 break;
             case SkoodatRocketMap:
                 sql = "" +
-                      "SELECT pokemon_id," +
-                      "       latitude," +
-                      "       longitude," +
-                      "       disappear_time," +
-                      "       individual_attack, " +
-                      "       individual_defense," +
-                      "       individual_stamina," +
-                      "       move_1," +
-                      "       move_2," +
-                      "       weight," +
-                      "       height," +
-                      "       gender," +
-                      "       form," +
-                      "       catch_prob_1," +
-                      "       catch_prob_2," +
-                      "       catch_prob_3," +
-                      "       cp, " +
-                      "       cp_multiplier, " +
-                      "       weather_id " +
-                      "FROM pokemon " +
-                      "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
-                      "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" + blacklistQuery;
+                        "SELECT pokemon_id," +
+                        "       latitude," +
+                        "       longitude," +
+                        "       disappear_time," +
+                        "       individual_attack, " +
+                        "       individual_defense," +
+                        "       individual_stamina," +
+                        "       move_1," +
+                        "       move_2," +
+                        "       weight," +
+                        "       height," +
+                        "       gender," +
+                        "       form," +
+                        "       catch_prob_1," +
+                        "       catch_prob_2," +
+                        "       catch_prob_3," +
+                        "       cp, " +
+                        "       cp_multiplier, " +
+                        "       weather_id " +
+                        "FROM pokemon " +
+                        "WHERE last_modified >= (? - INTERVAL 1 SECOND) " +
+                        "AND disappear_time > (UTC_TIMESTAMP() - INTERVAL ? SECOND)" + blacklistQuery;
                 break;
         }
 
@@ -569,7 +747,7 @@ public class ScanDBManager  {
 
             if (scannerDb.getProtocol().equals("mysql") && scannerDb.getScannerType() != Monocle) {
                 statement.setString(offset,
-                                    String.valueOf(novaBot.getConfig().getMinSecondsLeft()));
+                        String.valueOf(novaBot.getConfig().getMinSecondsLeft()));
                 offset++;
             }
 
@@ -609,7 +787,7 @@ public class ScanDBManager  {
                         Integer cp = (Integer) rs.getObject(14);
                         double cpMod = rs.getDouble(15);
                         int weather = rs.getInt(16);
-                        pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, weight, height, gender, form, cp, cpMod,weather);
+                        pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, weight, height, gender, form, cp, cpMod, weather);
                         break;
                     case SloppyRocketMap:
                     case SkoodatRocketMap:
@@ -702,12 +880,12 @@ public class ScanDBManager  {
                         dbLog.debug("pokemon already seen, ignoring");
                     }
                 } catch (Exception e) {
-                    dbLog.error("Error executing getNewPokemon",e);
+                    dbLog.error("Error executing getNewPokemon", e);
                 }
             }
         } catch (SQLException e) {
             lastChecked = ZonedDateTime.now(UtilityFunctions.UTC);
-            dbLog.error("Error executing getNewPokemon",e);
+            dbLog.error("Error executing getNewPokemon", e);
         }
         dbLog.info(String.format("Returned %s rows, %s new pokemon", rows, newSpawns));
 //        return pokeSpawns;
@@ -717,7 +895,7 @@ public class ScanDBManager  {
         try {
             return scanDataSource.getConnection();
         } catch (SQLException e) {
-            dbLog.error("Error executing getScanConnection",e);
+            dbLog.error("Error executing getScanConnection", e);
         }
         return null;
     }
@@ -750,11 +928,11 @@ public class ScanDBManager  {
         boolean mysql = scannerDb.getProtocol().equals("mysql");
 
         scanUrl = String.format("jdbc:%s://%s:%s/%s%s",
-                                scannerDb.getProtocol(),
-                                scannerDb.getIp(),
-                                scannerDb.getPort(),
-                                scannerDb.getDbName(),
-                                mysql ? "?useSSL=" + scannerDb.getUseSSL() : "");
+                scannerDb.getProtocol(),
+                scannerDb.getIp(),
+                scannerDb.getPort(),
+                scannerDb.getDbName(),
+                mysql ? "?useSSL=" + scannerDb.getUseSSL() : "");
 
         try {
             scanDataSource = com.github.novskey.novabot.data.DataSource.getInstance(
@@ -763,10 +941,51 @@ public class ScanDBManager  {
                     scannerDb.getPass(),
                     scanUrl,
                     scannerDb.getMaxConnections()
-                                                                                   );
+            );
         } catch (IOException | SQLException | PropertyVetoException e) {
-            dbLog.error("Error executing scanDbConnect",e);
+            dbLog.error("Error executing scanDbConnect", e);
         }
     }
 
+    public void updateFortSightings(String fortsId) {
+        String sql = null;
+        switch (scannerDb.getScannerType()) {
+            case SloppyRocketMap:
+            case SkoodatRocketMap:
+            case RocketMap:
+            case PhilMap:
+            case Monocle:
+                return;
+            case Hydro74000Monocle:
+                sql = "UPDATE fort_sightings fs " +
+                        "SET updated = ? " +
+                        "WHERE fort_id = (SELECT @id:=id FROM forts where external_id = ?) " +
+                        "  AND last_modified = ( SELECT lm FROM (SELECT MAX(last_modified) lm FROM fort_sightings fs2 WHERE fs2.fort_id = @id) as c)";
+                break;
+        }
+
+        try (Connection connection = getScanConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            switch (scannerDb.getScannerType()) {
+                case RocketMap:
+                case SkoodatRocketMap:
+                case SloppyRocketMap:
+                case PhilMap:
+                case Monocle:
+                    return;
+                case Hydro74000Monocle:
+                    statement.setLong(1, System.currentTimeMillis() / 1000L);
+                    statement.setString(2, fortsId);
+                    break;
+            }
+
+            dbLog.info("Executing query: " + statement);
+            statement.executeUpdate();
+            dbLog.info("Query complete");
+
+        } catch (SQLException e) {
+            dbLog.error("Error executing updateFortSightings", e);
+        }
+    }
 }

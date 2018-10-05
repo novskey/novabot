@@ -7,7 +7,9 @@ import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
+import com.github.novskey.novabot.raids.RaidLobbyMember;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.api.Token;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -113,8 +115,9 @@ public class DataManager implements IDataBase {
         dbCache.pokemons = settingsDbManager.dumpPokemon();
         dbCache.raids = settingsDbManager.dumpRaids();
         dbCache.presets = settingsDbManager.dumpPresets();
-        dbCache.raidLobbies = settingsDbManager.dumpRaidLobbies();
+        //dbCache.raidLobbies = settingsDbManager.dumpRaidLobbies();
         dbCache.spawnInfo = settingsDbManager.dumpSpawnInfo();
+        loadTokens();
     }
 
     @Override
@@ -217,9 +220,10 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void endLobby(String lobbyCode) {
-        dbCache.endLobby(lobbyCode);
-        settingsDbManager.endLobby(lobbyCode);
+    public void endLobby(String lobbyCode, String gymId) {
+        novaBot.lobbyManager.removeLobby(lobbyCode);
+        dbCache.endLobby(lobbyCode, gymId);
+        settingsDbManager.endLobby(lobbyCode, gymId);
     }
 
     @Override
@@ -264,9 +268,9 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void newLobby(String lobbyCode, String gymId, int memberCount, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode) {
-        dbCache.newLobby(lobbyCode, gymId, memberCount, channelId, roleId, nextTimeLeftUpdate, inviteCode);
-        settingsDbManager.newLobby(lobbyCode, gymId, memberCount, channelId, roleId, nextTimeLeftUpdate, inviteCode);
+    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members, String[] lobbyChatIds) {
+        dbCache.newLobby(lobbyCode, gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatIds);
+        settingsDbManager.newLobby(lobbyCode, gymId, channelId, roleId, nextTimeLeftUpdate, inviteCode, members, lobbyChatIds);
     }
 
     @Override
@@ -323,9 +327,9 @@ public class DataManager implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode) {
-        dbCache.updateLobby(lobbyCode, memberCount, nextTimeLeftUpdate, inviteCode);
-        settingsDbManager.updateLobby(lobbyCode, memberCount, nextTimeLeftUpdate, inviteCode);
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId, String[] lobbyChatIds) {
+        dbCache.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members, gymId, lobbyChatIds);
+        settingsDbManager.updateLobby(lobbyCode, nextTimeLeftUpdate, inviteCode, roleId, channelId, members, gymId, lobbyChatIds);
     }
 
     @Override
@@ -342,6 +346,27 @@ public class DataManager implements IDataBase {
     public void setZoneId(double lat, double lon, ZoneId zoneId) {
         dbCache.setZoneId(lat, lon, zoneId);
         settingsDbManager.setZoneId(lat, lon, zoneId);
+    }
+
+    @Override
+    public void saveToken(String userId, String token, int hours) {
+        settingsDbManager.saveToken(userId, token, hours);
+        dbCache.saveToken(userId, token, hours);
+    }
+
+    @Override
+    public void clearTokens(String userId) {
+        settingsDbManager.clearTokens(userId);
+        dbCache.clearTokens(userId);
+    }
+
+    public Token getToken(String token) {
+        return dbCache.getToken(token);
+    }
+
+    private void loadTokens() {
+        Token[] tokens = settingsDbManager.getTokens();
+        dbCache.saveTokens(tokens);
     }
 
     @Override
@@ -370,9 +395,25 @@ public class DataManager implements IDataBase {
         }
     }
 
+    public RaidSpawn getRaidForGym(String gymId) {
+        for (ScanDBManager scanDBManager : scanDBManagers) {
+            RaidSpawn raidSpawn = scanDBManager.getRaidForGym(gymId);
+            if (raidSpawn != null) {
+                return raidSpawn;
+            }
+        }
+        return  null;
+    }
+
     public void getCurrentRaids(boolean firstRun) {
         for (ScanDBManager scanDBManager : scanDBManagers) {
             new Thread(() -> scanDBManager.getCurrentRaids(firstRun)).start();
+        }
+    }
+
+    public void updateFortSightings(String fortsId){
+        for (ScanDBManager scanDBManager : scanDBManagers) {
+            scanDBManager.updateFortSightings(fortsId);
         }
     }
 }

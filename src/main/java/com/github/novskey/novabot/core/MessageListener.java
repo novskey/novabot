@@ -1,6 +1,9 @@
 package com.github.novskey.novabot.core;
 
+import com.github.novskey.novabot.Util.UtilityFunctions;
+import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.raids.RaidLobby;
+
 import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
@@ -18,8 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessageListener extends ListenerAdapter {
-    public final String WHITE_GREEN_CHECK = "\u2705";
-
+    public final String NUMBER_1 = "\u0031\u20E3";
+    public final String NUMBER_2 = "\u0032\u20E3";
+    public final String NUMBER_3 = "\u0033\u20E3";
+    public final String NUMBER_4 = "\u0034\u20E3";
+    public final String NUMBER_5 = "\u0035\u20E3";
 
     private Map<Long, Message> messageMap;
     private NovaBot novaBot;
@@ -151,7 +157,7 @@ public class MessageListener extends ListenerAdapter {
                             RaidLobby lobby = novaBot.lobbyManager.getLobbyByChannelId(newInvite.getChannel().getId());
 
                             if (lobby != null) {
-                                lobby.joinLobby(member.getUser().getId());
+                                lobby.joinLobby(member.getUser().getId(), 1, null, false);
                             }
                             break;
                         }

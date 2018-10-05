@@ -8,6 +8,9 @@ import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
 import com.github.novskey.novabot.raids.RaidSpawn;
+import com.github.novskey.novabot.raids.RaidLobbyMember;
+import com.github.novskey.novabot.api.Token;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +22,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SettingsDBManager implements IDataBase {
@@ -26,7 +30,6 @@ public class SettingsDBManager implements IDataBase {
 
     Calendar utcCalendar = Calendar.getInstance(TimeZone.getTimeZone(UtilityFunctions.UTC));
 
-    public final HashMap<String, RaidSpawn> knownRaids = new HashMap<>();
     private StringBuilder blacklistQuery = new StringBuilder();
     private final NovaBot novaBot;
     private java.lang.String scanUrl;
@@ -413,7 +416,7 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void endLobby(String lobbyCode) {
+    public void endLobby(String lobbyCode, String gymId) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "DELETE FROM raidlobby WHERE lobby_id = ?")
@@ -423,13 +426,13 @@ public class SettingsDBManager implements IDataBase {
         } catch (SQLException e) {
             dbLog.error("Error executing endLobby",e);
         }
+        if (gymId != null) {
+            novaBot.dataManager.updateFortSightings(gymId);
+        }
     }
 
     public ArrayList<RaidLobby> getActiveLobbies() {
         ArrayList<RaidLobby> activeLobbies = new ArrayList<>();
-
-        ArrayList<String> toDelete = null;
-
 
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -440,7 +443,8 @@ public class SettingsDBManager implements IDataBase {
 
 
             while (rs.next()) {
-                String lobbyCode = String.format("%04d", rs.getInt(1));
+            	    int lobbyId = rs.getInt(1);
+                String lobbyCode = String.format("%04d", lobbyId);
                 String gymId = rs.getString(2);
                 String channelId = rs.getString(3);
                 String roleId = rs.getString(4);
@@ -449,32 +453,25 @@ public class SettingsDBManager implements IDataBase {
 
                 dbLog.info(String.format("Found lobby with info %s,%s,%s,%s in the db, checking for known raid", lobbyCode, gymId, channelId, roleId));
 
-                RaidSpawn spawn = knownRaids.get(gymId);
+                
+                RaidSpawn spawn = novaBot.getDataManager().getKnownRaids().get(gymId);
 
                 if (spawn == null) {
-                    dbLog.warn(String.format("Couldn't find a known raid for gym id %s which was found as an active raid lobby, queuing for deletion", gymId));
-                    if (toDelete == null) {
-                        toDelete = new ArrayList<>();
-                    }
+                    dbLog.warn(String.format("Couldn't find a known raid for gym id %s which was found as an active raid lobbyo, deleting", gymId));
 
-                    toDelete.add(lobbyCode);
+                    RaidLobby lobby = new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, null, true);
                 } else {
                     dbLog.info(String.format("Found a raid for gym id %s, lobby code %s", gymId, lobbyCode));
-                    RaidLobby lobby = new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, true);
+                    RaidLobby lobby = new RaidLobby(spawn, lobbyCode, novaBot, channelId, roleId, inviteCode, null, true);
                     lobby.nextTimeLeftUpdate = nextTimeLeftUpdate;
-                    lobby.loadMembers();
+                    lobby.loadMembers(getMembers(lobbyId));
+                    lobby.lobbyChatIds = getLobbyChats(lobbyId);
 
                     activeLobbies.add(lobby);
                 }
             }
         } catch (SQLException e) {
             dbLog.error("Error executing getActiveLobbies",e);
-        }
-
-
-        if (toDelete != null) {
-            dbLog.info("Deleting non-existent lobbies");
-            endLobbies(toDelete);
         }
 
         return activeLobbies;
@@ -748,7 +745,7 @@ public class SettingsDBManager implements IDataBase {
             offset++;
             statement.setInt(geofences + offset, pokeSpawn.cp == null ? 0 : pokeSpawn.cp);
             dbLog.debug(statement.toString());
-            System.out.println(statement);
+            // System.out.println(statement);
             final ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 ids.add(rs.getString(1));
@@ -967,22 +964,23 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void newLobby(String lobbyCode, String gymId, int memberCount, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode) {
+    public void newLobby(String lobbyCode, String gymId, String channelId, String roleId, long nextTimeLeftUpdate, String inviteCode, HashSet<RaidLobbyMember> members, String[] lobbyChatIds) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO raidlobby (lobby_id, gym_id, members, channel_id, role_id, next_timeleft_update,invite_code) VALUES (?,?,?,?,?,?,?)")
+                     "INSERT INTO raidlobby (lobby_id, gym_id, channel_id, role_id, next_timeleft_update, invite_code) VALUES (?,?,?,?,?,?)")
         ) {
             statement.setInt(1, Integer.parseInt(lobbyCode));
             statement.setString(2, gymId);
-            statement.setInt(3, memberCount);
-            statement.setString(4, channelId);
-            statement.setString(5, roleId);
-            statement.setInt(6, (int) nextTimeLeftUpdate);
-            statement.setString(7, inviteCode);
+            statement.setString(3, channelId);
+            statement.setString(4, roleId);
+            statement.setInt(5, (int) nextTimeLeftUpdate);
+            statement.setString(6, inviteCode);
             statement.executeUpdate();
         } catch (SQLException e) {
             dbLog.error("Error executing newLobby",e);
         }
+        setMembers(Integer.parseInt(lobbyCode), members);
+        setLobbyChats(Integer.parseInt(lobbyCode), lobbyChatIds);
     }
 
     @Override
@@ -1153,19 +1151,23 @@ public class SettingsDBManager implements IDataBase {
     }
 
     @Override
-    public void updateLobby(String lobbyCode, int memberCount, int nextTimeLeftUpdate, String inviteCode) {
+    public void updateLobby(String lobbyCode, int nextTimeLeftUpdate, String inviteCode, String roleId, String channelId, HashSet<RaidLobbyMember> members, String gymId, String[] lobbyChatIds) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE raidlobby SET members = ?, next_timeleft_update = ?, invite_code = ? WHERE lobby_id = ?")
+                     "UPDATE raidlobby SET next_timeleft_update = ?, invite_code = ?, role_id = ?, channel_id = ? WHERE lobby_id = ?")
         ) {
-            statement.setInt(1, memberCount);
-            statement.setInt(2, nextTimeLeftUpdate);
-            statement.setString(3, inviteCode);
-            statement.setInt(4, Integer.parseInt(lobbyCode));
+            statement.setInt(1, nextTimeLeftUpdate);
+            statement.setString(2, inviteCode);
+            statement.setString(3, roleId);
+            statement.setString(4, channelId);
+            statement.setInt(5, Integer.parseInt(lobbyCode));
             statement.executeUpdate();
         } catch (SQLException e) {
             dbLog.error("Error executing updateLobby",e);
         }
+        setMembers(Integer.parseInt(lobbyCode), members);
+        setLobbyChats(Integer.parseInt(lobbyCode), lobbyChatIds);
+        novaBot.dataManager.updateFortSightings(gymId);
     }
 
     private void endLobbies(ArrayList<String> toDelete) {
@@ -1417,31 +1419,32 @@ public class SettingsDBManager implements IDataBase {
         return presets;
     }
 
-    public ConcurrentHashMap<String,DbLobby> dumpRaidLobbies() {
+    /*public ConcurrentHashMap<String,DbLobby> dumpRaidLobbies() {
         ConcurrentHashMap<String, DbLobby> lobbies = new ConcurrentHashMap<>();
 
         try (Connection connection = getNbConnection();
              Statement statement = connection.createStatement())
         {
-            ResultSet rs = statement.executeQuery("SELECT lobby_id, gym_id, members, role_id, channel_id, next_timeleft_update, invite_code FROM raidlobby");
+            ResultSet rs = statement.executeQuery("SELECT lobby_id, gym_id, role_id, channel_id, next_timeleft_update, invite_code FROM raidlobby");
 
+            
             while (rs.next()){
                 int lobbyID = rs.getInt(1);
                 String gymId = rs.getString(2);
-                int members = rs.getInt(3);
-                String roleId = rs.getString(4);
-                String channelId = rs.getString(5);
-                int nextTimeLeftUpdate = rs.getInt(6);
-                String inviteCode = rs.getString(7);
-
-                lobbies.put(String.format("%04d", lobbyID), new DbLobby(gymId,members,channelId,roleId,nextTimeLeftUpdate,inviteCode));
+                String roleId = rs.getString(3);
+                String channelId = rs.getString(4);
+                int nextTimeLeftUpdate = rs.getInt(5);
+                String inviteCode = rs.getString(6);
+                HashSet<RaidLobbyMember> members = getMembers(lobbyID);
+                
+                lobbies.put(String.format("%04d", lobbyID), new DbLobby(gymId,channelId,roleId,nextTimeLeftUpdate,inviteCode,members));
             }
         } catch (SQLException e) {
             dbLog.error("Error executing dumpRaidLobbies",e);
         }
 
         return lobbies;
-    }
+    }*/
 
     public ConcurrentHashMap<SpawnPoint,SpawnInfo> dumpSpawnInfo() {
         ConcurrentHashMap<SpawnPoint, SpawnInfo> spawnInfo = new ConcurrentHashMap<>();
@@ -1524,5 +1527,195 @@ public class SettingsDBManager implements IDataBase {
         }
 
         return spawnInfo;
+    }
+    
+    public HashSet<RaidLobbyMember> getMembers(int lobbyId) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT user_id, count, time FROM raidlobby_members WHERE lobby_id = ?"))
+        {
+            statement.setInt(1, lobbyId);
+            final ResultSet rs = statement.executeQuery();
+            
+            HashSet<RaidLobbyMember> members = new HashSet<RaidLobbyMember>();
+            while (rs.next()) {
+                String   memberId  = rs.getString(1);
+                int      count   = rs.getInt(2);
+                String   time    = rs.getString(3);
+
+                members.add(new RaidLobbyMember(memberId, count, time));
+            }
+            return members;
+        } catch (SQLException e) {
+            dbLog.error("Error executing getMembers",e);
+        }
+        return null;
+    }
+    
+    public void deleteAllMembers(int lobbyId) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                 "DELETE FROM raidlobby_members WHERE lobby_id = ?")
+        ) {
+            statement.setInt(1, lobbyId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing deleteAllMembers",e);
+        }
+    }
+    
+    public void setMembers(int lobbyId, HashSet<RaidLobbyMember> members) {
+    		deleteAllMembers(lobbyId);
+    		
+    		if (members.size() > 0) {
+	    		String sql = "INSERT INTO raidlobby_members (lobby_id, user_id, count, time) "
+	    	               + "VALUES ";
+	    		boolean first = true;
+	    		for (int i = 0; i < members.size(); i++) {
+	    			if (first) {
+	    				first = false;
+	    			} else {
+	    				sql += ",";
+	    			}
+				sql += "(?, ?, ?, ?)";
+			}
+	    		
+	    		System.out.println(sql);
+	    		
+	    		try (Connection connection = getNbConnection();
+	             PreparedStatement statement = connection.prepareStatement(sql);
+	        ) {
+	    			int i = 0;
+	    			for (RaidLobbyMember member : members) {
+	    				System.out.println("adding member");
+	        			statement.setInt(i*4 + 1, lobbyId);
+	        			statement.setString(i*4 + 2, member.memberId);
+	        			statement.setInt(i*4 + 3, member.count);
+	        			statement.setString(i*4 + 4, member.time);
+	        			i++;
+	        		}
+	            statement.executeUpdate();
+	        } catch (SQLException e) {
+	            dbLog.error("Error executing setMembers",e);
+	        }
+        }
+    }
+
+    public void saveToken(String userId, String token, int hours) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT INTO token (token, valid_date, user_id) VALUES (?, ?, ?)")
+        ) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.HOUR, hours);
+            final Timestamp timestamp = new Timestamp(calendar.getTime().getTime());
+
+            statement.setString(1, token);
+            statement.setTimestamp(2, timestamp);
+            statement.setString(3, userId);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing saveToken",e);
+        }
+    }
+
+    public void clearTokens(String userId) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "DELETE FROM token WHERE user_id = ?")
+        ) {
+            statement.setString(1, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing clearTokens",e);
+        }
+    }
+
+    public Token[] getTokens() {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT token, valid_date, user_id FROM token"))
+        {
+            final ResultSet rs = statement.executeQuery();
+
+
+            ArrayList<Token> tokens = new ArrayList<Token>();
+            while (rs.next()) {
+                String    token     = rs.getString(1);
+                Timestamp validDate = rs.getTimestamp(2);
+                String    userId    = rs.getString(3);
+
+                tokens.add(new Token(token, userId, new Date(validDate.getTime())));
+            }
+            return tokens.toArray(new Token[0]);
+        } catch (SQLException e) {
+            dbLog.error("Error executing getTokens",e);
+        }
+        return null;
+    }
+
+    public String[] getLobbyChats(int lobbyId) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT message_id FROM raidlobby_lobbychat WHERE lobby_id = ?"))
+        {
+            statement.setInt(1, lobbyId);
+            final ResultSet rs = statement.executeQuery();
+
+            ArrayList<String> lobbyChatIds = new ArrayList<>();
+            while (rs.next()) {
+                String lobbyChatId = rs.getString(1);
+                lobbyChatIds.add(lobbyChatId);
+            }
+            return lobbyChatIds.toArray(new String[0]);
+        } catch (SQLException e) {
+            dbLog.error("Error executing getLobbyChats",e);
+        }
+        return null;
+    }
+
+    public void deleteAllLobbyChats(int lobbyId) {
+        try (Connection connection = getNbConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "DELETE FROM raidlobby_lobbychat WHERE lobby_id = ?")
+        ) {
+            statement.setInt(1, lobbyId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            dbLog.error("Error executing deleteAllLobbyChats",e);
+        }
+    }
+
+    public void setLobbyChats(int lobbyId, String[] lobbyChatIds) {
+        deleteAllLobbyChats(lobbyId);
+
+        if (lobbyChatIds != null && lobbyChatIds.length > 0) {
+            String sql = "INSERT INTO raidlobby_lobbychat (lobby_id, message_id) "
+                    + "VALUES ";
+            boolean first = true;
+            for (int i = 0; i < lobbyChatIds.length; i++) {
+                if (first) {
+                    first = false;
+                } else {
+                    sql += ",";
+                }
+                sql += "(?, ?)";
+            }
+
+            System.out.println(sql);
+
+            try (Connection connection = getNbConnection();
+                 PreparedStatement statement = connection.prepareStatement(sql);
+            ) {
+                int i = 0;
+                for (String lobbyChatId : lobbyChatIds) {
+                    System.out.println("adding member");
+                    statement.setInt(i*2 + 1, lobbyId);
+                    statement.setString(i*2 + 2, lobbyChatId);
+                    i++;
+                }
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                dbLog.error("Error executing setLobbyChats",e);
+            }
+        }
     }
 }

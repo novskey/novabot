@@ -3,6 +3,7 @@ package com.github.novskey.novabot.core;
 import com.github.novskey.novabot.Util.CommandLineOptions;
 import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.Util.UtilityFunctions;
+import com.github.novskey.novabot.api.ApiManager;
 import com.github.novskey.novabot.data.DataManager;
 import com.github.novskey.novabot.data.Preset;
 import com.github.novskey.novabot.data.SpawnLocation;
@@ -19,6 +20,7 @@ import com.github.novskey.novabot.raids.RaidLobby;
 import net.dv8tion.jda.core.*;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.security.SecureRandom;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import static com.github.novskey.novabot.Util.StringLocalizer.getLocalString;
 import static com.github.novskey.novabot.core.Spawn.printFormat24hr;
@@ -38,7 +42,11 @@ import static com.github.novskey.novabot.parser.ArgType.CommandName;
 
 public class NovaBot {
 
-    private final String WHITE_GREEN_CHECK = "\u2705";
+    public final String NUMBER_1 = "\u0031\u20E3";
+    public final String NUMBER_2 = "\u0032\u20E3";
+    public final String NUMBER_3 = "\u0033\u20E3";
+    public final String NUMBER_4 = "\u0034\u20E3";
+    public final String NUMBER_5 = "\u0035\u20E3";
     public final Logger novabotLog = LoggerFactory.getLogger("novabot");
     public final ConcurrentHashMap<String, ZonedDateTime> lastUserRoleChecks = new ConcurrentHashMap<>();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -96,15 +104,6 @@ public class NovaBot {
 
     public NovaBot() {
         this(new CommandLineOptions());
-    }
-
-
-    public void alertRaidChats(String[] raidChatIds, String message) {
-        for (String raidChatId : raidChatIds) {
-            guild.getTextChannelById(raidChatId).sendMessageFormat(message).queue(
-                    m -> m.addReaction(WHITE_GREEN_CHECK).queue()
-            );
-        }
     }
 
     public DataManager getDataManager() {
@@ -241,11 +240,59 @@ public class NovaBot {
             channel.sendMessageFormat("%s, %s", author, getLocalString("UnPauseMessage")).queue();
             return;
         }
+        
+        if (msg.startsWith(getLocalString("GetTokenCommand"))) {
+        		char[] alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+            String token = RandomStringUtils.random(
+            		128, 
+            		0, 
+            		alphabet.length, 
+            		false,
+            		false,
+            		alphabet, 
+            		new SecureRandom()
+        		);
+            final String hoursString = msg.substring(msg.indexOf(" ") + 1).trim();
+            int hoursN = 8760;
+            try {
+            		int hours = Integer.parseInt(hoursString);
+            		if (hours > 0) {
+            			hoursN = hours;
+            		}
+            } catch (NumberFormatException e) {}
+            final int hours = hoursN;
+            
+            dataManager.saveToken(author.getId(), token, hours);
+            if (channel.getType() != ChannelType.PRIVATE) {
+                channel.sendMessageFormat("%s, %s", author, getLocalString("SendPrivateMessage")).queue();
+            }
+            author.openPrivateChannel().queue((privateChannel) ->
+            {
+            		privateChannel.sendMessageFormat("%s, %s", author, getLocalString("GetTokenMessage").replace("<token>", token).replace("<hours>", String.valueOf(hours))).queue();
+            });
+            return;
+        }
+
+        if (msg.equals(getLocalString("ClearTokensCommand"))) {
+            dataManager.clearTokens(author.getId());
+            channel.sendMessageFormat("%s, %s", author, getLocalString("ClearTokensMessage")).queue();
+            return;
+        }
 
         if (msg.startsWith(getLocalString("JoinRaidCommand")) && getConfig().isRaidOrganisationEnabled()) {
-
-            String groupCode = msg.substring(msg.indexOf(" ") + 1).trim();
-
+        	
+            String[] splited = msg.split("\\s+");
+            String groupCode = "";
+            	if (splited.length >= 2) {
+            		groupCode = splited[1];
+            	}
+            	int groupSize = 1;
+            	if (splited.length >= 3) {
+            		try {
+            			groupSize = Integer.parseInt(splited[2]);
+            		} catch (NumberFormatException e) {}
+            	}
+            
             RaidLobby lobby = lobbyManager.getLobby(groupCode);
 
             if (lobby == null) {
@@ -257,21 +304,12 @@ public class NovaBot {
                     return;
                 }
 
-                lobby.joinLobby(author.getId());
-
-                String alertMsg = getLocalString("AlertRaidChatsMessage");
-                alertMsg = alertMsg.replaceAll("<user>", author.getAsMention());
-                alertMsg = alertMsg.replaceAll("<boss-or-egg>", (lobby.spawn.bossId == 0 ? String.format("%s %s %s", getLocalString("Level"), lobby.spawn.raidLevel, getLocalString("Egg")) : lobby.spawn.getProperties().get("pkmn")));
-                alertMsg = alertMsg.replaceAll("<channel>", lobby.getChannel().getAsMention());
-                alertMsg = alertMsg.replaceAll("<membercount>", String.valueOf(lobby.memberCount()));
-                alertMsg = alertMsg.replaceAll("<lobbycode>", groupCode);
-
-                alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), alertMsg);
+                lobby.joinLobby(author.getId(), groupSize, null, false);
 
                 String joinMsg = getLocalString("JoinRaidLobbyMessage");
                 joinMsg = joinMsg.replaceAll("<channel>", lobby.getChannel().getAsMention());
                 joinMsg = joinMsg.replaceAll("<lobbysize>", String.valueOf(lobby.memberCount()));
-                channel.sendMessageFormat("%s %s", joinMsg).queue();
+                channel.sendMessageFormat("%s %s", author ,joinMsg).queue();
             }
 
             return;
@@ -845,27 +883,34 @@ public class NovaBot {
         if (!msg.startsWith(getLocalString("Prefix")) || author.isBot()) return;
 
         if (msg.startsWith(getLocalString("JoinRaidCommand"))) {
-            String groupCode = msg.substring(msg.indexOf(" ") + 1).trim();
+            
+        		String[] splited = msg.split("\\s+");
+    			String groupCode = "";
+            	if (splited.length >= 2) {
+            		groupCode = splited[1];
+            	}
+            	int groupSize = 1;
+            	if (splited.length >= 3) {
+            		try {
+            			groupSize = Integer.parseInt(splited[2]);
+            		} catch (NumberFormatException e) {}
+            	}
 
             RaidLobby lobby = lobbyManager.getLobby(groupCode);
 
             if (lobby == null) {
-                textChannel.sendMessageFormat("%s sorry, there are no active raid lobbies with the lobby code `%s`", author, groupCode).queue();
+                textChannel.sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyNoLobby"), author, groupCode).queue();
             } else {
                 if (lobby.containsUser(author.getId())) {
-                    textChannel.sendMessageFormat("%s you are already in that raid lobby!", author).queue();
+                    textChannel.sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyAllreadyInLoby"), author).queue();
                     return;
                 }
 
-                lobby.joinLobby(author.getId());
-                alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                        "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the ✅ or by typing `!joinraid %s`.",
-                        author.getAsMention(),
-                        (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                        lobby.getChannel().getAsMention(),
-                        lobby.memberCount(),
-                        lobby.lobbyCode
-                ));
+                lobby.joinLobby(author.getId(), groupSize, null, false);
+		    		String numberString = "";
+		    		if (groupSize > 1) {
+		    			numberString = " (+" + (groupSize - 1) + ")";
+		    		}
             }
 
 //        } else if (msg.equals("!activeraids")) {
@@ -923,6 +968,9 @@ public class NovaBot {
                     getLocalString("RaidLobbyHelpStart"),
                     getLocalString("LeaveCommand"),
                     getLocalString("MapCommand"),
+                    getLocalString("SetTimeCommand") + " HH:MM",
+                    getLocalString("TimesCommand"),
+                    getLocalString("SetCountCommand") + " X",
                     getLocalString("TimeLeftCommand"),
                     getLocalString("StatusCommand"),
                     getLocalString("BossCommand"),
@@ -936,10 +984,102 @@ public class NovaBot {
             lobby.leaveLobby(author.getId());
             return;
         }
+        
+        if (msg.equals(getLocalString("TimesCommand"))) {
+            lobby.sendTimes(author);
+            return;
+        }
+        
+        if (msg.startsWith(getLocalString("SetCountCommand"))) {
+        		String countString = msg.substring(msg.indexOf(" ") + 1).trim();
+        		
+        		boolean sucess = false;
+        		int count;
+        		try {
+    				count = Integer.parseInt(countString);
+    				if (count > 0) {
+    					sucess = true;
+    				}
+    				
+    			} catch (NumberFormatException e) {
+    				count = 1;
+    			}
+        	
+        		if (sucess) {
+        			lobby.getChannel()
+    				.sendMessageFormat("%s %s", author,
+    						StringLocalizer.getLocalString("CountSet"))
+    				.queue();
+            		lobby.setCount(author.getId(), count);
+        		} else {
+        			lobby.getChannel()
+					.sendMessageFormat("%s %s %s", author,
+							StringLocalizer.getLocalString("ProblemReadingInput"),
+							StringLocalizer.getLocalString("WrongCountFormat"))
+					.queue();
+        		}
+            return;
+        }
 
         if (msg.equals(getLocalString("MapCommand"))) {
             textChannel.sendMessage(lobby.spawn.getProperties().get("gmaps")).queue();
             return;
+        }
+        
+        if (msg.startsWith(getLocalString("SetTimeCommand"))) {
+        		String time = msg.substring(msg.indexOf(" ") + 1).trim();
+             
+        		String[] splited = time.split(":");
+        		if (splited.length != 2) {
+        			lobby.getChannel()
+					.sendMessageFormat("%s %s %s", author,
+							StringLocalizer.getLocalString("ProblemReadingInput"),
+							StringLocalizer.getLocalString("NoTimeSpecified"))
+					.queue();
+        			return;
+        		};
+        		
+        		int hour;
+        		int minute;
+        		boolean valid = false;
+    			try {
+    				hour = Integer.parseInt(splited[0]);
+    				minute = Integer.parseInt(splited[1]);
+    				
+    				if (hour < 0 || hour > 60 || minute < 0 || minute > 60) {
+    					throw new Exception();
+    				}
+    				
+    			} catch (Exception e) {
+        			lobby.getChannel()
+					.sendMessageFormat("%s %s %s", author,
+							StringLocalizer.getLocalString("ProblemReadingInput"),
+							StringLocalizer.getLocalString("WrongTimeFormat"))
+					.queue();
+        			return;
+    			}
+    			
+    			int startHour = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getHour();
+    			int startMinute = lobby.spawn.battleStart.withZoneSameInstant(config.getTimeZone()).getMinute();
+    			int endHour = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getHour();
+    			int endMinute = lobby.spawn.raidEnd.withZoneSameInstant(config.getTimeZone()).getMinute();
+
+    			if (		hour > endHour || 
+    					hour < startHour || 
+    					(hour == endHour && minute > endMinute) ||
+    					(hour == startHour && minute < startMinute)
+    				) {
+    				lobby.getChannel()
+					.sendMessageFormat("%s %s", author,
+							StringLocalizer.getLocalString("TimeOutsideRaid"))
+					.queue();
+    			} else { 
+    				lobby.getChannel()
+					.sendMessageFormat("%s %s", author,
+							StringLocalizer.getLocalString("TimeSet"))
+					.queue();
+	    			lobby.setTime(author.getId(), hour, minute);
+    			}
         }
 
         if (msg.equals(getLocalString("TimeLeftCommand"))) {
@@ -1028,9 +1168,13 @@ public class NovaBot {
 
         botTokenUses.putAll(dataManager.getTokenUses());
 
-        if (getConfig().isRaidOrganisationEnabled()) {
+        if (config.isRaidOrganisationEnabled()) {
             lobbyManager = new LobbyManager(this);
             RaidNotificationSender.setNextId(dataManager.highestRaidLobbyId() + 1);
+        }
+
+        if (config.isApiEnabled()) {
+            ApiManager.setup(getConfig().getApiPort(), this);
         }
     }
 
@@ -1311,13 +1455,7 @@ public class NovaBot {
 
         if (event.getUser().isBot()) return;
 
-        if (!event.getReactionEmote().getName().equals(WHITE_GREEN_CHECK)) return;
-
         Message message = event.getChannel().getMessageById(event.getMessageId()).complete();
-
-        if (!message.getAuthor().isBot()) return;
-
-        novabotLog.debug("white green check reaction added to a bot message that contains an embed!");
 
         String content;
         if (message.getEmbeds().size() > 0) {
@@ -1326,34 +1464,75 @@ public class NovaBot {
             content = message.getContentDisplay();
         }
 
-        int    joinIndex = content.indexOf("!joinraid") + 10;
-        String lobbyCode = content.substring(joinIndex, content.substring(joinIndex).indexOf("`") + joinIndex).trim();
+        if (!message.getAuthor().isBot()) return;
 
-        novabotLog.info("Message clicked was for lobbycode " + lobbyCode);
+        if (content.contains(StringLocalizer.getLocalString("SetTimeCommand"))) {
+            novabotLog.debug("Set time reaction added to a bot message that contains an embed!");
 
-        RaidLobby lobby = lobbyManager.getLobby(lobbyCode);
+            String reaction = event.getReactionEmote().getName();
 
-        if (lobby == null) {
-            event.getChannel().sendMessageFormat("%s, that lobby has ended and cannot be joined.", event.getMember()).queue();
-            return;
-        }
+            int commandIndex = content.indexOf(reaction) + reaction.length() + 1;
+            String time = content.substring(commandIndex, commandIndex + 5).trim();
+            String channeldID = message.getChannel().getId();
+            String userId = event.getUser().getId();
 
-        if (!lobby.containsUser(event.getUser().getId())) {
+            novabotLog.info("Message clicked was for time " + time + " in channeldId " + channeldID);
 
-            lobby.joinLobby(event.getUser().getId());
+            message.getChannel()
+                    .sendMessageFormat("%s %s", event.getUser(),
+                            StringLocalizer.getLocalString("TimeSet"))
+                    .queue();
+            RaidLobby lobby = lobbyManager.getLobbyByChannelId(channeldID);
+            lobby.setTime(userId, time);
 
-            if (event.getChannelType() == ChannelType.PRIVATE) {
-                event.getChannel().sendMessageFormat("%s you have been placed in %s. There are now %s users in the lobby.", event.getUser(), lobby.getChannel(), lobby.memberCount()).queue();
+        } else if (content.contains(StringLocalizer.getLocalString("JoinRaidCommand"))) {
+
+            int groupCount = 1;
+            if (event.getReactionEmote().getName().equals(NUMBER_1)) {
+                groupCount = 1;
+            } else if (event.getReactionEmote().getName().equals(NUMBER_2)) {
+                groupCount = 2;
+            } else if (event.getReactionEmote().getName().equals(NUMBER_3)) {
+                groupCount = 3;
+            } else if (event.getReactionEmote().getName().equals(NUMBER_4)) {
+                groupCount = 4;
+            } else if (event.getReactionEmote().getName().equals(NUMBER_5)) {
+                groupCount = 5;
+            } else {
+                return;
             }
 
-            alertRaidChats(getConfig().getRaidChats(lobby.spawn.getGeofences()), String.format(
-                    "%s joined %s raid in %s. There are now %s users in the lobby. Join the lobby by clicking the ✅ or by typing `!joinraid %s`.",
-                    guild.getMember(event.getUser()).getAsMention(),
-                    (lobby.spawn.bossId == 0 ? String.format("lvl %s egg", lobby.spawn.raidLevel) : lobby.spawn.getProperties().get("pkmn")),
-                    lobby.getChannel().getAsMention(),
-                    lobby.memberCount(),
-                    lobby.lobbyCode
-            ));
+            novabotLog.debug("Join reaction added to a bot message that contains an embed!");
+
+            int    joinIndex = content.indexOf(StringLocalizer.getLocalString("JoinRaidCommand")) + 10;
+            String lobbyCode = content.substring(joinIndex, content.substring(joinIndex).indexOf(" ") + joinIndex).trim();
+
+            novabotLog.info("Message clicked was for lobbycode " + lobbyCode + " with group size of " + groupCount);
+
+            RaidLobby lobby = lobbyManager.getLobby(lobbyCode);
+
+            if (lobby == null) {
+                if (event.getChannelType() == ChannelType.PRIVATE) {
+                    event.getChannel().sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyEnded"), event.getUser());
+                }
+                return;
+            }
+
+            if (!lobby.containsUser(event.getUser().getId())) {
+
+                lobby.joinLobby(event.getUser().getId(), groupCount, null, false);
+
+                if (event.getChannelType() == ChannelType.PRIVATE) {
+                    event.getChannel().sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyPlaced"), event.getUser(), lobby.getChannel(), lobby.memberCount()).queue();
+                }
+
+                String numberString = "";
+                if (groupCount > 1) {
+                    numberString = " (+" + (groupCount - 1) + ")";
+                }
+            } else if (event.getChannelType() == ChannelType.PRIVATE) {
+                event.getChannel().sendMessageFormat("%s " + StringLocalizer.getLocalString("LobbyAllreadyInLoby"), event.getUser()).queue();
+            }
         }
     }
 }
