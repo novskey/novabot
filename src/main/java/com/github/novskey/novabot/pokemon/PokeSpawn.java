@@ -157,14 +157,24 @@ public class PokeSpawn extends Spawn
         getProperties().put("level", String.valueOf(level));
     }
 
-    public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, int weight, int height, Integer gender, Integer form, Integer cp, Integer level, int weather, String encounter_id) {
+    public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, int weight, int height, Integer gender, Integer form, Integer cp, Integer level, int weather, String encounter_id, Long spawn_id, Integer is_wild_spawn) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp,level);
         Weather w = Weather.fromId(weather);
         if (w != null) {
-            getProperties().replace("weather", w.toString());
-            getProperties().replace("weather_icon", w.getEmote());
+            getProperties().put("weather", w.toString());
+            getProperties().put("weather_icon", w.getEmote());
         }
         getProperties().replace("encounter_id",encounter_id);
+        if (spawn_id != null) {
+        	//We had spawnpoint data. No disclaimer.
+        	getProperties().put("expiration_description", "");
+        } else {
+        	String wild_spawn_note = "";
+        	if (is_wild_spawn != null && (Integer)is_wild_spawn == 1) {
+        		wild_spawn_note = " Spawn is wild.";
+        	}
+        	getProperties().put("expiration_description", "Spawnpoint data unavailable for this spawn. Despawn times are only an estimate." + wild_spawn_note);	
+        }
     }
 
     public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, float weight, float height, Integer gender, Integer form, Integer cp, double cpMod, int weather) {

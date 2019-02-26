@@ -55,6 +55,23 @@ public class ReverseGeocoder {
         location.set("neighborhood","unkn");
         location.set("sublocality","unkn");
         location.set("country","unkn");
+        
+        //Only geocode in scan locations.
+        if (lat > 37.13 && lat < 37.99 && lon > -123.02 && lon < -121.45) {
+            //OK to geocode.
+        } else {
+            novaBot.novabotLog.info("Skipping geocode @ " + lat+", "+lon);
+            novaBot.dataManager.setGeocodedLocation(lat, lon, location);
+        	return location;
+        }
+        
+        synchronized (novaBot.getConfig().getGeocodingKeys()) {
+        	if (novaBot.getConfig().getGeocodingKeys().isEmpty()) {
+	            novaBot.novabotLog.info("Out of API keys.");
+	            novaBot.dataManager.setGeocodedLocation(lat, lon, location);
+	        	return location;
+        	}
+        }
 
         String key = getNextKey();
         final GeoApiContext context = novaBot.getConfig().getGeoApis().get(key);
@@ -147,6 +164,8 @@ public class ReverseGeocoder {
         }
         catch (Exception e) {
             novaBot.novabotLog.error("Error executing geocodedLocation",e);
+            //Prevent retrying the same location:
+            novaBot.dataManager.setGeocodedLocation(lat, lon, location);
         }
 
         return location;

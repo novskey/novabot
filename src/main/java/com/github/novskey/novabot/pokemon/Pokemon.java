@@ -159,13 +159,13 @@ public class Pokemon {
     }
 
     public static String getIcon(final int id, Integer form) {
-        String url = "https://bitbucket.org/anzmap/sprites/raw/HEAD/";
+        String url = "https://raw.githubusercontent.com/novabot-sprites/novabot-sprites/master/";
         if (form != null && form != 0){
             url = url +  id + "-" + form;
         } else {
             url += id;
         }
-        return url + ".png?4";
+        return url + ".png?5";
     }
 
     public Location getLocation() {
@@ -173,7 +173,11 @@ public class Pokemon {
     }
 
     public static String getMoveType(int moveId) {
-        return movesInfo.getAsJsonObject(Integer.toString(moveId)).get("type").getAsString();
+    	JsonObject moveInfo = movesInfo.getAsJsonObject(Integer.toString(moveId));
+    	if (moveInfo == null) {
+    		return "unkn";
+    	}
+        return moveInfo.get("type").getAsString();
     }
 
     public static String getSize(int id, float height, float weight) {

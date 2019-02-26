@@ -33,6 +33,8 @@ public class NotificationsManager {
 
             for (int i = 1; i <= novaBot.getConfig().getPokemonThreads(); i++) {
                 new Thread(new PokeNotificationSender(novaBot,i)).start();
+                //Do an equal number of these: 
+                new Thread(new ResearchTaskNotificationSender(novaBot,i)).start();
             }
         }
 

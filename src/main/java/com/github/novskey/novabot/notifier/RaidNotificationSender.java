@@ -9,6 +9,8 @@ import com.github.novskey.novabot.raids.RaidSpawn;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.requests.RestAction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,24 +148,26 @@ public class RaidNotificationSender extends NotificationSender implements Runnab
         if (lastChecked == null || lastChecked.isBefore(currentTime.minusMinutes(10))) {
             localLog.info(String.format("Checking supporter status of %s", user.getName()));
             novaBot.lastUserRoleChecks.put(userID, currentTime);
-            if (checkSupporterStatus(user)) {
-                user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue(
-                        msg -> {
-                            if (showTick) {
-                                msg.addReaction(WHITE_GREEN_CHECK).queue();
-                            }
-                        }
-                ));
+            if (!checkSupporterStatus(user)) {
+            	return;
             }
-        } else {
-            user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue(
-                    msg -> {
-                        if (showTick) {
-                            msg.addReaction(WHITE_GREEN_CHECK).queue();
-                        }
-                    }
-            ));
         }
+
+        user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue(
+                msg -> {
+                    if (showTick) {
+                        msg.addReaction(WHITE_GREEN_CHECK).queue();
+                    }
+                },
+				failure -> {
+					RestAction.DEFAULT_FAILURE.accept(failure);
+        			localLog.info(String.format("Failure in raid sendMessage for %s", user.getName()));
+				}
+        ),
+		failure -> {
+			RestAction.DEFAULT_FAILURE.accept(failure);
+			localLog.info(String.format("Failure in raid openPrivateChannel for %s", user.getName()));
+		});
     }
 
     private void sendChannelAlert(Message message, String channelId, int raidLevel) {

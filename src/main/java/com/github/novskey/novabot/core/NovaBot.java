@@ -1149,7 +1149,7 @@ public class NovaBot {
     private boolean isSupporter(final String userID) {
         final Member member = guild.getMemberById(userID);
 
-        if (member == null || member.getRoles() == null) return false;
+        if (member == null) return false;
 
         for (final Role role : member.getRoles()) {
             if (role == null) continue;

@@ -159,22 +159,23 @@ public class ScanDBManager  {
 
         StringBuilder knownIdQMarks = new StringBuilder();
 
-        if (novaBot.getDataManager().getKnownRaids().size() > 0) {
+        ArrayList<String> knownIds = new ArrayList<>(novaBot.getDataManager().getKnownRaids().keySet());
+
+        if (knownIds.size() > 0) {
             if (scannerDb.getScannerType() == ScannerType.PhilMap || scannerDb.getScannerType() == RocketMap || scannerDb.getScannerType() == SkoodatRocketMap || scannerDb.getScannerType() == SloppyRocketMap) {
                 knownIdQMarks.append("gym.gym_id NOT IN (");
             } else {
                 knownIdQMarks.append("forts.id NOT in (");
             }
-            for (int i = 0; i < novaBot.getDataManager().getKnownRaids().size(); ++i) {
+            for (int i = 0; i < knownIds.size(); ++i) {
                 knownIdQMarks.append("?");
-                if (i != novaBot.getDataManager().getKnownRaids().size() - 1) {
+                if (i != knownIds.size() - 1) {
                     knownIdQMarks.append(",");
                 }
             }
             knownIdQMarks.append(") AND");
         }
 
-        ArrayList<String> knownIds = new ArrayList<>(novaBot.getDataManager().getKnownRaids().keySet());
 
         String sql = null;
 
@@ -268,7 +269,7 @@ public class ScanDBManager  {
         try (Connection connection = getScanConnection();
              PreparedStatement statement = connection.prepareStatement(sql)
         ) {
-            for (int i = 0; i < novaBot.getDataManager().getKnownRaids().size(); i++) {
+            for (int i = 0; i < knownIds.size(); i++) {
                 if (scannerDb.getProtocol().equals("mysql")) {
                     statement.setString(i + 1, knownIds.get(i));
                 } else {
@@ -376,6 +377,7 @@ public class ScanDBManager  {
             dbLog.error("Error executing getCurrentRaids",e);
         }
         dbLog.info(String.format("Returned %s rows", rows));
+        dbLog.info("Known IDs is currently: " + knownIds.toString());
 
     }
 
@@ -438,9 +440,13 @@ public class ScanDBManager  {
                       "       level, " +
                       "       weather_boosted_condition, " +
                       "       encounter_id, " +
-                      "       id " +
+                      "       id, " +
+                      "		  spawn_id," +
+                      "       is_wild_spawn " +
                       "FROM sightings " +
-                      "WHERE cp IS NOT NULL AND (" +
+                      "WHERE " +
+                      //"cp IS NOT NULL AND " +
+                      "(" +
                       (lastCheckedID > 0 ? "id > ? OR " : "") +
                       "updated >= " +
                             (scannerDb.getProtocol().equals("mysql")
@@ -699,8 +705,10 @@ public class ScanDBManager  {
                         weather = rs.getInt(14);
                         String encounter_id = rs.getString(15);
                         long table_id = rs.getLong(16);
+                        Long spawn_id = (Long) rs.getObject(17);
+                        Integer is_wild_spawn = (Integer) rs.getObject(18);
                         lastCheckedID = Math.max(lastCheckedID, table_id);
-                        pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, 0, 0, gender, form, cp, level, weather, encounter_id);
+                        pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, 0, 0, gender, form, cp, level, weather, encounter_id, spawn_id, is_wild_spawn);
 
                         break;
                 }
@@ -714,6 +722,9 @@ public class ScanDBManager  {
                         newSpawns++;
                         novaBot.getDataManager().addHashCode(pokeSpawn.hashCode());
 
+                        if (novaBot.notificationsManager.pokeQueue.size() > 1000) {
+                            dbLog.warn("pokeQueue is getting very large!");
+                        }
                         novaBot.notificationsManager.pokeQueue.add(pokeSpawn);
 //                        pokeSpawns.add(pokeSpawn);
                     } else {

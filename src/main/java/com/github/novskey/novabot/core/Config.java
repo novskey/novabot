@@ -137,6 +137,7 @@ public class Config {
         geoApis.clear();
         for (String s : geocodingKeys) {
             GeoApiContext api = new GeoApiContext();
+            api.setMaxRetries(0);
             api.setApiKey(s);
             geoApis.put(s,api);
         }
@@ -451,11 +452,14 @@ public class Config {
 
     public NotificationLimit getNotificationLimit(Member member) {
         NotificationLimit largest = nonSupporterLimit;
-        for (Role role : member.getRoles()) {
-            NotificationLimit notificationLimit = roleLimits.get(role.getId());
-            if (notificationLimit != null && notificationLimit.sumSize > largest.sumSize){
-                largest = notificationLimit;
-            }
+        if (member != null){
+                for (Role role : member.getRoles()) {
+                        if (role == null) continue;
+                        NotificationLimit notificationLimit = roleLimits.get(role.getId());
+                        if (notificationLimit != null && notificationLimit.sumSize > largest.sumSize){
+                                largest = notificationLimit;
+                        }
+                }
         }
         return largest;
     }
@@ -620,7 +624,7 @@ public class Config {
     public boolean matchesFilter(JsonObject filter, PokeSpawn pokeSpawn, String filterName) {
         JsonElement pokeFilter = searchFilter(filter, UtilityFunctions.capitaliseFirst(Pokemon.getFilterName(pokeSpawn.getFilterId())));
         if (pokeFilter == null) {
-            PokeNotificationSender.notificationLog.info(String.format("pokeFilter %s is null for %s", filterName, pokeSpawn.getProperties().get("pkmn")));
+            //PokeNotificationSender.notificationLog.info(String.format("pokeFilter %s is null for %s", filterName, pokeSpawn.getProperties().get("pkmn")));
             pokeFilter = searchFilter(filter, "Default");
 
             if (pokeFilter == null) {
@@ -631,9 +635,12 @@ public class Config {
         if (pokeFilter.isJsonArray()) {
             JsonArray array = pokeFilter.getAsJsonArray();
             for (JsonElement element : array) {
-                PokeNotificationSender.notificationLog.info(String.format("Checking %s against filter: %s", pokeSpawn.getProperties().get("pkmn"),element));
-                if (processPokeElement(element, pokeSpawn, filterName)) return true;
-                PokeNotificationSender.notificationLog.info(String.format("%s didn't pass.",pokeSpawn.getProperties().get("pkmn")));
+                //PokeNotificationSender.notificationLog.info(String.format("Checking %s against filter: %s", pokeSpawn.getProperties().get("pkmn"),element));
+                if (processPokeElement(element, pokeSpawn, filterName)) {
+                	PokeNotificationSender.notificationLog.info(String.format("Spawn %s matches filter %s", pokeSpawn.getProperties().get("pkmn"),element));
+                    return true;
+                }
+                //PokeNotificationSender.notificationLog.info(String.format("%s didn't pass.",pokeSpawn.getProperties().get("pkmn")));
             }
         }else {
             return processPokeElement(pokeFilter, pokeSpawn, filterName);
@@ -723,9 +730,9 @@ public class Config {
                 }
 
                 if (passed) {
-                    PokeNotificationSender.notificationLog.info(String.format("Pokemon between specified %s (%s,%s)", filterType, infOrNum(min), infOrNum(max)));
+                    //PokeNotificationSender.notificationLog.info(String.format("Pokemon between specified %s (%s,%s)", filterType, infOrNum(min), infOrNum(max)));
                 } else {
-                    PokeNotificationSender.notificationLog.info(String.format("Pokemon (%s %s) not between specified %s (%s,%s). filter %s", filterType, failed, filterType, infOrNum(min), infOrNum(max), filterName));
+                    //PokeNotificationSender.notificationLog.info(String.format("Pokemon (%s %s) not between specified %s (%s,%s). filter %s", filterType, failed, filterType, infOrNum(min), infOrNum(max), filterName));
                     return false;
                 }
             }

@@ -6,10 +6,11 @@ import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.maps.GeofenceIdentifier;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
-import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.requests.RestAction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,15 +33,12 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
     public void run() {
         try {
             while (novaBot.getConfig().pokemonEnabled()) {
-            	
-
-        	if (false) {
                 PokeSpawn pokeSpawn = novaBot.notificationsManager.pokeQueue.take();
-                localLog.info("Checking against global filter: " + pokeSpawn.id);
+                //localLog.info("Checking against global filter: " + pokeSpawn.id);
 
                 if(novaBot.getConfig().useGlobalFilter()) {
                     if (novaBot.getConfig().passesGlobalFilter(pokeSpawn)) {
-                        localLog.info("Passed global filter, continuing processing");
+                        //localLog.info("Passed global filter, continuing processing");
                     } else {
                         localLog.info("Didn't pass global filter, skipping spawn");
                         continue;
@@ -106,62 +104,6 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
                         }
                     }
                 }
-            }
-            
-            {
-                localLog.info("Waiting to retrieve object from researchTaskQueue");
-		        //XXX Move to its own notifier.
-		        ResearchTaskSpawn researchTaskSpawn = novaBot.notificationsManager.researchTaskQueue.take();
-	            
-		        /*
-	            localLog.info("Checking against global filter: " + researchTaskSpawn.reward);
-                if(novaBot.getConfig().useGlobalFilter()) {
-                    if (novaBot.getConfig().passesGlobalFilter(researchTaskSpawn)) {
-                        localLog.info("Passed global filter, continuing processing");
-                    } else {
-                        localLog.info("Didn't pass global filter, skipping spawn");
-                        continue;
-                    }
-                }
-                */
-
-                localLog.info("Checking if anyone wants research task: " + researchTaskSpawn.getProperties());
-                
-                HashSet<String> toNotify = new HashSet<>(novaBot.dataManager.getUserIDsToNotify(researchTaskSpawn));
-                ArrayList<String> matchingPresets = novaBot.getConfig().findMatchingPresets(researchTaskSpawn);
-
-                for (String preset : matchingPresets) {
-                    toNotify.addAll(novaBot.dataManager.getUserIDsToNotify(preset, researchTaskSpawn));
-                }
-
-                if (toNotify.size() == 0) {
-                    localLog.info("no-one wants this research task");
-                } else {
-                    final Message message = researchTaskSpawn.buildMessage(novaBot.getFormatting());
-                    toNotify.forEach(userID -> this.notifyUser(userID, message));
-                }
-	           
-	            for (GeofenceIdentifier geofenceIdentifier : researchTaskSpawn.getGeofences()) {
-	                ArrayList<AlertChannel> channels = novaBot.getConfig().getResearchTaskChannels(geofenceIdentifier);
-	                if (channels == null) continue;
-	                for (AlertChannel channel : channels) {
-	                    if (channel != null) {
-	                    	checkAndPostResearchTask(channel, researchTaskSpawn);
-	                    }
-	                }
-	            }
-	            ArrayList<AlertChannel> noGeofences = novaBot.getConfig().getNonGeofencedResearchTaskChannels();
-
-	            if (noGeofences != null) {
-	                for (AlertChannel channel : noGeofences) {
-	                    if (channel != null) {
-	                    	checkAndPostResearchTask(channel, researchTaskSpawn);
-	                    }
-	                }
-	            }
-            
-            }
-            
             } //while loop
         } catch (Exception e) {
             localLog.error("An exception ocurred in poke-notif-sender", e);
@@ -174,36 +116,37 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
             localLog.info("Pokemon passed filter, posting to Discord");
             sendChannelAlert(pokeSpawn.buildMessage(channel.getFormattingName()), channel.getChannelId());
         } else {
-            localLog.info(String.format("Pokemon didn't pass %s filter, not posting", channel.getFilterName()));
+            //localLog.info(String.format("Pokemon didn't pass %s filter, not posting", channel.getFilterName()));
         }
     }
     
-
-    private void checkAndPostResearchTask(AlertChannel channel, ResearchTaskSpawn researchTaskSpawn) {
-    	if (novaBot.getConfig().matchesFilter(novaBot.getConfig().getResearchTaskFilters().get(channel.getFilterName()), researchTaskSpawn, channel.getFilterName())) {
-            localLog.info("Research task passed filter, posting to channel "+channel.getChannelId());
-            sendChannelAlert(researchTaskSpawn.buildMessage(channel.getFormattingName()), channel.getChannelId());
-        } else {
-            localLog.info(String.format("Research task didn't pass %s filter, not posting", channel.getFilterName()));
-        }
-    }
-
     private void notifyUser(final String userID, final Message message) {
         final User user = novaBot.getUserJDA(userID).getUserById(userID);
         if (user == null) return;
-
 
         ZonedDateTime lastChecked = novaBot.lastUserRoleChecks.get(userID);
         ZonedDateTime currentTime = ZonedDateTime.now(UtilityFunctions.UTC);
         if (lastChecked == null || lastChecked.isBefore(currentTime.minusMinutes(10))) {
             localLog.info(String.format("Checking supporter status of %s", user.getName()));
             novaBot.lastUserRoleChecks.put(userID, currentTime);
-            if (checkSupporterStatus(user)) {
-                user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
+            if (!checkSupporterStatus(user)) {
+            		return;
             }
-        } else {
-            user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
         }
+        localLog.info(String.format("Sending to %s", user.getName()));
+        user.openPrivateChannel().queue(
+        		channel -> channel.sendMessage(message).queue(
+        					RestAction.DEFAULT_SUCCESS,
+            				failure -> {
+            						RestAction.DEFAULT_FAILURE.accept(failure);
+                        			localLog.info(String.format("Failure in sendMessage for %s", user.getName()));
+            				}
+        				),
+        		failure -> {
+        			RestAction.DEFAULT_FAILURE.accept(failure);
+        			localLog.info(String.format("Failure in openPrivateChannel for %s", user.getName()));
+        		}
+        );
     }
 
     private void sendChannelAlert(Message message, String channelId) {
