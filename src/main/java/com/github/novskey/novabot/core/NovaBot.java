@@ -514,6 +514,7 @@ public class NovaBot {
         if (matchingCommand.contains("raid")) {
             Raid[] raids = userCommand.buildRaids();
 
+            /* Allow adding raid filters for raidbosses that might not be released yet
             ArrayList<String> nonRaidBosses = new ArrayList<>();
 
             for (Pokemon pokemon : userCommand.getUniquePokemon()) {
@@ -533,6 +534,7 @@ public class NovaBot {
                 channel.sendMessage(message.toString()).queue();
                 return;
             }
+            */
 
             switch (matchingCommand) {
                 case "addraidcommand": {

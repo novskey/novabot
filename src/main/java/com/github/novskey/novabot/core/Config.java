@@ -622,7 +622,16 @@ public class Config {
     }
 
     public boolean matchesFilter(JsonObject filter, PokeSpawn pokeSpawn, String filterName) {
-        JsonElement pokeFilter = searchFilter(filter, UtilityFunctions.capitaliseFirst(Pokemon.getFilterName(pokeSpawn.getFilterId())));
+    	//Check for 'PVP' filter
+    	JsonElement pvpFilter = searchFilter(filter, "PVP");
+    	if (pvpFilter != null) {
+    		if (pokeSpawn.getProperties().containsKey("pvpdescription")) {
+    			PokeNotificationSender.notificationLog.info(String.format("Spawn %s matches 'PVP' filter.", pokeSpawn.getProperties().get("pkmn")));
+                return true;
+            }
+    	}
+    	
+    	JsonElement pokeFilter = searchFilter(filter, UtilityFunctions.capitaliseFirst(Pokemon.getFilterName(pokeSpawn.getFilterId())));
         if (pokeFilter == null) {
             //PokeNotificationSender.notificationLog.info(String.format("pokeFilter %s is null for %s", filterName, pokeSpawn.getProperties().get("pkmn")));
             pokeFilter = searchFilter(filter, "Default");

@@ -442,7 +442,8 @@ public class ScanDBManager  {
                       "       encounter_id, " +
                       "       id, " +
                       "		  spawn_id," +
-                      "       is_wild_spawn " +
+                      "       is_wild_spawn, " +
+                      "       expire_timestamp_verified " +
                       "FROM sightings " +
                       "WHERE " +
                       //"cp IS NOT NULL AND " +
@@ -707,8 +708,9 @@ public class ScanDBManager  {
                         long table_id = rs.getLong(16);
                         Long spawn_id = (Long) rs.getObject(17);
                         Integer is_wild_spawn = (Integer) rs.getObject(18);
+                        Boolean expire_timestamp_verified = (Boolean) rs.getObject(19);
                         lastCheckedID = Math.max(lastCheckedID, table_id);
-                        pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, 0, 0, gender, form, cp, level, weather, encounter_id, spawn_id, is_wild_spawn);
+                        pokeSpawn = new PokeSpawn(id, lat, lon, disappearTime, attack, defense, stamina, move1, move2, 0, 0, gender, form, cp, level, weather, encounter_id, spawn_id, is_wild_spawn, expire_timestamp_verified);
 
                         break;
                 }

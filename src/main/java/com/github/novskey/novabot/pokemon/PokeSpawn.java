@@ -143,21 +143,35 @@ public class PokeSpawn extends Spawn
         getProperties().put("weather","unkn");
         getProperties().put("weather_icon","");
         getProperties().put("encounter_id","");
+        
+    }
+    
+    //PokeSpawn constructor process is a little weird, but we can only check pvp description once we have
+    //all the IVs and the level.
+    private void initPVPDescription() {
+        if (iv_attack != null && iv_defense != null && iv_stamina != null && level != null){
+	        String pvpRanking = Pokemon.getPVPRankingDescription(id, level, iv_attack, iv_defense, iv_stamina);
+	        if (pvpRanking != null) {
+	        	getProperties().put("pvpdescription", pvpRanking+"\n");
+	        }
+        }
     }
 
     public PokeSpawn(final int id, final double lat, final double lon, final ZonedDateTime disappearTime, final Integer attack, final Integer defense, final Integer stamina, final Integer move1, final Integer move2, final float weight, final float height, final Integer gender, final Integer form, Integer cp, double cpModifier) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp);
         level = Pokemon.getLevel(cpModifier);
         getProperties().put("level", String.valueOf(level));
+        initPVPDescription();
     }
 
     public PokeSpawn(final int id, final double lat, final double lon, final ZonedDateTime disappearTime, final Integer attack, final Integer defense, final Integer stamina, final Integer move1, final Integer move2, final float weight, final float height, final Integer gender, final Integer form, Integer cp, Integer level) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp);
         this.level = level;
         getProperties().put("level", String.valueOf(level));
+        initPVPDescription();
     }
 
-    public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, int weight, int height, Integer gender, Integer form, Integer cp, Integer level, int weather, String encounter_id, Long spawn_id, Integer is_wild_spawn) {
+    public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, int weight, int height, Integer gender, Integer form, Integer cp, Integer level, int weather, String encounter_id, Long spawn_id, Integer is_wild_spawn, Boolean expire_timestamp_verified) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp,level);
         Weather w = Weather.fromId(weather);
         if (w != null) {
@@ -165,15 +179,17 @@ public class PokeSpawn extends Spawn
             getProperties().put("weather_icon", w.getEmote());
         }
         getProperties().replace("encounter_id",encounter_id);
-        if (spawn_id != null) {
+        if (expire_timestamp_verified) {
+        	getProperties().put("expiration_description", " Known despawn time.");
+        } else if (spawn_id != null) {
         	//We had spawnpoint data. No disclaimer.
-        	getProperties().put("expiration_description", "");
+        	getProperties().put("expiration_description", " Known despawn time (historical data.)");
         } else {
         	String wild_spawn_note = "";
         	if (is_wild_spawn != null && (Integer)is_wild_spawn == 1) {
         		wild_spawn_note = " Spawn is wild.";
         	}
-        	getProperties().put("expiration_description", "Spawnpoint data unavailable for this spawn. Despawn times are only an estimate." + wild_spawn_note);	
+        	getProperties().put("expiration_description", " Spawnpoint data unavailable for this spawn. Despawn times are only an estimate." + wild_spawn_note);	
         }
     }
 

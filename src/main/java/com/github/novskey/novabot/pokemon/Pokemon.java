@@ -26,6 +26,8 @@ public class Pokemon {
     private static JsonObject pokemonInfo;
     private static JsonObject movesInfo;
     private static JsonObject formInfo;
+    private static JsonObject evolutions;
+    private static JsonObject pvpivs;
 
     private static final Logger LOGGER = LoggerFactory.getLogger("Pokemon");
 
@@ -77,6 +79,28 @@ public class Pokemon {
                 }
             } catch (FileNotFoundException e) {
                 LOGGER.error("Couldn't find static/data/forms.json, aborting");
+                System.exit(0);
+            }
+            
+            try{
+                element = parser.parse(new FileReader("static/data/evolutions.json"));
+
+                if (element.isJsonObject()) {
+                    evolutions = element.getAsJsonObject();
+                }
+            } catch (FileNotFoundException e) {
+                LOGGER.error("Couldn't find static/data/evolutions.json, aborting");
+                System.exit(0);
+            }
+            
+            try{
+                element = parser.parse(new FileReader("static/data/pvpivs.json"));
+
+                if (element.isJsonObject()) {
+                	pvpivs = element.getAsJsonObject();
+                }
+            } catch (FileNotFoundException e) {
+                LOGGER.error("Couldn't find static/data/pvpivs.json, aborting");
                 System.exit(0);
             }
 
@@ -485,6 +509,9 @@ public class Pokemon {
     }
 
     public static void main(String[] args) {
+    
+    	System.out.println(getPVPRankingDescription(29,1,0,14,12));
+    	if (true) return;
 
         for (Integer integer : new Integer[]{13, 16, 19, 21, 23, 29, 32, 41, 48, 60, 98, 118, 120, 161, 163, 165, 167, 177, 183, 194}) {
             System.out.println(Pokemon.idToName(integer));
@@ -567,6 +594,40 @@ public class Pokemon {
                 break;
         }
         return (int) Math.floor(((baseAtk(bossId) + 15) * Math.sqrt(baseDef(bossId) + 15) * Math.sqrt(stamina)) / 10);
+    }
+    
+    public static String getPVPRankingDescription(int pokemonId, int level, int atkIV, int defIV, int staIV){
+    	try {
+    		ArrayList<String> rankPossibilities = new ArrayList<String>();
+    		//System.out.println(evolutions.getAsJsonObject(Integer.toString(pokemonId)));
+    		ArrayList<Integer> evolutionIds = new ArrayList<Integer>();
+    		evolutionIds.add(pokemonId); //consider as-is
+			for(JsonElement _evolution : evolutions.getAsJsonObject(Integer.toString(pokemonId)).getAsJsonArray("evolutionDexNumbers")) {
+				evolutionIds.add(_evolution.getAsInt());
+			}
+			for(int id : evolutionIds) {
+				JsonArray rankPossibilitiesForEvolution = pvpivs.getAsJsonArray(Integer.toString(id));
+				//System.out.println(rankPossibilitiesForEvolution);
+				for(JsonElement _rankPossible : rankPossibilitiesForEvolution) {
+					JsonObject rankPossible = _rankPossible.getAsJsonObject();
+					double atLevel = rankPossible.getAsJsonPrimitive("maxlevel").getAsDouble();
+					if (atLevel >= level){
+						JsonArray ivs = rankPossible.getAsJsonArray("ivs");
+						if (ivs.get(0).getAsInt() == atkIV && ivs.get(1).getAsInt() == defIV && ivs.get(2).getAsInt() == staIV) {
+							String league = rankPossible.getAsJsonPrimitive("mode").getAsString();
+							int rank = rankPossible.getAsJsonPrimitive("rank").getAsInt();
+							rankPossibilities.add(String.format("Rank %d %s league level %.1f %s", rank, league, atLevel, Pokemon.idToName(id)));	
+						}
+					}
+				}
+			}
+			if (!rankPossibilities.isEmpty()) {
+				return String.join("\n", rankPossibilities);
+			}
+    	} catch (Throwable t) {
+    		//t.printStackTrace();
+    	}
+		return null;
     }
 
 }
