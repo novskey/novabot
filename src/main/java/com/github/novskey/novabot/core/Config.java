@@ -625,7 +625,8 @@ public class Config {
     	//Check for 'PVP' filter
     	JsonElement pvpFilter = searchFilter(filter, "PVP");
     	if (pvpFilter != null) {
-    		if (pokeSpawn.getProperties().containsKey("pvpdescription")) {
+    		String pvpdescription = pokeSpawn.getProperties().get("pvpdescription");
+    		if (pvpdescription != null && !pvpdescription.equals("")) {
     			PokeNotificationSender.notificationLog.info(String.format("Spawn %s matches 'PVP' filter.", pokeSpawn.getProperties().get("pkmn")));
                 return true;
             }

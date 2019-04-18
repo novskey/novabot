@@ -100,6 +100,7 @@ public class PokeSpawn extends Spawn
         this.iv_stamina = stamina;
         getProperties().put("sta", String.valueOf(iv_stamina));
 
+    	getProperties().put("pvpdescription", "");
         if (attack != null && defense != null && stamina != null){
             this.iv = (attack + defense + stamina) / 45.0f * 100.0f;
             getProperties().put("iv", getIv());

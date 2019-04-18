@@ -510,7 +510,7 @@ public class Pokemon {
 
     public static void main(String[] args) {
     
-    	System.out.println(getPVPRankingDescription(29,1,0,14,12));
+    	System.out.println(getPVPRankingDescription(227,1,0,15,14));
     	if (true) return;
 
         for (Integer integer : new Integer[]{13, 16, 19, 21, 23, 29, 32, 41, 48, 60, 98, 118, 120, 161, 163, 165, 167, 177, 183, 194}) {
