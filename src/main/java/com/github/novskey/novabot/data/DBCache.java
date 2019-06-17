@@ -169,13 +169,13 @@ public class DBCache implements IDataBase {
             HashSet<Pokemon> noDuplicateLocations = new HashSet<>();
 
             for (Pokemon pokemon : settings) {
-                Pokemon noLocation = new Pokemon(pokemon.name,Location.ALL, pokemon.miniv,pokemon.maxiv, pokemon.minlvl, pokemon.maxlvl, pokemon.mincp, pokemon.maxcp);
+                Pokemon noLocation = new Pokemon(pokemon.name,Location.ALL, pokemon.miniv,pokemon.maxiv, pokemon.minlvl, pokemon.maxlvl, pokemon.mincp, pokemon.maxcp, pokemon.minIVs, pokemon.maxIVs, pokemon.PVPGreatRank, pokemon.PVPUltraRank);
                 noDuplicateLocations.add(noLocation);
             }
 
             if (potentialPokemon != null){
                 for (Pokemon pokemon : potentialPokemon) {
-                    Pokemon noLocation = new Pokemon(pokemon.name,Location.ALL, pokemon.miniv,pokemon.maxiv, pokemon.minlvl, pokemon.maxlvl, pokemon.mincp, pokemon.maxcp);
+                    Pokemon noLocation = new Pokemon(pokemon.name,Location.ALL, pokemon.miniv,pokemon.maxiv, pokemon.minlvl, pokemon.maxlvl, pokemon.mincp, pokemon.maxcp, pokemon.minIVs, pokemon.maxIVs, pokemon.PVPGreatRank, pokemon.PVPUltraRank);
                     noDuplicateLocations.add(noLocation);
                 }
             }
@@ -384,10 +384,29 @@ public class DBCache implements IDataBase {
 
                 if (!(level >= pokemonSetting.minlvl && level <= pokemonSetting.maxlvl)) return false;
 
+                int iv_attack = pokeSpawn.iv_attack == null ? 0 : pokeSpawn.iv_attack;
+
+                if (!(iv_attack >= pokemonSetting.minIVs[0] && iv_attack <= pokemonSetting.maxIVs[0])) return false;
+
+                int iv_defense = pokeSpawn.iv_defense == null ? 0 : pokeSpawn.iv_defense;
+
+                if (!(iv_defense >= pokemonSetting.minIVs[1] && iv_defense <= pokemonSetting.maxIVs[1])) return false;
+
+                int iv_stamina = pokeSpawn.iv_stamina == null ? 0 : pokeSpawn.iv_stamina;
+
+                if (!(iv_stamina >= pokemonSetting.minIVs[2] && iv_stamina <= pokemonSetting.maxIVs[2])) return false;
+                
+                int pvp_great_rank = pokeSpawn.pvp_great_rank == null ? 4096 : pokeSpawn.pvp_great_rank;
+                
+                if (pvp_great_rank > pokemonSetting.PVPGreatRank) return false;
+
+                int pvp_ultra_rank = pokeSpawn.pvp_ultra_rank == null ? 4096 : pokeSpawn.pvp_ultra_rank;
+                
+                if (pvp_ultra_rank > pokemonSetting.PVPUltraRank) return false;
+
                 int cp = pokeSpawn.cp == null ? 0 : pokeSpawn.cp;
 
                 return cp >= pokemonSetting.mincp && cp <= pokemonSetting.maxcp;
-
             });
         }).keySet());
     }

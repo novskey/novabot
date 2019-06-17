@@ -42,6 +42,29 @@ CREATE TABLE IF NOT EXISTS `pokemon` (
   CONSTRAINT `pokemon_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- New format:
+CREATE TABLE IF NOT EXISTS `pokemon` (
+  `user_id` varchar(50) DEFAULT NULL,
+  `id` varchar(30) DEFAULT NULL,
+  `max_iv` float DEFAULT 100,
+  `min_iv` float DEFAULT 0,
+  `max_lvl` TINYINT DEFAULT 40,
+  `min_lvl` TINYINT DEFAULT 0,
+  `max_cp` INT DEFAULT 2147483647,
+  `min_cp` INT DEFAULT 0,
+  `location` varchar(30) DEFAULT NULL,
+  `min_attack_iv` INT DEFAULT 0,
+  `max_attack_iv` INT DEFAULT 15,
+  `min_defense_iv` INT DEFAULT 0,
+  `max_defense_iv` INT DEFAULT 15,
+  `min_stamina_iv` INT DEFAULT 0,
+  `max_stamina_iv` INT DEFAULT 15,
+  `pvp_great_rank` INT DEFAULT 4096,
+  `pvp_ultra_rank` INT DEFAULT 4096
+  PRIMARY KEY `pokemon_user_id_id_channel_max_iv_min_iv_pk` (`user_id`,`id`,`location`,`max_iv`,`min_iv`,`max_lvl`,`min_lvl`, `max_cp`,`min_cp`,`min_attack_iv`,`max_attack_iv`,`min_defense_iv`,`max_defense_iv`,`min_stamina_iv`,`max_stamina_iv`,`pvp_great_rank`,`pvp_ultra_rank`),
+  CONSTRAINT `pokemon_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- Data exporting was unselected.
 -- Dumping structure for table novabot.preset
 CREATE TABLE IF NOT EXISTS `preset` (

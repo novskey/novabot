@@ -9,6 +9,7 @@ import com.github.novskey.novabot.researchtask.ResearchTask;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -51,6 +52,11 @@ public class UserCommand
         int maxlvl = 40;
         int mincp = 0;
         int maxcp = Integer.MAX_VALUE;
+        
+        int[] minIVs = {0,0,0};
+        int[] maxIVs = {15,15,15};
+        int PVPGreatRank = 4096;
+        int PVPUltraRank = 4096;
 
         String[] pokeNames = new String[0];
         for (final Argument arg : this.args) {
@@ -61,13 +67,28 @@ public class UserCommand
                 case Pokemon:
                     pokeNames = this.toStrings(arg.getParams());
                     break;
-                case IV:
+                case IV: 
                     miniv = (float)arg.getParams()[0];
                     if (arg.getParams().length == 2) {
                         maxiv = (float)arg.getParams()[1];
                         break;
                     }
                     break;
+                case ATKIV: case DEFIV: case STAIV:
+                	int index = (arg.getType() == ArgType.ATKIV) ? 0 : 
+                			(arg.getType() == ArgType.DEFIV) ? 1 : 2;
+                    minIVs[index] = (int)arg.getParams()[0];
+                    if (arg.getParams().length == 2) {
+                        maxIVs[index] = (int)arg.getParams()[1];
+                        break;
+                    }
+                    break;
+                case PVPGreatRank: 
+                	PVPGreatRank = (int)arg.getParams()[0];
+                	break;
+                case PVPUltraRank:
+                	PVPUltraRank = (int)arg.getParams()[0];
+                	break;
                 case Level:
                     minlvl = (int)arg.getParams()[0];
                     if (arg.getParams().length == 2) {
@@ -85,8 +106,7 @@ public class UserCommand
         final ArrayList<Pokemon> pokemons = new ArrayList<>();
         for (final String pokeName : pokeNames) {
             for (final Location location : locations) {
-                System.out.println(pokeName);
-                pokemons.add(new Pokemon(pokeName, location, miniv, maxiv, minlvl, maxlvl, mincp, maxcp));
+                pokemons.add(new Pokemon(pokeName, location, miniv, maxiv, minlvl, maxlvl, mincp, maxcp, minIVs, maxIVs, PVPGreatRank, PVPUltraRank));
             }
         }
         final Pokemon[] pokeArray = new Pokemon[pokemons.size()];
@@ -208,19 +228,6 @@ public class UserCommand
         return this.toLocations(this.getArg(ArgType.Locations).getParams());
     }
 
-    public String getIvMessage() {
-        String message = "";
-        if (containsArg(ArgType.IV)) {
-            final Argument ivArg = getArg(ArgType.IV);
-            if (ivArg.getParams().length == 1) {
-                message = message + " " + ivArg.getParams()[0] + "% " + getLocalString("IvOrAbove");
-            } else {
-                message = message + " " + getLocalString("Between") + " " + ivArg.getParams()[0] + " " + getLocalString("And") + " " + ivArg.getParams()[1] + "% " + getLocalString("IV");
-            }
-        }
-        return message;
-    }
-
 
     public Raid[] buildRaids() {
         Location[] locations = { Location.ALL };
@@ -309,10 +316,25 @@ public class UserCommand
         final ResearchTask[] raidArray = new ResearchTask[rts.size()];
         return rts.toArray(raidArray);
     }
+    
+    public String getIvMessage() {
+        if (containsArg(ArgType.IV)) {
+            String message = "";
+            final Argument ivArg = getArg(ArgType.IV);
+            if (ivArg.getParams().length == 1) {
+                message = message + " " + ivArg.getParams()[0] + "% " + getLocalString("IvOrAbove");
+            } else {
+                message = message + " " + getLocalString("Between") + " " + ivArg.getParams()[0] + " " + getLocalString("And") + " " + ivArg.getParams()[1] + "% " + getLocalString("IV");
+            }
+            return message;
+        }
+        return null;
+    }
+
 
     public String getCpMessage() {
-        String message = "";
         if (containsArg(ArgType.CP)) {
+            String message = "";
             final Argument cpArg = getArg(ArgType.CP);
             if (cpArg.getParams().length == 1) {
                 message = message + " " + cpArg.getParams()[0] + " " + getLocalString("CpOrAbove");
@@ -320,13 +342,14 @@ public class UserCommand
             else {
                 message = message + " " + getLocalString("Between") + " " + cpArg.getParams()[0] + " " + getLocalString("And") + " " + cpArg.getParams()[1] + " " + getLocalString("CP");
             }
+            return message;
         }
-        return message;
+        return null;
     }
 
     public String getLevelMessage() {
-        String message = "";
         if (containsArg(ArgType.Level)) {
+            String message = "";
             final Argument levelArg = getArg(ArgType.Level);
             if (levelArg.getParams().length == 1) {
                 message = message + " " + getLocalString("Level") + " " + levelArg.getParams()[0] + " " + getLocalString("OrAbove");
@@ -334,7 +357,35 @@ public class UserCommand
             else {
                 message = message + " " + getLocalString("Between") + " " + getLocalString("Level") + " " + levelArg.getParams()[0] + " " + getLocalString("And") + " " + getLocalString("Level") + " " + levelArg.getParams()[1];
             }
+            return message;
         }
-        return message;
+        return null;
+    }
+
+    public String getIndividualIVlimitsMessage(Pokemon pokemon) {
+        if (!Arrays.equals(pokemon.minIVs, new int[]{0,0,0}) || !Arrays.equals(pokemon.maxIVs, new int[]{15,15,15})) {
+            String message = "";
+            int[] minIVs = pokemon.minIVs == null ? new int[] {0,0,0} : pokemon.minIVs;
+            int[] maxIVs = pokemon.maxIVs == null ? new int[] {15,15,15} : pokemon.maxIVs;
+            message += String.format(" %d-%datk,%d-%ddef,%d-%dsta", 
+            		minIVs[0],
+            		maxIVs[0],
+            		minIVs[1],
+            		maxIVs[1],
+            		minIVs[2],
+            		maxIVs[2]
+            		);
+            return message;
+        }
+        return null;
+    }
+    public String getPVPRankMessage(Pokemon pokemon) {
+    	if (pokemon.PVPGreatRank != 4096) {
+    		return " rank " + pokemon.PVPGreatRank + " great league";
+    	} else if (pokemon.PVPUltraRank != 4096) {
+    		return " " + pokemon.PVPUltraRank + " ultra league";
+    		
+    	}
+        return null;
     }
 }

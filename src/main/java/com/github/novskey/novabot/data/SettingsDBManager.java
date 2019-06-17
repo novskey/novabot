@@ -48,8 +48,10 @@ public class SettingsDBManager implements IDataBase {
     public void addPokemon(final String userID, final Pokemon pokemon) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO pokemon (user_id, id, max_iv, min_iv, max_lvl, min_lvl, max_cp, min_cp, location) " +
-                             "VALUES (?,?,?,?,?,?,?,?,?)")) {
+                     "INSERT INTO pokemon (user_id, id, max_iv, min_iv, max_lvl, min_lvl, max_cp, min_cp, location, min_attack_iv, max_attack_iv, min_defense_iv, max_defense_iv, min_stamina_iv, max_stamina_iv, pvp_great_rank, pvp_ultra_rank) " +
+                             " VALUES (?,?,?,?,?,?,?,?,?," + 
+                    		 	       "?,?,?,?,?,?,?,?" +
+                    		 ")")) {
             statement.setString(1, userID);
             statement.setInt(2, pokemon.getID());
             statement.setDouble(3, pokemon.maxiv);
@@ -59,6 +61,16 @@ public class SettingsDBManager implements IDataBase {
             statement.setInt(7,pokemon.maxcp);
             statement.setInt(8,pokemon.mincp);
             statement.setString(9, pokemon.getLocation().toDbString());
+            
+            int p = 10;
+            statement.setInt(p++, pokemon.minIVs[0]);
+            statement.setInt(p++, pokemon.maxIVs[0]);
+            statement.setInt(p++, pokemon.minIVs[1]);
+            statement.setInt(p++, pokemon.maxIVs[1]);
+            statement.setInt(p++, pokemon.minIVs[2]);
+            statement.setInt(p++, pokemon.maxIVs[2]);
+            statement.setInt(p++, pokemon.PVPGreatRank);
+            statement.setInt(p++, pokemon.PVPUltraRank);
 
             dbLog.info(statement.toString());
             statement.executeUpdate();
@@ -825,7 +837,17 @@ public class SettingsDBManager implements IDataBase {
                         "AND (min_lvl <= ?) " +
                         "AND (max_lvl >= ?) " +
                         "AND (min_cp <= ?) " +
-                        "AND (max_cp >= ?));", geofenceQMarks.toString()
+                        "AND (max_cp >= ?)) " +
+                        "AND (min_attack_iv <= ?) " +
+                        "AND (max_attack_iv >= ?) " +
+                        "AND (min_defense_iv <= ?) " +
+                        "AND (max_defense_iv >= ?) " +
+                        "AND (min_stamina_iv <= ?) " +
+                        "AND (max_stamina_iv >= ?) " +
+                        "AND (pvp_great_rank <= ?) " +
+                        "AND (pvp_ultra_rank <= ?) " +
+                        ";", 
+                        geofenceQMarks.toString()
         );
 
         try (Connection connection = getNbConnection();
@@ -856,6 +878,22 @@ public class SettingsDBManager implements IDataBase {
             statement.setInt(geofences + offset, pokeSpawn.cp == null ? 0 : pokeSpawn.cp);
             offset++;
             statement.setInt(geofences + offset, pokeSpawn.cp == null ? 0 : pokeSpawn.cp);
+            offset++;
+            statement.setInt(geofences + offset, pokeSpawn.iv_attack == null ? 0 : pokeSpawn.iv_attack);
+            offset++;
+            statement.setInt(geofences + offset, pokeSpawn.iv_attack == null ? 0 : pokeSpawn.iv_attack);
+            offset++;
+            statement.setInt(geofences + offset, pokeSpawn.iv_defense == null ? 0 : pokeSpawn.iv_defense);
+            offset++;
+            statement.setInt(geofences + offset, pokeSpawn.iv_defense == null ? 0 : pokeSpawn.iv_defense);
+            offset++;
+            statement.setInt(geofences + offset, pokeSpawn.iv_stamina == null ? 0 : pokeSpawn.iv_stamina);
+            offset++;
+            statement.setInt(geofences + offset, pokeSpawn.iv_stamina == null ? 0 : pokeSpawn.iv_stamina);
+            offset++;
+            statement.setInt(geofences + offset, pokeSpawn.pvp_great_rank == null ? 4096 : pokeSpawn.pvp_great_rank);
+            offset++;
+            statement.setInt(geofences + offset, pokeSpawn.pvp_ultra_rank == null ? 4096 : pokeSpawn.pvp_ultra_rank);
             dbLog.debug(statement.toString());
             System.out.println(statement);
             final ResultSet rs = statement.executeQuery();
@@ -875,7 +913,7 @@ public class SettingsDBManager implements IDataBase {
 
         try (Connection connection = getNbConnection();
              Statement statement = connection.createStatement()) {
-            statement.executeQuery(String.format("SELECT id,location,max_iv,min_iv,max_lvl,min_lvl,max_cp,min_cp FROM pokemon WHERE user_id=%s", "'" + id + "'"));
+            statement.executeQuery(String.format("SELECT id,location,max_iv,min_iv,max_lvl,min_lvl,max_cp,min_cp,min_attack_iv,max_attack_iv,min_defense_iv,max_defense_iv,min_stamina_iv,max_stamina_iv,pvp_great_rank,pvp_ultra_rank FROM pokemon WHERE user_id=%s", "'" + id + "'"));
             ResultSet rs = statement.getResultSet();
 
             while (rs.next()) {
@@ -887,10 +925,16 @@ public class SettingsDBManager implements IDataBase {
                 final int min_lvl = rs.getInt(6);
                 final int max_cp = rs.getInt(7);
                 final int min_cp = rs.getInt(8);
+                int offset = 9;
+                int[] minIVs = {rs.getInt(offset), rs.getInt(offset + 2), rs.getInt(offset + 4)};
+                int[] maxIVs = {rs.getInt(offset + 1), rs.getInt(offset + 3), rs.getInt(offset + 5)};
+                offset += 6;
+                final int PVPgreatrank = rs.getInt(offset);
+                final int PVPultrarank = rs.getInt(offset + 1);
                 if (location == null) {
                     novaBot.novabotLog.warn("Location null fromDbString " + rs.getString(2).toLowerCase());
                 } else {
-                    userPref.addPokemon(new Pokemon(Pokemon.getFilterName(pokemon_id), location, min_iv, max_iv, min_lvl, max_lvl,min_cp,max_cp));
+                    userPref.addPokemon(new Pokemon(Pokemon.getFilterName(pokemon_id), location, min_iv, max_iv, min_lvl, max_lvl,min_cp,max_cp,minIVs,maxIVs,PVPgreatrank, PVPultrarank));
                 }
             }
 
@@ -1428,29 +1472,35 @@ public class SettingsDBManager implements IDataBase {
         try (Connection connection = getNbConnection();
              Statement statement = connection.createStatement())
         {
-            ResultSet rs = statement.executeQuery("SELECT user_id, id, max_iv, min_iv, max_lvl, min_lvl, max_cp, min_cp, location FROM pokemon");
+            ResultSet rs = statement.executeQuery("SELECT user_id, id, location, max_iv, min_iv, max_lvl, min_lvl, max_cp, min_cp, min_attack_iv,max_attack_iv,min_defense_iv,max_defense_iv,min_stamina_iv,max_stamina_iv,pvp_great_rank,pvp_ultra_rank FROM pokemon");
 
             while (rs.next()){
                 String userId = rs.getString(1);
                 int pokemonId = rs.getInt(2);
-                float maxIv = rs.getFloat(3);
-                float minIv = rs.getFloat(4);
-                int maxLvl = rs.getInt(5);
-                int minLvl = rs.getInt(6);
-                int maxCp = rs.getInt(7);
-                int minCp = rs.getInt(8);
-                Location location = Location.fromDbString(rs.getString(9).toLowerCase(),novaBot);
+                Location location = Location.fromDbString(rs.getString(3).toLowerCase(),novaBot);
                 if (location == null){
                     dbLog.warn("Location is null, not dumping pokemon setting");
                     continue;
                 }
+                float maxIv = rs.getFloat(4);
+                float minIv = rs.getFloat(5);
+                int maxLvl = rs.getInt(6);
+                int minLvl = rs.getInt(7);
+                int maxCp = rs.getInt(8);
+                int minCp = rs.getInt(9);
+                int offset = 10;
+                int[] minIVs = {rs.getInt(offset), rs.getInt(offset + 2), rs.getInt(offset + 4)};
+                int[] maxIVs = {rs.getInt(offset + 1), rs.getInt(offset + 3), rs.getInt(offset + 5)};
+                offset += 6;
+                final int PVPgreatrank = rs.getInt(offset);
+                final int PVPultrarank = rs.getInt(offset + 1);
 
                 Set<Pokemon> userSettings = pokemons.get(userId);
                 if(userSettings == null){
                     userSettings =  ConcurrentHashMap.newKeySet();
                     pokemons.put(userId,userSettings);
                 }
-                userSettings.add(new Pokemon(pokemonId,location,minIv,maxIv,minLvl,maxLvl,minCp,maxCp));
+                userSettings.add(new Pokemon(Pokemon.idToName(pokemonId),location,minIv,maxIv,minLvl,maxLvl,minCp,maxCp,minIVs,maxIVs,PVPgreatrank,PVPultrarank));
             }
         } catch (SQLException e) {
             dbLog.error("Error executing dumpPokemon",e);

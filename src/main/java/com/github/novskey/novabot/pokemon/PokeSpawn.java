@@ -7,6 +7,8 @@ import com.github.novskey.novabot.core.Types;
 import com.github.novskey.novabot.core.Weather;
 import com.github.novskey.novabot.data.SpawnLocation;
 import com.github.novskey.novabot.maps.GeofenceIdentifier;
+import com.github.novskey.novabot.pokemon.Pokemon.PVPRanking;
+
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
@@ -46,6 +48,8 @@ public class PokeSpawn extends Spawn
     public Integer iv_attack;
     public Integer iv_defense;
     public Integer iv_stamina;
+	public Integer pvp_great_rank;
+	public Integer pvp_ultra_rank;
 
     public Float catchprob1;
     public Float catchprob2;
@@ -151,9 +155,11 @@ public class PokeSpawn extends Spawn
     //all the IVs and the level.
     private void initPVPDescription() {
         if (iv_attack != null && iv_defense != null && iv_stamina != null && level != null){
-	        String pvpRanking = Pokemon.getPVPRankingDescription(id, level, iv_attack, iv_defense, iv_stamina);
-	        if (pvpRanking != null) {
-	        	getProperties().put("pvpdescription", pvpRanking+"\n");
+	        PVPRanking pvpRanking = Pokemon.getPVPRankingDescription(id, level, iv_attack, iv_defense, iv_stamina);
+	        if (pvpRanking.description != null) {
+	        	getProperties().put("pvpdescription", pvpRanking.description+"\n");
+	        	pvp_great_rank = pvpRanking.PVPGreatRank;
+	        	pvp_ultra_rank = pvpRanking.PVPUltraRank;
 	        }
         }
     }

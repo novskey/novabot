@@ -712,21 +712,56 @@ public class NovaBot {
                     } else if (limit == null && isSupporter) {
                         novabotLog.error(String.format("LIMIT IS NULL: %s, is supporter", author.getName()));
                     }
+                    if (pokemons.length == 0) {
+                        novabotLog.error(String.format("pokemons.length == 0 in parseMsg of NovaBot"));
+                    	return;
+                    }
 
                     for (final Pokemon pokemon : pokemons) {
                         novabotLog.debug("adding pokemon " + pokemon);
                         dataManager.addPokemon(author.getId(), pokemon);
                     }
                     String message2 = String.format("%s, %s %s", author.getAsMention(), getLocalString("YouWillNowBeNotifiedOf"), Pokemon.listToString(userCommand.getUniquePokemon()));
+
+                    boolean had_more = false;
                     String ivMessage = userCommand.getIvMessage();
-                    message2 += ivMessage;
+                    if (ivMessage != null) {
+                    	message2 += ivMessage;
+                    	had_more = true;
+                    }
 
                     String levelMessage = userCommand.getLevelMessage();
-                    message2 += (!ivMessage.isEmpty() && !levelMessage.isEmpty() ? " and" : "") + levelMessage;
+                    if (levelMessage != null) {
+                    	if (had_more) {
+                    		message2 += " and";
+                    	}
+                    	message2 += levelMessage;
+                    }
 
                     String cpMessage = userCommand.getCpMessage();
-                    message2 += ((!ivMessage.isEmpty() || !levelMessage.isEmpty()) && !cpMessage.isEmpty() ? " and" : "") + cpMessage;
+                    if (cpMessage != null) {
+                    	if (had_more) {
+                    		message2 += " and";
+                    	}
+                    	message2 += cpMessage;
+                    }
 
+                    String invidualIVlimits = userCommand.getIndividualIVlimitsMessage(pokemons[0]);
+                    if (invidualIVlimits != null) {
+                    	if (had_more) {
+                    		message2 += " and";
+                    	}
+                    	message2 += invidualIVlimits;
+                    }
+
+                    String pvpRank = userCommand.getPVPRankMessage(pokemons[0]);
+                    if (pvpRank != null) {
+                    	if (had_more) {
+                    		message2 += " and";
+                    	}
+                    	message2 += pvpRank;
+                    }
+                    
                     final Argument locationsArg = userCommand.getArg(ArgType.Locations);
                     Location[] locations = {Location.ALL};
                     if (locationsArg != null) {

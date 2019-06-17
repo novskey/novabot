@@ -21,6 +21,10 @@ public class PokeBotMigrator {
     static JsonObject userFilters;
 
     public static void main(String[] args) {
+    	
+    	throw new RuntimeException("Not yet implemented");
+    	
+    	/*
 
         if(args.length == 0){
             System.out.println("Please specify a user filters file to migrate.");
@@ -127,6 +131,7 @@ public class PokeBotMigrator {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        */
     }
 
 }

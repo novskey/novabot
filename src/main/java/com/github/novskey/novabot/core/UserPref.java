@@ -24,7 +24,6 @@ public class UserPref {
 
         if (location == null) return;
 
-
         if (!this.pokemonPrefs.containsKey(location.toWords())) {
             final TreeSet<Pokemon> set = new TreeSet<>(Comparator.comparing(Pokemon::toString));
             set.add(pokemon);
@@ -368,9 +367,9 @@ public class UserPref {
 
     private String pokePrefString(Pokemon pokemon) {
         String str = pokemon.name;
-        boolean iv = false, lvl = false;
+        boolean has_more = false;
         if (pokemon.miniv > 0.0f || pokemon.maxiv < 100.0f) {
-            iv = true;
+        	has_more = true;
             if (pokemon.maxiv < 100.0f) {
                 if (pokemon.miniv == pokemon.maxiv) {
                     str = str + " " + pokemon.miniv + "%";
@@ -382,10 +381,10 @@ public class UserPref {
             }
         }
         if (pokemon.minlvl > 0 || pokemon.maxlvl < 40) {
-            lvl = true;
-            if (iv){
+            if (has_more){
                 str += ",";
             }
+            has_more = true;
             if (pokemon.maxlvl < 40) {
                 if (pokemon.minlvl == pokemon.maxlvl) {
                     str = str + " level " + pokemon.minlvl + "";
@@ -396,10 +395,41 @@ public class UserPref {
                 str = str + " level " + pokemon.minlvl + ((pokemon.minlvl == pokemon.maxlvl) ? "" : "+");
             }
         }
-        if (pokemon.mincp > 0 || pokemon.maxcp < Integer.MAX_VALUE) {
-            if (iv || lvl){
+        if (!Arrays.equals(pokemon.minIVs, new int[]{0,0,0}) || !Arrays.equals(pokemon.maxIVs, new int[]{15,15,15})) {
+            if (has_more){
                 str += ",";
             }
+            has_more = true;
+            int[] minIVs = pokemon.minIVs == null ? new int[] {0,0,0} : pokemon.minIVs;
+            int[] maxIVs = pokemon.maxIVs == null ? new int[] {15,15,15} : pokemon.maxIVs;
+            str += String.format(" %d-%datk,%d-%ddef,%d-%dsta", 
+            		minIVs[0],
+            		maxIVs[0],
+            		minIVs[1],
+            		maxIVs[1],
+            		minIVs[2],
+            		maxIVs[2]
+            		);
+        }
+        if (pokemon.PVPGreatRank != 4096) {
+            if (has_more){
+                str += ",";
+            }
+            has_more = true;
+            str += " great league rank " + pokemon.PVPGreatRank; 
+        }
+        if (pokemon.PVPUltraRank != 4096) {
+            if (has_more){
+                str += ",";
+            }
+            has_more = true;
+            str += " ultra league rank " + pokemon.PVPUltraRank; 
+        }
+        if (pokemon.mincp > 0 || pokemon.maxcp < Integer.MAX_VALUE) {
+            if (has_more){
+                str += ",";
+            }
+            has_more = true;
             if (pokemon.maxcp < Integer.MAX_VALUE) {
                 if (pokemon.mincp == pokemon.maxcp) {
                     str = str + " " + pokemon.mincp + "CP" + "";

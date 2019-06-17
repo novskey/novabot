@@ -622,14 +622,22 @@ public class Config {
     }
 
     public boolean matchesFilter(JsonObject filter, PokeSpawn pokeSpawn, String filterName) {
-    	//Check for 'PVP' filter
-    	JsonElement pvpFilter = searchFilter(filter, "PVP");
-    	if (pvpFilter != null) {
-    		String pvpdescription = pokeSpawn.getProperties().get("pvpdescription");
-    		if (pvpdescription != null && !pvpdescription.equals("")) {
-    			PokeNotificationSender.notificationLog.info(String.format("Spawn %s matches 'PVP' filter.", pokeSpawn.getProperties().get("pkmn")));
-                return true;
-            }
+    	//Check for 'PVP' filters
+    	for(String pvpFilterName : new String[]{"PVP", "PVPGreat", "PVPUltra"}) {
+	    	JsonElement pvpFilter = searchFilter(filter, pvpFilterName);
+	    	if (pvpFilter != null) {
+	    		String pvpdescription = pokeSpawn.getProperties().get("pvpdescription");
+	    		if (pvpdescription != null && !pvpdescription.equals("")) {
+	    			if (pvpFilterName.equals("PVPGreat") && !pvpdescription.contains("great")) {
+	    				continue;
+	    			}
+	    			if (pvpFilterName.equals("PVPUltra") && !pvpdescription.contains("ultra")) {
+	    				continue;
+	    			}
+	    			PokeNotificationSender.notificationLog.info(String.format("Spawn %s matches %s filter.", pokeSpawn.getProperties().get("pkmn"), pvpFilterName));
+	                return true;
+	            }
+	    	}
     	}
     	
     	JsonElement pokeFilter = searchFilter(filter, UtilityFunctions.capitaliseFirst(Pokemon.getFilterName(pokeSpawn.getFilterId())));

@@ -23,6 +23,11 @@ public class Parser {
     private static final Pattern ONLY_NUMBERS = Pattern.compile("[0-9]+");
     private static final Pattern CP_PATTERN = Pattern.compile("(cp[0-9]+)|([0-9]+cp)");
     private static final Pattern IV_PATTERN = Pattern.compile("iv[0-9]+|([0-9]+iv)|[0-9]+");
+    private static final Pattern ATKIV_PATTERN = Pattern.compile("atk[0-9]+|([0-9]+atk)|a[0-9]+|([0-9]+a)");
+    private static final Pattern DEFIV_PATTERN = Pattern.compile("def[0-9]+|([0-9]+def)|d[0-9]+|([0-9]+d)");
+    private static final Pattern STAIV_PATTERN = Pattern.compile("sta[0-9]+|([0-9]+sta)|s[0-9]+|([0-9]+s)");
+    private static final Pattern PVPGREATRANK_PATTERN = Pattern.compile("great[0-9]+|([0-9]+great)|g[0-9]+|([0-9]+g)");
+    private static final Pattern PVPULTRARANK_PATTERN = Pattern.compile("ultra[0-9]+|([0-9]+ultra)|u[0-9]+|([0-9]+u)");
     private static final Pattern EGG_PATTERN = Pattern.compile("egg[1-5]");
 	private static final Pattern POKE_PATTERN = Pattern.compile("p[0-9]+|pid[0-9]+|poke[0-9]+|pokemon[0-9]+");
 
@@ -75,6 +80,24 @@ public class Parser {
             }
         }
         return command;
+    }
+
+    //Helper routine for getArg
+    private boolean getArgSpecificIV(Argument argument, String trimmed) {
+    	if (ATKIV_PATTERN.matcher(trimmed).matches()) {
+    		argument.setType(ArgType.ATKIV);
+    	} else if (DEFIV_PATTERN.matcher(trimmed).matches()) {
+    		argument.setType(ArgType.DEFIV);
+    	} else if (STAIV_PATTERN.matcher(trimmed).matches()) {
+    		argument.setType(ArgType.STAIV);
+    	} else {
+    		return false;
+    	}
+        Matcher matcher = ONLY_NUMBERS.matcher(trimmed);
+        if (matcher.find()){
+            argument.setParams(new Object[]{Integer.valueOf(matcher.group())});
+        }
+    	return true;
     }
 
     private Argument getArg(final String s, Command command) {
@@ -135,6 +158,19 @@ public class Parser {
                 if (matcher.find()){
                     argument.setParams(new Object[]{Float.valueOf(matcher.group())});
                 }
+            } else if (valid.contains(ArgType.PVPGreatRank) && PVPGREATRANK_PATTERN.matcher(trimmed).matches()){
+                argument.setType(ArgType.PVPGreatRank);
+                Matcher matcher = ONLY_NUMBERS.matcher(trimmed);
+                if (matcher.find()){
+                    argument.setParams(new Object[]{Integer.valueOf(matcher.group())});
+                }
+            } else if (valid.contains(ArgType.PVPUltraRank) && PVPULTRARANK_PATTERN.matcher(trimmed).matches()){
+                argument.setType(ArgType.PVPUltraRank);
+                Matcher matcher = ONLY_NUMBERS.matcher(trimmed);
+                if (matcher.find()){
+                    argument.setParams(new Object[]{Integer.valueOf(matcher.group())});
+                }
+            } else if (valid.contains(ArgType.ATKIV) && getArgSpecificIV(argument, trimmed)){
             } else if (valid.contains(ArgType.TimeUnit) && TimeUnit.fromString(trimmed) != null) {
                 argument.setType(ArgType.TimeUnit);
                 argument.setParams(new Object[]{TimeUnit.fromString(trimmed)});
@@ -258,10 +294,14 @@ public class Parser {
                             malformed.add(string.trim());
                         }
                         break;
-                    case CP:
+                    case CP: case ATKIV: case DEFIV: case STAIV:
                         if (strings.length == 1 || strings.length == 2) {
-                            if (CP_PATTERN.matcher(trimmed).matches()) {
-                                argument.setType(ArgType.Level);
+                        	Pattern pattern;
+                        	pattern = (argType == ArgType.CP) ? CP_PATTERN : 
+                        		(argType == ArgType.ATKIV) ? ATKIV_PATTERN : 
+                        			(argType == ArgType.DEFIV) ? DEFIV_PATTERN : STAIV_PATTERN;
+                            if (pattern.matcher(trimmed).matches()) {
+                                argument.setType(argType);
                                 Matcher matcher = ONLY_NUMBERS.matcher(trimmed);
                                 if (matcher.find()) {
                                     args.add(Integer.valueOf(matcher.group()));
@@ -373,14 +413,13 @@ public class Parser {
 
         System.out.println(StringLocalizer.getLocalString("StatusDescription"));
 
-        String[] testStrings = new String [] {"!addpokemon Ralts <90iv, 100iv>","!addpokemon ralts", "!addpokemon ralts 90iv", "!addpokemon ralts 90", "!addpokemon ralts iv90", "!addpokemon ralts <iv90,iv99>","!addraid egg5", "!addraid", "!help", "!help addpokemon"};
+        String[] testStrings = new String [] {"!addpokemon marill <10a,15a> <10d,15d> <10h,15h>", "!addpokemon Ralts <90iv, 100iv>","!addpokemon ralts", "!addpokemon ralts 90iv", "!addpokemon ralts 90", "!addpokemon ralts iv90", "!addpokemon ralts <iv90,iv99>","!addraid egg5", "!addraid", "!help", "!help addpokemon"};
 
         for (String testString : testStrings) {
             System.out.println(testString);
             UserCommand command = novaBot.parser.parseInput(testString);
             System.out.println(command.getExceptions());
         }
-
 
         UserCommand command = novaBot.parser.parseInput("!addraid <egg1,level1>");
         System.out.println(command.getExceptions());

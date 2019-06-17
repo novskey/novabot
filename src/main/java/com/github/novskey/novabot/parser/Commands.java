@@ -57,7 +57,7 @@ public class Commands {
 
         if(config.pokemonEnabled()) {
             final Command addPokemon = new Command()
-                    .setValidArgTypes(new HashSet<>(Arrays.asList(CommandStr, Pokemon, Locations, IV, Level, CP)));
+                    .setValidArgTypes(new HashSet<>(Arrays.asList(CommandStr, Pokemon, Locations, IV, Level, CP, ATKIV, DEFIV, STAIV, PVPGreatRank, PVPUltraRank)));
 
             if (config.isAllowAllLocation()){
                 addPokemon.setRequiredArgTypes(new HashSet<>(Arrays.asList(CommandStr, Pokemon)))
@@ -80,7 +80,42 @@ public class Commands {
                       .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, IV, Level, CP)))
                       .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level)))
                       .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level, CP)))
-                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, CP)));
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, CP)))
+                      //Massive list of PVP relevant commands:
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, PVPGreatRank)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, PVPUltraRank)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, PVPGreatRank)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, PVPUltraRank)))
+                      
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, ATKIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, DEFIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, ATKIV, DEFIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, DEFIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, ATKIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, ATKIV, DEFIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, Level, ATKIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, Level, DEFIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, Level, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, Level, ATKIV, DEFIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, Level, DEFIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, Level, ATKIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Locations, Level, ATKIV, DEFIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, ATKIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, DEFIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, ATKIV, DEFIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, DEFIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, ATKIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, ATKIV, DEFIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level, ATKIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level, DEFIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level, ATKIV, DEFIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level, DEFIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level, ATKIV, STAIV)))
+                      .addValidArgCombination(new TreeSet<>(Arrays.asList(CommandStr, Pokemon, Level, ATKIV, DEFIV, STAIV)))
+                      ;
 
             final Command delPokemon = new Command()
                     .setValidArgTypes(addPokemon.getValidArgTypes())
