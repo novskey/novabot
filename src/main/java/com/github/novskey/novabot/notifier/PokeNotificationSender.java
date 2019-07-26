@@ -7,7 +7,9 @@ import com.github.novskey.novabot.maps.GeofenceIdentifier;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.requests.RestAction;
 
@@ -151,6 +153,21 @@ public class PokeNotificationSender extends NotificationSender implements Runnab
 
     private void sendChannelAlert(Message message, String channelId) {
         localLog.info("Sending public alert message to channel " + channelId);
-        novaBot.getNextNotificationBot().getTextChannelById(channelId).sendMessage(message).queue(m -> localLog.info("Successfully sent message."));
+        try {
+        	JDA nextNotificationBot = novaBot.getNextNotificationBot();
+        	if (nextNotificationBot == null) {
+                localLog.info("Weird, no more notification bots.");
+        		return;
+        	}
+			TextChannel textChannelById = nextNotificationBot.getTextChannelById(channelId);
+			if (textChannelById == null) {
+                localLog.info("Discord channel went away.");
+        		return;
+			}
+			textChannelById.sendMessage(message).queue(m -> localLog.info("Successfully sent message."));
+        } catch (Throwable t) {
+        	//Eat errors that can happen if the discord channel gets deleted
+        	t.printStackTrace();
+        }
     }
 }

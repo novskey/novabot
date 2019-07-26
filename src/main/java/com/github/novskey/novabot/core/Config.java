@@ -623,7 +623,7 @@ public class Config {
 
     public boolean matchesFilter(JsonObject filter, PokeSpawn pokeSpawn, String filterName) {
     	//Check for 'PVP' filters
-    	for(String pvpFilterName : new String[]{"PVP", "PVPGreat", "PVPUltra"}) {
+    	for(String pvpFilterName : new String[]{"PVP", "PVPGreat", "PVPUltra", "PVPTop20", "PVPOptimal"}) {
 	    	JsonElement pvpFilter = searchFilter(filter, pvpFilterName);
 	    	if (pvpFilter != null) {
 	    		String pvpdescription = pokeSpawn.getProperties().get("pvpdescription");
@@ -633,6 +633,20 @@ public class Config {
 	    			}
 	    			if (pvpFilterName.equals("PVPUltra") && !pvpdescription.contains("ultra")) {
 	    				continue;
+	    			}
+	    			if (pvpFilterName.equals("PVPOptimal") && !pvpdescription.contains("Rank 1 ")) {
+	    				continue;
+	    			}
+	    			if (pvpFilterName.equals("PVPTop20")) {
+	    				boolean matches = false;
+		    			for(int i = 1; i <= 20; i++) {
+		    				if (pvpdescription.contains("Rank " + i + " ")) {
+		    					matches = true;
+		    				}
+		    			}
+		    			if (!matches) {
+		    				continue;
+		    			}
 	    			}
 	    			PokeNotificationSender.notificationLog.info(String.format("Spawn %s matches %s filter.", pokeSpawn.getProperties().get("pkmn"), pvpFilterName));
 	                return true;

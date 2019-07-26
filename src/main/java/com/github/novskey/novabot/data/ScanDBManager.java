@@ -1,5 +1,28 @@
 package com.github.novskey.novabot.data;
 
+import static com.github.novskey.novabot.core.ScannerType.RocketMap;
+import static com.github.novskey.novabot.core.ScannerType.SkoodatRocketMap;
+import static com.github.novskey.novabot.core.ScannerType.SloppyRocketMap;
+import static com.github.novskey.novabot.data.DataManager.MySQL_DRIVER;
+import static com.github.novskey.novabot.data.DataManager.PgSQL_DRIVER;
+
+import java.beans.PropertyVetoException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.novskey.novabot.Util.UtilityFunctions;
 import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.core.ScannerType;
@@ -9,23 +32,10 @@ import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.RaidSpawn;
 import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
+import com.github.novskey.novabot.rocketincident.RocketIncidentSpawn;
+import com.github.novskey.novabot.rocketincident.RocketIncident;
 
 import lombok.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.beans.PropertyVetoException;
-import java.io.IOException;
-import java.sql.*;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import static com.github.novskey.novabot.core.ScannerType.*;
-import static com.github.novskey.novabot.data.DataManager.MySQL_DRIVER;
-import static com.github.novskey.novabot.data.DataManager.PgSQL_DRIVER;
 
 @Data
 public class ScanDBManager  {
@@ -761,7 +771,7 @@ public class ScanDBManager  {
                       "       quest_submitter" +
                       " FROM pokestops" +
                       " WHERE (quest IS NOT NULL OR reward IS NOT NULL) AND" +
-                      " updated >= ? AND updated < ?" //parameter 1 and 2
+                      " quest_updated >= ? AND quest_updated < ?" //parameter 1 and 2
                       ;
                 break;
             default:
@@ -771,8 +781,7 @@ public class ScanDBManager  {
         //We subtract 2 seconds to allow a (generous) 2 second period for new submissions to enter the database.
         long nextTS = Instant.now().getEpochSecond() - 2;
         
-        int rows = 0;
-        int newSpawns = 0;
+        int updatedStops = 0;
         try (Connection connection = getScanConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -791,8 +800,6 @@ public class ScanDBManager  {
             final ResultSet rs = statement.executeQuery();
             dbLog.info("Query complete");
 
-            rows = 0;
-
             while (rs.next()) {
                 ResearchTaskSpawn researchtask = null;
                
@@ -805,7 +812,6 @@ public class ScanDBManager  {
                         String reward = rs.getString(5);
                         String quest_submitter = rs.getString(6);
                         researchtask = new ResearchTaskSpawn(lat,lon,name,quest,reward,quest_submitter);
-
                         break;
                     default:
                     	throw new RuntimeException("Assertion error");
@@ -815,7 +821,7 @@ public class ScanDBManager  {
                     dbLog.info(researchtask.toString());
                     
                     novaBot.notificationsManager.researchTaskQueue.add(researchtask);
-                    newSpawns++;
+                    updatedStops++;
                 } catch (Exception e) {
                     dbLog.error("Error executing GetUpdatedPokestops",e);
                 }
@@ -823,7 +829,73 @@ public class ScanDBManager  {
         } catch (SQLException e) {
             dbLog.error("Error executing GetUpdatedPokestops",e);
         }
-        dbLog.info(String.format("Returned %s rows, %s updated pokestops", rows, newSpawns));
+        
+        switch (scannerDb.getScannerType()) {
+            case Hydro74000Monocle:
+                sql = "" +
+                      " SELECT " +
+                      "       lat," +
+                      "       lon," +
+                      "       name," +
+                      "       incident_expiration" +
+                      " FROM pokestops" + 
+                      " WHERE (incident_expiration >= ?) AND" + //parameter 1
+                      " rocket_updated >= ? AND rocket_updated < ?" //parameter 2 and 3
+                      ;
+                break;
+            default:
+            	throw new RuntimeException("Assertion error");
+        }
+        
+        try (Connection connection = getScanConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            int offset = 1;
+
+            switch (scannerDb.getScannerType()) {
+                case Hydro74000Monocle:
+                	statement.setLong(offset++, nextTS); //see sql above
+                	statement.setLong(offset++, lastPokestopsTS);
+                	statement.setLong(offset++, nextTS);
+                	break;
+                default:
+                	throw new RuntimeException("Assertion error");
+            }
+
+            dbLog.info("Executing query:" + statement);
+            final ResultSet rs = statement.executeQuery();
+            dbLog.info("Query complete");
+
+            while (rs.next()) {
+                RocketIncidentSpawn rocketi = null;
+               
+                switch (scannerDb.getScannerType()) {
+                    case Hydro74000Monocle:
+                        double lat = rs.getDouble(1);
+                        double lon = rs.getDouble(2);
+                        String name = rs.getString(3);
+                        ZonedDateTime disappearTime = ZonedDateTime.ofLocal(rs.getTimestamp(4).toLocalDateTime(), UtilityFunctions.UTC, null);
+                        rocketi = new RocketIncidentSpawn(lat,lon,name,disappearTime);
+                        break;
+                    default:
+                    	throw new RuntimeException("Assertion error");
+                }
+
+                try {
+                    dbLog.info(rocketi.toString());
+                    
+                    //novaBot.notificationsManager.rocketIncidentQueue.add(rocketi);
+                    novaBot.notificationsManager.researchTaskQueue.add(rocketi.toResearchTaskSpawn());
+                    updatedStops++;
+                } catch (Exception e) {
+                    dbLog.error("Error executing GetUpdatedPokestops",e);
+                }
+            }
+        } catch (SQLException e) {
+            dbLog.error("Error executing GetUpdatedPokestops",e);
+        }
+        
+        dbLog.info(String.format("Returned %s updated pokestops", updatedStops));
         
         lastPokestopsTS = nextTS;
 //        return pokeSpawns;

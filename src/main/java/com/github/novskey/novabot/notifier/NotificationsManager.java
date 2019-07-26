@@ -1,13 +1,14 @@
 package com.github.novskey.novabot.notifier;
 
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
 import com.github.novskey.novabot.core.NovaBot;
 import com.github.novskey.novabot.core.ScheduledExecutor;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.raids.RaidSpawn;
 import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
-
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import com.github.novskey.novabot.rocketincident.RocketIncidentSpawn;
 
 
 public class NotificationsManager {
@@ -17,6 +18,7 @@ public class NotificationsManager {
     public final LinkedBlockingQueue<PokeSpawn> pokeQueue = new LinkedBlockingQueue<>();
     public final LinkedBlockingQueue<RaidSpawn> raidQueue = new LinkedBlockingQueue<>();
     public final LinkedBlockingQueue<ResearchTaskSpawn> researchTaskQueue = new LinkedBlockingQueue<>();
+    public final LinkedBlockingQueue<RocketIncidentSpawn> rocketTaskQueue = new LinkedBlockingQueue<>();
 
     public NotificationsManager(NovaBot novaBot, boolean testing) {
         this.novaBot = novaBot;

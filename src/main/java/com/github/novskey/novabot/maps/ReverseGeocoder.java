@@ -162,7 +162,7 @@ public class ReverseGeocoder {
                 novaBot.getConfig().getGeocodingKeys().remove(key);
             }
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             novaBot.novabotLog.error("Error executing geocodedLocation",e);
             //Prevent retrying the same location:
             novaBot.dataManager.setGeocodedLocation(lat, lon, location);
