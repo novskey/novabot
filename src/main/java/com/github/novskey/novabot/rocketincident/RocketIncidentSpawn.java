@@ -4,6 +4,7 @@ import static com.github.novskey.novabot.maps.Geofencing.getGeofence;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
@@ -22,9 +23,11 @@ public class RocketIncidentSpawn extends Spawn{
 	@Getter
 	public final String pokestop_name;
 	@Getter
+	public final String grunt_type;
+	@Getter
     public ZonedDateTime disappearTime;
     
-	public RocketIncidentSpawn(double lat, double lon, String pokestop_name, ZonedDateTime disappearTime) {
+	public RocketIncidentSpawn(double lat, double lon, String pokestop_name, String grunt_type, ZonedDateTime disappearTime) {
 		this.lat = lat;
         getProperties().put("lat", String.valueOf(lat));
 		this.lon = lon;
@@ -32,6 +35,8 @@ public class RocketIncidentSpawn extends Spawn{
         getProperties().put("lng", String.valueOf(lon));
 		this.pokestop_name = pokestop_name;
         getProperties().put("pokestop_name", pokestop_name);
+        this.grunt_type = grunt_type;
+        getProperties().put("grunt_type", grunt_type);
         this.disappearTime = disappearTime;
         
         //Generated properties:
@@ -44,6 +49,11 @@ public class RocketIncidentSpawn extends Spawn{
         getProperties().put("geofence", GeofenceIdentifier.listToString(geofenceIdentifiers));
         getProperties().put("gmaps", getGmapsLink());
         getProperties().put("applemaps", getAppleMapsLink());
+
+        this.setTimeZone(novaBot.getConfig().useGoogleTimeZones() ?  novaBot.timeZones.getTimeZone(lat,lon) : novaBot.getConfig().getTimeZone());
+        if(getTimeZone() == null){
+            setTimeZone(novaBot.timeZones.getTimeZone(lat,lon));
+        }
 	}
 
 	public Message buildMessage(String formatFile) {
@@ -80,8 +90,11 @@ public class RocketIncidentSpawn extends Spawn{
     }
 
 	public ResearchTaskSpawn toResearchTaskSpawn() {
+		//Taken from PokeSpawn
+        String timestr = printFormat12hr.format(disappearTime.withZoneSameInstant(getTimeZone()));
+        
 		return new ResearchTaskSpawn(lat, lon, pokestop_name,
-				"Team Rocket", "Team Rocket", "Scanner"
+				"Team Rocket", grunt_type + " until " + timestr, "Scanner"
 		);
 	}
 

@@ -18,6 +18,7 @@ public enum ArgType
     PVPGreatRank,
     PVPUltraRank,
     Level,
+    Forms,
     Locations,
     Rewards,
     Pokemon,
@@ -39,6 +40,8 @@ public enum ArgType
                 return "number";
             case Locations:
                 return "location";
+            case Forms:
+                return "form";
             case Rewards:
             	return "rewards";
             case Pokemon:

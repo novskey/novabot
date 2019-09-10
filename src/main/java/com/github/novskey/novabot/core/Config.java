@@ -557,8 +557,8 @@ public class Config {
         System.out.println(novaBot.getConfig().matchesFilter(novaBot.getConfig().getPokeFilters().get("ultrarare.json"),pokeSpawn,"ultrarare.json"));
         System.out.println(novaBot.getConfig().passesGlobalFilter(pokeSpawn));
 
-        RaidSpawn raidSpawn = new RaidSpawn("gymname", "gymid", -35, 149, Team.Valor, ZonedDateTime.now(),ZonedDateTime.now(), 0,50012,1,2,5);
-        System.out.println(novaBot.getConfig().matchesFilter(novaBot.getConfig().getRaidFilters().get("raidfilter.json"),raidSpawn));
+        //RaidSpawn raidSpawn = new RaidSpawn("gymname", "gymid", -35, 149, Team.Valor, ZonedDateTime.now(),ZonedDateTime.now(), 0,50012,1,2,5);
+        //System.out.println(novaBot.getConfig().matchesFilter(novaBot.getConfig().getRaidFilters().get("raidfilter.json"),raidSpawn));
 
     }
 

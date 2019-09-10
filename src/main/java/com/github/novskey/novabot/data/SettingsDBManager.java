@@ -48,9 +48,9 @@ public class SettingsDBManager implements IDataBase {
     public void addPokemon(final String userID, final Pokemon pokemon) {
         try (Connection connection = getNbConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO pokemon (user_id, id, max_iv, min_iv, max_lvl, min_lvl, max_cp, min_cp, location, min_attack_iv, max_attack_iv, min_defense_iv, max_defense_iv, min_stamina_iv, max_stamina_iv, pvp_great_rank, pvp_ultra_rank) " +
+                     "INSERT INTO pokemon (user_id, id, max_iv, min_iv, max_lvl, min_lvl, max_cp, min_cp, location, min_attack_iv, max_attack_iv, min_defense_iv, max_defense_iv, min_stamina_iv, max_stamina_iv, pvp_great_rank, pvp_ultra_rank, form) " +
                              " VALUES (?,?,?,?,?,?,?,?,?," + 
-                    		 	       "?,?,?,?,?,?,?,?" +
+                    		 	       "?,?,?,?,?,?,?,?,?" +
                     		 ")")) {
             statement.setString(1, userID);
             statement.setInt(2, pokemon.getID());
@@ -71,6 +71,7 @@ public class SettingsDBManager implements IDataBase {
             statement.setInt(p++, pokemon.maxIVs[2]);
             statement.setInt(p++, pokemon.PVPGreatRank);
             statement.setInt(p++, pokemon.PVPUltraRank);
+            statement.setString(p++, pokemon.form);
 
             dbLog.info(statement.toString());
             statement.executeUpdate();
@@ -1042,7 +1043,7 @@ public class SettingsDBManager implements IDataBase {
 //        System.out.println(novaBot.dataManager.getUserIDsToNotify(pokeSpawn));
 
         System.out.println(novaBot.getDataManager().getUserPref("107730875596169216").allSettingsToString());
-
+/*
         RaidSpawn spawn = new RaidSpawn(
                 "lincoln park gazebo",
                 "id",
@@ -1117,6 +1118,7 @@ public class SettingsDBManager implements IDataBase {
                 1);
 
         System.out.println(novaBot.dataManager.getUserIDsToNotify(spawn));
+        */
     }
 
     @Override
@@ -1472,7 +1474,7 @@ public class SettingsDBManager implements IDataBase {
         try (Connection connection = getNbConnection();
              Statement statement = connection.createStatement())
         {
-            ResultSet rs = statement.executeQuery("SELECT user_id, id, location, max_iv, min_iv, max_lvl, min_lvl, max_cp, min_cp, min_attack_iv,max_attack_iv,min_defense_iv,max_defense_iv,min_stamina_iv,max_stamina_iv,pvp_great_rank,pvp_ultra_rank FROM pokemon");
+            ResultSet rs = statement.executeQuery("SELECT user_id, id, location, max_iv, min_iv, max_lvl, min_lvl, max_cp, min_cp, min_attack_iv,max_attack_iv,min_defense_iv,max_defense_iv,min_stamina_iv,max_stamina_iv,pvp_great_rank,pvp_ultra_rank,form FROM pokemon");
 
             while (rs.next()){
                 String userId = rs.getString(1);
@@ -1494,13 +1496,17 @@ public class SettingsDBManager implements IDataBase {
                 offset += 6;
                 final int PVPgreatrank = rs.getInt(offset);
                 final int PVPultrarank = rs.getInt(offset + 1);
+                String form = rs.getString(offset + 2);
+                if ("all".equals(form)) { //since null isn't allowed in primary keys...
+                	form = null;
+                }
 
                 Set<Pokemon> userSettings = pokemons.get(userId);
                 if(userSettings == null){
                     userSettings =  ConcurrentHashMap.newKeySet();
                     pokemons.put(userId,userSettings);
                 }
-                userSettings.add(new Pokemon(Pokemon.idToName(pokemonId),location,minIv,maxIv,minLvl,maxLvl,minCp,maxCp,minIVs,maxIVs,PVPgreatrank,PVPultrarank));
+                userSettings.add(new Pokemon(Pokemon.idToName(pokemonId),location,minIv,maxIv,minLvl,maxLvl,minCp,maxCp,minIVs,maxIVs,PVPgreatrank,PVPultrarank,form));
             }
         } catch (SQLException e) {
             dbLog.error("Error executing dumpPokemon",e);

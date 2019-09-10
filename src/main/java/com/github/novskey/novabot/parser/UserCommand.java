@@ -57,6 +57,8 @@ public class UserCommand
         int[] maxIVs = {15,15,15};
         int PVPGreatRank = 4096;
         int PVPUltraRank = 4096;
+        
+        String[] forms = {null};
 
         String[] pokeNames = new String[0];
         for (final Argument arg : this.args) {
@@ -67,6 +69,9 @@ public class UserCommand
                 case Pokemon:
                     pokeNames = this.toStrings(arg.getParams());
                     break;
+                case Forms:
+                	forms = this.toStrings(arg.getParams());
+                	break;
                 case IV: 
                     miniv = (float)arg.getParams()[0];
                     if (arg.getParams().length == 2) {
@@ -106,7 +111,9 @@ public class UserCommand
         final ArrayList<Pokemon> pokemons = new ArrayList<>();
         for (final String pokeName : pokeNames) {
             for (final Location location : locations) {
-                pokemons.add(new Pokemon(pokeName, location, miniv, maxiv, minlvl, maxlvl, mincp, maxcp, minIVs, maxIVs, PVPGreatRank, PVPUltraRank));
+            	for(final String form : forms) {
+            		pokemons.add(new Pokemon(pokeName, location, miniv, maxiv, minlvl, maxlvl, mincp, maxcp, minIVs, maxIVs, PVPGreatRank, PVPUltraRank, form));
+            	}
             }
         }
         final Pokemon[] pokeArray = new Pokemon[pokemons.size()];
@@ -226,6 +233,10 @@ public class UserCommand
 
     public Location[] getLocations() {
         return this.toLocations(this.getArg(ArgType.Locations).getParams());
+    }
+
+    public String[] getForms() {
+        return this.toStrings(this.getArg(ArgType.Forms).getParams());
     }
 
 

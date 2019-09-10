@@ -33,6 +33,8 @@ public class RaidSpawn extends Spawn {
     public ZonedDateTime raidEnd;
     public ZonedDateTime battleStart;
     public int bossId;
+    public int bossForm; //form as its id, 0 for formless
+    public String form; //form as a string, for property
     public int raidLevel;
     public String gymId;
     private String name;
@@ -41,16 +43,19 @@ public class RaidSpawn extends Spawn {
     private int lobbyCode;
     private String submitter;
 
-    public RaidSpawn(int id, boolean egg) {
+    /*
+    public RaidSpawn(int id, int form, boolean egg) {
         super();
         if (egg) {
             raidLevel = id;
         } else {
             bossId = id;
+            bossForm = form;
         }
     }
+    */
 
-    public RaidSpawn(String name, String gymId, double lat, double lon, Team team, ZonedDateTime raidEnd, ZonedDateTime battleStart, int bossId, int bossCp, int move_1, int move_2, int raidLevel) {
+    public RaidSpawn(String name, String gymId, double lat, double lon, Team team, ZonedDateTime raidEnd, ZonedDateTime battleStart, int bossId, int bossForm, int bossCp, int move_1, int move_2, int raidLevel) {
         this.name = name;
         getProperties().put("gym_name", name);
 
@@ -86,11 +91,16 @@ public class RaidSpawn extends Spawn {
 
 
         this.bossId = bossId;
+        this.bossForm = bossForm;
         this.bossCp = bossCp;
         this.setMove_1(move_1);
         this.setMove_2(move_2);
 
         if (bossId != 0) {
+            if (bossForm != 0) {
+                this.form = Pokemon.formToString(bossId,bossForm);
+            }
+            getProperties().put("form", (this.form == null || this.form.equals("") ? "" : " ("+this.form+")"));
             getProperties().put("pkmn", Pokemon.getFilterName(bossId));
             getProperties().put("cp", String.valueOf(bossCp));
             getProperties().put("lvl20cp", String.valueOf(Pokemon.maxCpAtLevel(bossId, 20)));
@@ -106,8 +116,8 @@ public class RaidSpawn extends Spawn {
 
         getProperties().put("lobbycode", "unkn");
     }
-    public RaidSpawn(String name, String gymId, double lat, double lon, Team team, ZonedDateTime raidEnd, ZonedDateTime battleStart, int bossId, int bossCp, int move_1, int move_2, int raidLevel, String submitter) {
-    	this(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel);
+    public RaidSpawn(String name, String gymId, double lat, double lon, Team team, ZonedDateTime raidEnd, ZonedDateTime battleStart, int bossId, int bossForm, int bossCp, int move_1, int move_2, int raidLevel, String submitter) {
+    	this(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossForm, bossCp, move_1, move_2, raidLevel);
     	this.submitter = submitter;
     	getProperties().put("submitter", submitter);
     }
@@ -136,11 +146,6 @@ public class RaidSpawn extends Spawn {
         }
 
         return time;
-    }
-
-    public RaidSpawn(int i, int level, boolean b) {
-        this(i,b);
-        this.raidLevel = level;
     }
 
     public Message buildMessage(String formatFile) {
@@ -220,7 +225,7 @@ public class RaidSpawn extends Spawn {
                     return LEGENDARY_EGG;
             }
         }
-        return Pokemon.getIcon(bossId, null);
+        return Pokemon.getIcon(bossId, bossForm);
     }
 
     public String getLobbyCode() {

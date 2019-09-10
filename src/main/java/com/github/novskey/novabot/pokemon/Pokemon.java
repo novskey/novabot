@@ -1,5 +1,6 @@
 package com.github.novskey.novabot.pokemon;
 
+import com.github.novskey.novabot.core.Form;
 import com.github.novskey.novabot.core.Location;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -117,6 +118,7 @@ public class Pokemon {
     public int maxlvl;
     public int maxcp;
     public int mincp;
+    public String form; //Exactly equals, let's go ahead and say case insensitive. Null = any form.
     private Location location;
 	public int[] minIVs;
 	public int[] maxIVs;
@@ -167,6 +169,12 @@ public class Pokemon {
         this.PVPGreatRank = PVPGreatRank;
         this.PVPUltraRank = PVPUltraRank;
     }
+    
+
+    public Pokemon(final String pokeName, final Location location, final float miniv, final float maxiv, int minlvl, int maxlvl, int mincp, int maxcp, int[] minIVs, int[] maxIVs, int PVPGreatRank, int PVPUltraRank, String form) {
+        this(pokeName, location, miniv, maxiv, minlvl, maxlvl, mincp, maxcp, minIVs, maxIVs, PVPGreatRank, PVPUltraRank);
+        this.form = form;
+    }
 
     public Pokemon(final int id) {
 		this(idToName(id));
@@ -198,7 +206,8 @@ public class Pokemon {
     }
 
     public static String getIcon(final int id, Integer form) {
-        String url = "https://raw.githubusercontent.com/novabot-sprites/novabot-sprites/master/";
+        //String url = "https://raw.githubusercontent.com/novabot-sprites/novabot-sprites/master/";
+    	String url = "https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/NOVA_Sprites/";
         if (form != null && form != 0){
             url = url +  id + "-" + form;
         } else {
@@ -277,13 +286,14 @@ public class Pokemon {
                 Arrays.equals(poke.maxIVs, this.maxIVs) &&
                 poke.PVPGreatRank == this.PVPGreatRank && 
                 poke.PVPUltraRank == this.PVPUltraRank && 
-                poke.location.equals(this.location);
+                poke.location.equals(this.location) &&
+                ("" + poke.form).equals("" + this.form);
     }
 
     @Override
     public String toString() {
-        return String.format("%s (%s,%s)iv (%s%s)cp (%s%s)lvl %sminivs (%s)maxivs %dgreatrank %dultrarank",
-        		name,miniv,maxiv,mincp,maxcp,minlvl,maxlvl,Arrays.toString(minIVs),Arrays.toString(maxIVs),PVPGreatRank,PVPUltraRank);
+        return String.format("%s (%s,%s)iv (%s%s)cp (%s%s)lvl %sminivs (%s)maxivs %dgreatrank %dultrarank %s",
+        		name,miniv,maxiv,mincp,maxcp,minlvl,maxlvl,Arrays.toString(minIVs),Arrays.toString(maxIVs),PVPGreatRank,PVPUltraRank,form == null ? "" : " (" + form + ")");
     }
 
     public static String idToName(final int id) {
@@ -378,10 +388,7 @@ public class Pokemon {
     }
 
     public static String formToString(final Integer id, Integer form) {
-        if (form == null || form == 0){
-            return "";
-        }
-
+       /*
         JsonObject pokemonForms = formInfo.getAsJsonObject(Integer.toString(id));
 
         if (pokemonForms == null){
@@ -395,8 +402,9 @@ public class Pokemon {
         }
 
         return formName.getAsString();
+        */
+        return Form.fromID(form);
     }
-
     public static String listToString(final Pokemon[] pokemon) {
         StringBuilder str = new StringBuilder();
         if (pokemon.length == 1) {

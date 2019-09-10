@@ -135,9 +135,9 @@ public class PokeSpawn extends Spawn
         getProperties().put("gender", getGender());
 
         if (form != null && form != 0) {
-            this.form = ((Pokemon.formToString(id,form) == null) ? null : String.valueOf(Pokemon.formToString(id,form)));
+            this.form = Pokemon.formToString(id,form);
         }
-        getProperties().put("form", (this.form == null ? "" : this.form));
+        getProperties().put("form", (this.form == null || this.form.equals("") ? "" : " ("+this.form+")"));
 
         this.cp = cp;
         getProperties().put("cp", cp == null ? "?" : String.valueOf(cp));

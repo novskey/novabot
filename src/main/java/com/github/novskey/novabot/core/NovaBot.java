@@ -1,5 +1,30 @@
 package com.github.novskey.novabot.core;
 
+import static com.github.novskey.novabot.Util.StringLocalizer.getLocalString;
+import static com.github.novskey.novabot.core.Spawn.printFormat24hr;
+import static com.github.novskey.novabot.core.Weather.None;
+import static com.github.novskey.novabot.parser.ArgType.CommandName;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Queue;
+import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.security.auth.login.LoginException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.novskey.novabot.Util.CommandLineOptions;
 import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.Util.UtilityFunctions;
@@ -10,35 +35,36 @@ import com.github.novskey.novabot.maps.Geofencing;
 import com.github.novskey.novabot.maps.ReverseGeocoder;
 import com.github.novskey.novabot.maps.TimeZones;
 import com.github.novskey.novabot.notifier.NotificationsManager;
-import com.github.novskey.novabot.notifier.PokeNotificationSender;
 import com.github.novskey.novabot.notifier.RaidNotificationSender;
-import com.github.novskey.novabot.parser.*;
-import com.github.novskey.novabot.pokemon.PokeSpawn;
+import com.github.novskey.novabot.parser.ArgType;
+import com.github.novskey.novabot.parser.Argument;
+import com.github.novskey.novabot.parser.Commands;
+import com.github.novskey.novabot.parser.InputError;
+import com.github.novskey.novabot.parser.Parser;
+import com.github.novskey.novabot.parser.UserCommand;
 import com.github.novskey.novabot.pokemon.Pokemon;
 import com.github.novskey.novabot.raids.LobbyManager;
 import com.github.novskey.novabot.raids.Raid;
 import com.github.novskey.novabot.raids.RaidLobby;
 import com.github.novskey.novabot.researchtask.ResearchTask;
-import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
 
-import net.dv8tion.jda.core.*;
-import net.dv8tion.jda.core.entities.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.security.auth.login.LoginException;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static com.github.novskey.novabot.Util.StringLocalizer.getLocalString;
-import static com.github.novskey.novabot.core.Spawn.printFormat24hr;
-import static com.github.novskey.novabot.core.Weather.None;
-import static com.github.novskey.novabot.parser.ArgType.CommandName;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Emote;
+import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Icon;
+import net.dv8tion.jda.core.entities.Invite;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
 public class NovaBot {
 
@@ -294,7 +320,7 @@ public class NovaBot {
                 }
         	}
             novabotLog.debug("!settings");
-            if (userPref == null || (userPref.isRaidEmpty() && userPref.isPokeEmpty() && userPref.isPresetEmpty())) {
+            if (userPref == null || (userPref.isRaidEmpty() && userPref.isPokeEmpty() && userPref.isPresetEmpty() && userPref.isResearchEmpty())) {
                 channel.sendMessage(userMention + ", " + getLocalString("NoSettingsMessage")).queue();
             } else {
                 String toSend = userMention + ", " + getLocalString("SettingsMessageStart");
@@ -357,6 +383,15 @@ public class NovaBot {
         } else if (getConfig().getPresets().size() > 0 && (msg.equals(getLocalString("PresetsCommand")) || msg.equals(getLocalString("PresetListCommand")))) {
             MessageBuilder builder = new MessageBuilder();
             builder.appendFormat("%s, %s%s", author, getLocalString("PresetListMessageStart"), getConfig().getPresetsList());
+
+            Queue<Message> messages = builder.buildAll(MessageBuilder.SplitPolicy.NEWLINE);
+            for (final Message message : messages) {
+                channel.sendMessage(message).queue();
+            }
+            return;
+        } else if (msg.equals(getLocalString("!forms"))) {
+            MessageBuilder builder = new MessageBuilder();
+            builder.appendFormat("%s, the list of forms recognized is: %s", author, Form.getFormsList());
 
             Queue<Message> messages = builder.buildAll(MessageBuilder.SplitPolicy.NEWLINE);
             for (final Message message : messages) {
@@ -723,6 +758,14 @@ public class NovaBot {
                     }
                     String message2 = String.format("%s, %s %s", author.getAsMention(), getLocalString("YouWillNowBeNotifiedOf"), Pokemon.listToString(userCommand.getUniquePokemon()));
 
+                    final Argument formsArg = userCommand.getArg(ArgType.Forms);
+                    if (formsArg != null) {
+                        String[] forms = userCommand.getForms();
+                        if (forms.length > 0) {
+                        	message2 += " (" + String.join(", ",forms) + ")";
+                        }
+                    }
+                    
                     boolean had_more = false;
                     String ivMessage = userCommand.getIvMessage();
                     if (ivMessage != null) {

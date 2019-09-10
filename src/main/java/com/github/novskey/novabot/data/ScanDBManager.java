@@ -244,7 +244,8 @@ public class ScanDBManager  {
                       " raids.level," +
                       " raids.move_1," +
                       " raids.move_2, " +
-                      " raids.submitter " +
+                      " raids.submitter, " +
+                      " raids.form " +
                       "FROM forts " +
                       "INNER JOIN fort_sightings ON (fort_sightings.fort_id = forts.id AND fort_sightings.last_modified = (SELECT MAX(last_modified) FROM fort_sightings fs2 WHERE fs2.fort_id=forts.id)) " +
                       "INNER JOIN raids ON forts.id = raids.fort_id " +
@@ -341,7 +342,7 @@ public class ScanDBManager  {
                         int move_1 = rs.getInt(11);
                         int move_2 = rs.getInt(12);
 
-                        raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel);
+                        //raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossForm, bossCp, move_1, move_2, raidLevel);
                         break;
                     case Hydro74000Monocle:
                         name = rs.getString(1);
@@ -357,8 +358,9 @@ public class ScanDBManager  {
                         move_1 = rs.getInt(11);
                         move_2 = rs.getInt(12);
                         String submitter = rs.getString(13);
+                        int bossForm = rs.getInt(14);
 
-                        raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossCp, move_1, move_2, raidLevel, submitter);
+                        raidSpawn = new RaidSpawn(name, gymId, lat, lon, team, raidEnd, battleStart, bossId, bossForm, bossCp, move_1, move_2, raidLevel, submitter);
                         break;
                     case Monocle:
                         gymId = String.valueOf(rs.getInt(1));
@@ -372,7 +374,7 @@ public class ScanDBManager  {
                         move_1 = rs.getInt(9);
                         move_2 = rs.getInt(10);
 
-                        raidSpawn = new RaidSpawn("unkn", gymId, lat, lon, team, raidEnd, battleStart, bossId, (bossId > 0 ? Pokemon.getRaidBossCp(bossId, raidLevel) : 0), move_1, move_2, raidLevel);
+                        //raidSpawn = new RaidSpawn("unkn", gymId, lat, lon, team, raidEnd, battleStart, bossId, (bossId > 0 ? Pokemon.getRaidBossCp(bossId, raidLevel) : 0), move_1, move_2, raidLevel);
                         break;
                 }
                 dbLog.debug(raidSpawn.toString());
@@ -837,6 +839,7 @@ public class ScanDBManager  {
                       "       lat," +
                       "       lon," +
                       "       name," +
+                      "       grunt_type," +
                       "       incident_expiration" +
                       " FROM pokestops" + 
                       " WHERE (incident_expiration >= ?) AND" + //parameter 1
@@ -874,8 +877,9 @@ public class ScanDBManager  {
                         double lat = rs.getDouble(1);
                         double lon = rs.getDouble(2);
                         String name = rs.getString(3);
-                        ZonedDateTime disappearTime = ZonedDateTime.ofLocal(rs.getTimestamp(4).toLocalDateTime(), UtilityFunctions.UTC, null);
-                        rocketi = new RocketIncidentSpawn(lat,lon,name,disappearTime);
+                        String grunt_type = rs.getString(4);                        
+                        ZonedDateTime disappearTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getLong(5)), UtilityFunctions.UTC);
+                        rocketi = new RocketIncidentSpawn(lat,lon,name,grunt_type,disappearTime);
                         break;
                     default:
                     	throw new RuntimeException("Assertion error");

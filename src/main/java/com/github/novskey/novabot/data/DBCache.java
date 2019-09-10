@@ -342,8 +342,8 @@ public class DBCache implements IDataBase {
 
         return new ArrayList<>(UtilityFunctions.filterByValue(unPausedUsers, researchTasksSet -> {
             Stream<ResearchTask> matchingIds = researchTasksSet.stream().filter(researchTaskSetting ->
-                                                                        (rewardLower.equals(researchTaskSetting.reward) ||
-                                                                        rewardLower.contains(" "+researchTaskSetting.reward))
+                                                                        //(rewardLower.equals(researchTaskSetting.reward) || rewardLower.contains(" "+researchTaskSetting.reward))
+            			rewardLower.contains(researchTaskSetting.reward)
             );
             return matchingIds.anyMatch(researchTaskSetting -> researchTaskSpawn.getSpawnLocation().intersect(researchTaskSetting.location));
         }).keySet());
@@ -403,6 +403,8 @@ public class DBCache implements IDataBase {
                 int pvp_ultra_rank = pokeSpawn.pvp_ultra_rank == null ? 4096 : pokeSpawn.pvp_ultra_rank;
                 
                 if (pvp_ultra_rank > pokemonSetting.PVPUltraRank) return false;
+               
+                if (pokemonSetting.form != null && !pokemonSetting.form.equalsIgnoreCase(pokeSpawn.form)) return false;
 
                 int cp = pokeSpawn.cp == null ? 0 : pokeSpawn.cp;
 

@@ -365,8 +365,21 @@ public class UserPref {
         return empty[0];
     }
 
+    public boolean isResearchEmpty() {
+        boolean[] empty = {true};
+        researchTaskPrefs.forEach((loc, obj) -> {
+            if (obj.size() > 0) {
+                empty[0] = false;
+            }
+        });
+        return empty[0];
+    }
+
     private String pokePrefString(Pokemon pokemon) {
         String str = pokemon.name;
+        if (pokemon.form != null) {
+        	str += " (" + pokemon.form + ")";
+        }
         boolean has_more = false;
         if (pokemon.miniv > 0.0f || pokemon.maxiv < 100.0f) {
         	has_more = true;

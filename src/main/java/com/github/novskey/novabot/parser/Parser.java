@@ -1,13 +1,5 @@
 package com.github.novskey.novabot.parser;
 
-import com.github.novskey.novabot.Util.StringLocalizer;
-import com.github.novskey.novabot.core.Location;
-import com.github.novskey.novabot.core.LocationType;
-import com.github.novskey.novabot.core.NovaBot;
-import com.github.novskey.novabot.core.TimeUnit;
-import com.github.novskey.novabot.maps.GeofenceIdentifier;
-import com.github.novskey.novabot.pokemon.Pokemon;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +7,15 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.github.novskey.novabot.Util.StringLocalizer;
+import com.github.novskey.novabot.core.Form;
+import com.github.novskey.novabot.core.Location;
+import com.github.novskey.novabot.core.LocationType;
+import com.github.novskey.novabot.core.NovaBot;
+import com.github.novskey.novabot.core.TimeUnit;
+import com.github.novskey.novabot.maps.GeofenceIdentifier;
+import com.github.novskey.novabot.pokemon.Pokemon;
 
 
 public class Parser {
@@ -121,7 +122,10 @@ public class Parser {
             }
         } else {
             final Location location;
-            if (valid.contains(ArgType.Locations) && (location = Location.fromString(trimmed, novaBot)) != null) {
+            if (valid.contains(ArgType.Forms) && Form.fromString(trimmed) != null) {
+                argument.setType(ArgType.Forms);
+                argument.setParams(new Object[] {trimmed});
+            } else if (valid.contains(ArgType.Locations) && (location = Location.fromString(trimmed, novaBot)) != null) {
                 argument.setType(ArgType.Locations);
 
                 ArrayList<Location> locations = new ArrayList<>();
@@ -245,6 +249,14 @@ public class Parser {
             for (String string : strings) {
                 String trimmed = string.trim();
                 switch (argType) {
+                	case Forms:
+                        if (Form.fromString(trimmed) != null) {
+                            args.add(trimmed);
+                        }else{
+                            malformed.add(trimmed);
+                            args.add(null);
+                        }
+                        break;
                     case Locations:
                         Location loc = Location.fromString(trimmed, novaBot);
 
