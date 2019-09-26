@@ -122,9 +122,10 @@ public class Parser {
             }
         } else {
             final Location location;
-            if (valid.contains(ArgType.Forms) && Form.fromString(trimmed) != null) {
+            final String form;
+            if (valid.contains(ArgType.Forms) && (form = Form.fromString(trimmed)) != null) {
                 argument.setType(ArgType.Forms);
-                argument.setParams(new Object[] {trimmed});
+                argument.setParams(new Object[] {form});
             } else if (valid.contains(ArgType.Locations) && (location = Location.fromString(trimmed, novaBot)) != null) {
                 argument.setType(ArgType.Locations);
 
@@ -250,8 +251,9 @@ public class Parser {
                 String trimmed = string.trim();
                 switch (argType) {
                 	case Forms:
-                        if (Form.fromString(trimmed) != null) {
-                            args.add(trimmed);
+                		String form = Form.fromString(trimmed);
+                        if (form != null) {
+                            args.add(form);
                         }else{
                             malformed.add(trimmed);
                             args.add(null);

@@ -1,19 +1,23 @@
 package com.github.novskey.novabot.pokemon;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.novskey.novabot.core.Form;
 import com.github.novskey.novabot.core.Location;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
+import lombok.Builder;
 
+@Builder(toBuilder = true)
 public class Pokemon {
     private static final double[] cpMultipliers = new double[]{0.094, 0.16639787, 0.21573247, 0.25572005, 0.29024988,
                                                                0.3210876, 0.34921268, 0.37523559, 0.39956728, 0.42250001,
@@ -110,21 +114,21 @@ public class Pokemon {
             LOGGER.error("Error initialising Pokemon class",e);
         }
     }
-
+    
     public final String name;
-    public float miniv;
+    public Location location;
+	public float miniv;
     public float maxiv;
     public int minlvl;
     public int maxlvl;
-    public int maxcp;
     public int mincp;
-    public String form; //Exactly equals, let's go ahead and say case insensitive. Null = any form.
-    private Location location;
-	public int[] minIVs;
+    public int maxcp;
+    public int[] minIVs;
 	public int[] maxIVs;
 	public int PVPGreatRank;
 	public int PVPUltraRank;
-
+	public String form; //Exactly equals, let's go ahead and say case insensitive. Null = any form.
+    
     public Pokemon(final String name) {
         this.miniv = 0.0f;
         this.maxiv = 100.0f;
@@ -207,9 +211,10 @@ public class Pokemon {
 
     public static String getIcon(final int id, Integer form) {
         //String url = "https://raw.githubusercontent.com/novabot-sprites/novabot-sprites/master/";
-    	String url = "https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/NOVA_Sprites/";
+    	//String url = "https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/NOVA_Sprites/";
+    	String url = "https://raw.githubusercontent.com/mizu-github/PogoAssets/sugimori/nova_256/";
         if (form != null && form != 0){
-            url = url +  id + "-" + form;
+            url = url + id + "-" + form;
         } else {
             url += id;
         }
@@ -287,7 +292,7 @@ public class Pokemon {
                 poke.PVPGreatRank == this.PVPGreatRank && 
                 poke.PVPUltraRank == this.PVPUltraRank && 
                 poke.location.equals(this.location) &&
-                ("" + poke.form).equals("" + this.form);
+                ("" + poke.form).equalsIgnoreCase("" + this.form);
     }
 
     @Override
@@ -641,8 +646,13 @@ public class Pokemon {
     		//System.out.println(evolutions.getAsJsonObject(Integer.toString(pokemonId)));
     		ArrayList<Integer> evolutionIds = new ArrayList<Integer>();
     		evolutionIds.add(pokemonId); //consider as-is
-			for(JsonElement _evolution : evolutions.getAsJsonObject(Integer.toString(pokemonId)).getAsJsonArray("evolutionDexNumbers")) {
-				evolutionIds.add(_evolution.getAsInt());
+			JsonObject evolutionsJsonObject = evolutions.getAsJsonObject(Integer.toString(pokemonId));
+			if (evolutionsJsonObject != null) {
+				for(JsonElement _evolution : evolutionsJsonObject.getAsJsonArray("evolutionDexNumbers")) {
+					evolutionIds.add(_evolution.getAsInt());
+				}
+			} else {
+	    		System.err.println("WARN: No evolution data for pokemon ID" + pokemonId);
 			}
 			for(int id : evolutionIds) {
 				JsonArray rankPossibilitiesForEvolution = pvpivs.getAsJsonArray(Integer.toString(id));

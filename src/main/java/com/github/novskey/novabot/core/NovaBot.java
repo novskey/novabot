@@ -493,6 +493,24 @@ public class NovaBot {
             return;
         }
 
+        if (cmdStr.equals(getLocalString("!move"))) {
+            try {
+                final Location[] locationsFrom = 
+                        userCommand.toLocations(userCommand.getArg(1).getParams());
+                final Location[] locationsTo = 
+                        userCommand.toLocations(userCommand.getArg(2).getParams());
+            	dataManager.moveLocations(author.getId(), locationsFrom, locationsTo);
+                final String message2 = String.format("%s %s %s %s %s",
+                    author.getAsMention(), getLocalString("you will now receive notifications in"), Location.listToString(locationsTo),
+                    getLocalString("instead of in"), Location.listToString(locationsFrom)
+                );
+                channel.sendMessage(message2).queue();
+	        } catch (Throwable e) {
+	            novabotLog.error("Error executing !move command",e);
+	        }
+            return;
+    	}
+
         if(matchingCommand == null){
             return;
         }

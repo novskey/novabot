@@ -71,7 +71,7 @@ public class SettingsDBManager implements IDataBase {
             statement.setInt(p++, pokemon.maxIVs[2]);
             statement.setInt(p++, pokemon.PVPGreatRank);
             statement.setInt(p++, pokemon.PVPUltraRank);
-            statement.setString(p++, pokemon.form);
+            statement.setString(p++, pokemon.form == null ? "all" : pokemon.form);
 
             dbLog.info(statement.toString());
             statement.executeUpdate();
@@ -1717,4 +1717,87 @@ public class SettingsDBManager implements IDataBase {
 
         return spawnInfo;
     }
+
+	public void moveLocations(String id, Location[] locationsFrom, Location[] locationsTo) {
+		
+	}
+
+	public GeocodedLocation getNearbyGeocodedLocation(double lat, double lon, double thresh) {
+        try (Connection connection = getNbConnection();
+             Statement statement = connection.createStatement())
+        {
+            ResultSet rs = statement.executeQuery("SELECT lat,lon, timezone, suburb, street_num, street, state, postal, neighbourhood, sublocality, country FROM spawninfo"
+            		+ " WHERE lat > " + (lat - thresh) + " AND lat < " + (lat + thresh)
+            		+ " AND lon > " + (lon - thresh) + " AND lon < " + (lon + thresh)
+            		+ " AND country != 'unkn'"
+            		+ " ORDER BY ABS(lat - " + lat + ") + ABS(lon - " + lon + ") limit 1");
+
+            while (rs.next()){
+                //double lat = rs.getDouble(1);
+                //double lon = rs.getDouble(2);
+                ZoneId zoneId;
+                String timezone = rs.getString(3);
+                if(rs.wasNull()){
+                    zoneId = null;
+                }else {
+                    zoneId = ZoneId.of(timezone);
+                }
+
+                GeocodedLocation geocodedLocation = new GeocodedLocation();
+
+                String city = rs.getString(4);
+                if(rs.wasNull()){
+                    city = "unkn";
+                }
+                geocodedLocation.set("city", city);
+
+                String streetNum = rs.getString(5);
+                if(rs.wasNull()){
+                    streetNum = "unkn";
+                }
+                geocodedLocation.set("street_num", streetNum);
+
+                String street = rs.getString(6);
+                if(rs.wasNull()){
+                    street = "unkn";
+                }
+                geocodedLocation.set("street", street);
+
+                String state = rs.getString(7);
+                if(rs.wasNull()){
+                    state = "unkn";
+                }
+                geocodedLocation.set("state", state);
+
+                String postal = rs.getString(8);
+                if(rs.wasNull()){
+                    postal = "unkn";
+                }
+                geocodedLocation.set("postal", postal);
+
+                String neighbourhood = rs.getString(9);
+                if(rs.wasNull()){
+                    neighbourhood = "unkn";
+                }
+                geocodedLocation.set("neighborhood", neighbourhood);
+
+                String sublocality = rs.getString(10);
+                if(rs.wasNull()){
+                    sublocality = "unkn";
+                }
+                geocodedLocation.set("sublocality", sublocality);
+
+                String country = rs.getString(11);
+                if(rs.wasNull()){
+                    country = "unkn";
+                }
+                geocodedLocation.set("country", country);
+
+                return geocodedLocation;
+            }
+        } catch (SQLException e) {
+            dbLog.error("Error executing getNearbyGeocodedLocation",e);
+        }
+        return null;
+	}
 }

@@ -534,8 +534,10 @@ public class DBCache implements IDataBase {
     @Override
     public int purgeUnknownSpawnpoints() {
         int oldSize = spawnInfo.size();
-        UtilityFunctions.concurrentFilterByValue(spawnInfo, info ->
-                info.geocodedLocation != null && !info.geocodedLocation.getProperties().get("country").equals("unkn"));
+        //This is not thread safe! Being fixed in java 9.
+        spawnInfo.entrySet().removeIf(
+        		info -> info.getValue().geocodedLocation == null || info.getValue().geocodedLocation.getProperties().get("country").equals("unkn")
+        );
 
         return oldSize - spawnInfo.size();
     }
@@ -566,4 +568,8 @@ public class DBCache implements IDataBase {
         }
         return locationNames;
     }
+
+	public void moveLocations(String id, Location[] locationsFrom, Location[] locationsTo) {
+		
+	}
 }

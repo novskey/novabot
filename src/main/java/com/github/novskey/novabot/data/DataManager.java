@@ -1,7 +1,26 @@
 package com.github.novskey.novabot.data;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import com.github.novskey.novabot.Util.UtilityFunctions;
-import com.github.novskey.novabot.core.*;
+import com.github.novskey.novabot.core.Location;
+import com.github.novskey.novabot.core.NovaBot;
+import com.github.novskey.novabot.core.RotatingSet;
+import com.github.novskey.novabot.core.Spawn;
+import com.github.novskey.novabot.core.TimeUnit;
+import com.github.novskey.novabot.core.UserPref;
 import com.github.novskey.novabot.maps.GeocodedLocation;
 import com.github.novskey.novabot.pokemon.PokeSpawn;
 import com.github.novskey.novabot.pokemon.Pokemon;
@@ -10,15 +29,6 @@ import com.github.novskey.novabot.raids.RaidLobby;
 import com.github.novskey.novabot.raids.RaidSpawn;
 import com.github.novskey.novabot.researchtask.ResearchTask;
 import com.github.novskey.novabot.researchtask.ResearchTaskSpawn;
-
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Paris on 18/01/2018.
@@ -406,5 +416,41 @@ public class DataManager implements IDataBase {
 	public void resetResearchTasks(String id) {
 		dbCache.resetResearchTasks(id);
 		settingsDbManager.resetResearchTasks(id);
+	}
+
+	public void moveLocations(String userID, Location[] _locationsFrom, Location[] _locationsTo) {
+		Set<Location> locationsFrom = 
+			    Arrays.stream(_locationsFrom).collect(Collectors.toCollection(HashSet::new));
+		//Have to grab the settings to replace first, as otherwise we'll reapply if there's something in both lists
+		//Afterwards do a pass to delete anything not in locationsTo
+		List<Pokemon> pokemon = dbCache.pokemons.getOrDefault(userID, new TreeSet<>()).stream()
+					.filter(x -> locationsFrom.contains(x.getLocation()))
+					.collect(Collectors.toList());
+		List<Raid> raids = dbCache.raids.getOrDefault(userID, new TreeSet<>()).stream()
+				.filter(x -> locationsFrom.contains(x.getLocation()))
+				.collect(Collectors.toList());
+		List<ResearchTask> researchtasks = dbCache.researchtasks.getOrDefault(userID, new TreeSet<>()).stream()
+				.filter(x -> locationsFrom.contains(x.getLocation()))
+				.collect(Collectors.toList());
+		List<Preset> presets = dbCache.presets.getOrDefault(userID, new TreeSet<>()).stream()
+				.filter(x -> locationsFrom.contains(x.getLocation()))
+				.collect(Collectors.toList());
+		//Pass to delete old locations not in locations to
+		Set<Location> locationsTo = 
+			    Arrays.stream(_locationsTo).collect(Collectors.toCollection(HashSet::new));
+		for(Location to : locationsTo) {
+			pokemon.stream().forEach(x -> addPokemon(userID, x.toBuilder().location(to).build()));
+			raids.stream().forEach(x -> addRaid(userID, x.toBuilder().location(to).build()));
+			researchtasks.stream().forEach(x -> addResearchTask(userID, x.toBuilder().location(to).build()));
+			presets.stream().forEach(x -> addPreset(userID, x.getPresetName(), to));
+		}
+		pokemon.stream().filter(x -> !locationsTo.contains(x.getLocation())).forEach(x -> deletePokemon(userID, x));
+		raids.stream().filter(x -> !locationsTo.contains(x.getLocation())).forEach(x -> deleteRaid(userID, x));
+		researchtasks.stream().filter(x -> !locationsTo.contains(x.getLocation())).forEach(x -> deleteResearchTask(userID, x));
+		presets.stream().filter(x -> !locationsTo.contains(x.getLocation())).forEach(x -> deletePreset(userID, x.getPresetName(), x.getLocation()));
+	}
+
+	public GeocodedLocation getNearbyGeocodedLocation(double lat, double lon, double thresh) {
+		return settingsDbManager.getNearbyGeocodedLocation(lat,lon,thresh);
 	}
 }

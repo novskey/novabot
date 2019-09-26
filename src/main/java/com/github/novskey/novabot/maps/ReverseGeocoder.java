@@ -44,7 +44,9 @@ public class ReverseGeocoder {
 
         GeocodedLocation location = novaBot.dataManager.getGeocodedLocation(lat, lon);
 
-        if(location != null)  return location;
+        if(location != null) {
+        	return location;
+        }
 
         location = new GeocodedLocation();
         location.set("street_num","unkn");
@@ -57,6 +59,7 @@ public class ReverseGeocoder {
         location.set("country","unkn");
         
         //Only geocode in scan locations.
+        novaBot.novabotLog.info("Considering reverse-geocoding  " + lat+", "+lon);
         if (lat > 37.13 && lat < 37.99 && lon > -123.02 && lon < -121.45) {
             //OK to geocode.
         } else {
@@ -64,6 +67,16 @@ public class ReverseGeocoder {
             novaBot.dataManager.setGeocodedLocation(lat, lon, location);
         	return location;
         }
+        
+        //See if we have a suitably near by coordinate that was already reverse geocoded
+        //Basically it should be close enough that the street address is (probably) the same.
+        GeocodedLocation nearbyLocation = novaBot.dataManager.getNearbyGeocodedLocation(lat, lon, 0.000001);
+    	if (nearbyLocation != null) {
+    		location = nearbyLocation;
+            novaBot.novabotLog.info("Re-using nearby reverse-geocode for " + lat+", "+lon);
+    		novaBot.dataManager.setGeocodedLocation(lat, lon, location);
+    		return location;
+    	}
         
         synchronized (novaBot.getConfig().getGeocodingKeys()) {
         	if (novaBot.getConfig().getGeocodingKeys().isEmpty()) {

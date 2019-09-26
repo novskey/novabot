@@ -12,7 +12,7 @@ public class Command {
     HashSet<ArgType> validArgTypes;
     HashSet<TreeSet<ArgType>> validArgCombinations;
     private HashSet<ArgType> requiredArgTypes;
-    final boolean allowDuplicateArgs;
+    boolean allowDuplicateArgs;
     private Argument[] arguments;
 
     public Command() {
@@ -109,7 +109,7 @@ public class Command {
         boolean match = false;
         for (TreeSet<ArgType> validArgCombination : validArgCombinations) {
             match = true;
-            if (argTypes.size() == validArgCombination.size()) {
+            if (argTypes.size() == validArgCombination.size() || allowDuplicateArgs) {
                 for (ArgType argType : validArgCombination) {
                     if (!argTypes.contains(argType)) {
                         match = false;

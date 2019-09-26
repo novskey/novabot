@@ -688,15 +688,15 @@ public class Config {
         topLevelSearchStrs.add(researchTaskSpawn.getTask());
         topLevelSearchStrs.add("Default");
 
-        RaidNotificationSender.notificationLog.info("Filter: " + filter);
+        //RaidNotificationSender.notificationLog.info("Filter: " + filter);
         
         JsonElement researchTaskFilter;
         for (String searchStr: topLevelSearchStrs) {
         	researchTaskFilter        = searchFilter(filter,searchStr);
-            PokeNotificationSender.notificationLog.info(searchStr + ": " + researchTaskFilter);
+            //PokeNotificationSender.notificationLog.info(searchStr + ": " + researchTaskFilter);
 
             if (researchTaskFilter == null) {
-            	PokeNotificationSender.notificationLog.info(String.format("couldn't find filter for '%s'",searchStr));
+            	//PokeNotificationSender.notificationLog.info(String.format("couldn't find filter for '%s'",searchStr));
             } else {
                 if (researchTaskFilter.isJsonObject()) {
                 	//Ignore these.

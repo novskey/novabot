@@ -4,7 +4,9 @@ import com.github.novskey.novabot.Util.StringLocalizer;
 import com.github.novskey.novabot.core.Location;
 import com.github.novskey.novabot.core.Types;
 import com.github.novskey.novabot.pokemon.Pokemon;
+import com.github.novskey.novabot.pokemon.Pokemon.PokemonBuilder;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.*;
@@ -12,12 +14,13 @@ import java.util.*;
 /**
  * Created by Owner on 27/06/2017.
  */
+@Builder(toBuilder = true)
 public class ResearchTask {
 
 	@Getter
-    public Location location;
-	@Getter
     public String reward = "";
+	@Getter
+    public Location location;
 
 
     public ResearchTask(){

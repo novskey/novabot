@@ -269,6 +269,17 @@ public class Commands {
 	        commands.put(StringLocalizer.getLocalString("DelResearchTaskCommand"), delrt);
 	        commands.put(StringLocalizer.getLocalString("ClearResearchTaskCommand"), clearrt);
         }
+        
+        {
+        	//move command
+            Command movec = new Command()
+                    .setValidArgTypes(new HashSet<>(Arrays.asList(Locations)))
+                    .setRequiredArgTypes(new HashSet<>(Arrays.asList(Locations)))
+                    .addValidArgCombination(new TreeSet<>(Arrays.asList(Locations)));
+            movec.setAllowDuplicateArgs(true);
+	
+	        commands.put(StringLocalizer.getLocalString("!move"), movec);
+        }
 
         if(config.statsEnabled()) {
             final Command stats = new Command()

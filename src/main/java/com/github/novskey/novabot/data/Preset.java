@@ -2,12 +2,18 @@ package com.github.novskey.novabot.data;
 
 import com.github.novskey.novabot.core.Location;
 
+import lombok.Builder;
+import lombok.Getter;
+
 /**
  * Created by Paris on 17/01/2018.
  */
+@Builder(toBuilder = true)
 public class Preset {
 
+	@Getter
     public String presetName;
+	@Getter
     public Location location;
 
     public Preset(String preset, Location location) {

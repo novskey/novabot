@@ -120,7 +120,7 @@ public class UserCommand
         return pokemons.toArray(pokeArray);
     }
 
-    private Location[] toLocations(final Object[] params) {
+    public Location[] toLocations(final Object[] params) {
         final Location[] locations = new Location[params.length];
         for (int i = 0; i < params.length; ++i) {
             locations[i] = (Location)params[i];

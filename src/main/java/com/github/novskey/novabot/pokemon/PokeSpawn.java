@@ -142,8 +142,8 @@ public class PokeSpawn extends Spawn
         this.cp = cp;
         getProperties().put("cp", cp == null ? "?" : String.valueOf(cp));
 
-        getProperties().put("lvl30cp", cp == null ? "?" : String.valueOf(Pokemon.maxCpAtLevel(id, 30)));
-        getProperties().put("lvl35cp", cp == null ? "?" : String.valueOf(Pokemon.maxCpAtLevel(id, 35)));
+        //getProperties().put("lvl30cp", cp == null ? "?" : String.valueOf(Pokemon.maxCpAtLevel(id, 30)));
+        //getProperties().put("lvl35cp", cp == null ? "?" : String.valueOf(Pokemon.maxCpAtLevel(id, 35)));
 
         getProperties().put("weather","unkn");
         getProperties().put("weather_icon","");
