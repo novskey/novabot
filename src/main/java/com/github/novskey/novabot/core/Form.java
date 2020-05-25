@@ -1,5 +1,6 @@
 package com.github.novskey.novabot.core;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -32,6 +33,14 @@ public class Form {
     	System.out.println(formMap);
     	System.out.println(formMap.containsKey("alola"));
     	System.out.println(getFormsList());
+    	outer: for(String form : new String[] {"Alola", "Trash", "Zen"}) {
+    		for(int i = 0; i < forms.length; i++) {
+    			if (forms[i].equals(form)) {
+        			System.out.println(form + " " + i);
+        			continue outer;
+    			}
+    		}
+    	}
     }
 	public static String fromID(Integer form) {
 		if (form == null || form == 0 || form >= forms.length){

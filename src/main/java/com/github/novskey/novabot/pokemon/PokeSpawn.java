@@ -41,9 +41,9 @@ public class PokeSpawn extends Spawn
     public Float iv;
     public Integer cp;
     public Integer level;
-    private Float weight;
-    private Float height;
-    private Integer gender;
+    public Float weight;
+    public Float height;
+    public Integer gender;
     private String suburb;
     public Integer iv_attack;
     public Integer iv_defense;
@@ -80,7 +80,7 @@ public class PokeSpawn extends Spawn
 
         getProperties().put("pkmn",Pokemon.getFilterName(id));
 
-        if (novaBot.suburbsEnabled()) {
+        if (novaBot != null && novaBot.suburbsEnabled()) {
             this.setGeocodedLocation(novaBot.reverseGeocoder.geocodedLocation(lat, lon));
             getGeocodedLocation().getProperties().forEach(getProperties()::put);
         }
@@ -155,7 +155,7 @@ public class PokeSpawn extends Spawn
     //all the IVs and the level.
     private void initPVPDescription() {
         if (iv_attack != null && iv_defense != null && iv_stamina != null && level != null){
-	        PVPRanking pvpRanking = Pokemon.getPVPRankingDescription(id, level, iv_attack, iv_defense, iv_stamina);
+	        PVPRanking pvpRanking = Pokemon.getPVPRankingDescription(this);
 	        if (pvpRanking.description != null) {
 	        	getProperties().put("pvpdescription", pvpRanking.description+"\n");
 	        	pvp_great_rank = pvpRanking.PVPGreatRank;
@@ -178,12 +178,14 @@ public class PokeSpawn extends Spawn
         initPVPDescription();
     }
 
-    public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, int weight, int height, Integer gender, Integer form, Integer cp, Integer level, int weather, String encounter_id, Long spawn_id, Integer is_wild_spawn, Boolean expire_timestamp_verified) {
+    public PokeSpawn(int id, double lat, double lon, ZonedDateTime disappearTime, Integer attack, Integer defense, Integer stamina, Integer move1, Integer move2, int weight, int height, Integer gender, Integer form, Integer cp, Integer level, Integer weather, String encounter_id, Long spawn_id, Integer is_wild_spawn, Boolean expire_timestamp_verified) {
         this(id,lat,lon,disappearTime,attack,defense,stamina,move1,move2,weight,height,gender,form,cp,level);
-        Weather w = Weather.fromId(weather);
-        if (w != null) {
-            getProperties().put("weather", w.toString());
-            getProperties().put("weather_icon", w.getEmote());
+        if (weather != null) {
+	        Weather w = Weather.fromId(weather);
+	        if (w != null) {
+	            getProperties().put("weather", w.toString());
+	            getProperties().put("weather_icon", w.getEmote());
+	        }
         }
         getProperties().replace("encounter_id",encounter_id);
         if (expire_timestamp_verified) {
@@ -364,13 +366,13 @@ public class PokeSpawn extends Spawn
             return "?";
         }
         if (this.gender == 1) {
-            return "\u2642";
+            return "\u2642"; //male
         }
         if (this.gender == 2) {
-            return "\u2640";
-        }
+            return "\u2640"; //female
+        } 
         if (this.gender == 3) {
-            return "\u26b2";
+            return "\u26b2"; //neuter
         }
         return "?";
     }
