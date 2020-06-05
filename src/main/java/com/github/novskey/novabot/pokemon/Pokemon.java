@@ -561,6 +561,21 @@ public class Pokemon {
     	);
     	System.out.println(burmy.getProperties());
     	System.out.println("Pvp description: " + burmy.getProperties().get("pvpdescription"));
+    	
+
+    	PokeSpawn galarianstunfisk = new PokeSpawn(
+    			618,  //id
+    			0.0,0.0, null, 
+    			0,14,15, //attack, def, sta
+    			0,0,0,0, 
+    			2, //gender 
+    			2345, //trash form
+    			0, 
+    			3, //level 
+    			null,null,0L,0,false
+    	);
+    	System.out.println(galarianstunfisk.getProperties());
+    	System.out.println("Pvp description: " + galarianstunfisk.getProperties().get("pvpdescription"));
     	if (true) return;
 
         for (Integer integer : new Integer[]{13, 16, 19, 21, 23, 29, 32, 41, 48, 60, 98, 118, 120, 122, 161, 163, 165, 167, 177, 183, 194, 412, 413}) {
