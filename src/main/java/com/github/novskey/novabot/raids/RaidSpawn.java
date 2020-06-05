@@ -191,7 +191,7 @@ public class RaidSpawn extends Spawn {
             embedBuilder.setTitle(novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleFormatting(formatFile, formatKey)), novaBot.getConfig().formatStr(getProperties(), novaBot.getConfig().getTitleUrl(formatFile, formatKey)));
             embedBuilder.setThumbnail(getIcon());
             if (novaBot.getConfig().showMap(formatFile, formatKey)) {
-                embedBuilder.setImage(getImage(formatFile));
+                embedBuilder.setImage(getImage(formatFile, bossId, bossForm, raidLevel));
             }
             embedBuilder.setFooter(novaBot.getConfig().getFooterText(), null);
             embedBuilder.setTimestamp(Instant.now());

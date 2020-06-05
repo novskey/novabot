@@ -40,7 +40,7 @@ import java.util.*;
 public class Config {
 
     private static final String[] formatKeys = new String[]{"pokemon", "raidEgg", "raidBoss", "researchTask"};
-    private static final String[] formattingVars = new String[]{"title", "titleUrl", "body", "content", "showMap", "mapZoom", "mapWidth", "mapHeight","showColor"};
+    private static final String[] formattingVars = new String[]{"title", "titleUrl", "body", "content", "showMap", "mapZoom", "mapWidth", "mapHeight", "tileserverURL", "showColor"};
     private static final HashSet<String> filterTypes = new HashSet<>(Arrays.asList("atk", "def", "sta", "level", "iv", "cp"));
     private JsonObject globalFilter = null;
     private final HashMap<String, JsonObject> pokeFilters = new HashMap<>();
@@ -436,6 +436,10 @@ public class Config {
 
     public String getMapZoom(String fileName, String formatKey) {
         return formats.get(fileName).getFormatting(formatKey, "mapZoom");
+    }
+    
+    public String getTileserverURL(String fileName, String formatKey) {
+        return formats.get(fileName).getFormatting(formatKey, "tileserverURL");
     }
 
     public ArrayList<AlertChannel> getNonGeofencedPokeChannels() {

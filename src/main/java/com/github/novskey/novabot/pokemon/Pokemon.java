@@ -211,7 +211,7 @@ public class Pokemon {
 //        System.out.println("getting id of " + this.name);
         return nameToID(this.name);
     }
-
+    
     public static String getIcon(final int id, Integer form) {
         //String url = "https://raw.githubusercontent.com/novabot-sprites/novabot-sprites/master/";
     	//String url = "https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/NOVA_Sprites/";

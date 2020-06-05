@@ -1,44 +1,8326 @@
-{
-  "201": {
-    "1": "A",
-    "2": "B",
-    "3": "C",
-    "4": "D",
-    "5": "E",
-    "6": "F",
-    "7": "G",
-    "8": "H",
-    "9": "I",
-    "10": "J",
-    "11": "K",
-    "12": "L",
-    "13": "M",
-    "14": "N",
-    "15": "O",
-    "16": "P",
-    "17": "Q",
-    "18": "R",
-    "19": "S",
-    "20": "T",
-    "21": "U",
-    "22": "V",
-    "23": "W",
-    "24": "X",
-    "25": "Y",
-    "26": "Z",
-    "27": "!",
-    "28": "?"
+[
+  {
+    "key": 163,
+    "value": "Normal"
   },
-  "351": {
-    "29": "Normal",
-    "30": "Sunny",
-    "31": "Rainy",
-    "32": "Snowy"
+  {
+    "key": 164,
+    "value": "Shadow"
   },
-  "386": {
-    "33": "Normal",
-    "34": "Attack",
-    "35": "Defense",
-    "36": "Speed"
+  {
+    "key": 165,
+    "value": "Purified"
+  },
+  {
+    "key": 604,
+    "value": "No Evolve"
+  },
+  {
+    "key": 897,
+    "value": "Fall"
+  },
+  {
+    "key": 166,
+    "value": "Normal"
+  },
+  {
+    "key": 167,
+    "value": "Shadow"
+  },
+  {
+    "key": 168,
+    "value": "Purified"
+  },
+  {
+    "key": 169,
+    "value": "Normal"
+  },
+  {
+    "key": 170,
+    "value": "Shadow"
+  },
+  {
+    "key": 171,
+    "value": "Purified"
+  },
+  {
+    "key": 950,
+    "value": "Clone"
+  },
+  {
+    "key": 172,
+    "value": "Normal"
+  },
+  {
+    "key": 173,
+    "value": "Shadow"
+  },
+  {
+    "key": 174,
+    "value": "Purified"
+  },
+  {
+    "key": 605,
+    "value": "No Evolve"
+  },
+  {
+    "key": 896,
+    "value": "Fall"
+  },
+  {
+    "key": 175,
+    "value": "Normal"
+  },
+  {
+    "key": 176,
+    "value": "Shadow"
+  },
+  {
+    "key": 177,
+    "value": "Purified"
+  },
+  {
+    "key": 178,
+    "value": "Normal"
+  },
+  {
+    "key": 179,
+    "value": "Shadow"
+  },
+  {
+    "key": 180,
+    "value": "Purified"
+  },
+  {
+    "key": 606,
+    "value": "No Evolve"
+  },
+  {
+    "key": 951,
+    "value": "Clone"
+  },
+  {
+    "key": 181,
+    "value": "Normal"
+  },
+  {
+    "key": 182,
+    "value": "Shadow"
+  },
+  {
+    "key": 183,
+    "value": "Purified"
+  },
+  {
+    "key": 607,
+    "value": "No Evolve"
+  },
+  {
+    "key": 895,
+    "value": "Fall"
+  },
+  {
+    "key": 184,
+    "value": "Normal"
+  },
+  {
+    "key": 185,
+    "value": "Shadow"
+  },
+  {
+    "key": 186,
+    "value": "Purified"
+  },
+  {
+    "key": 187,
+    "value": "Normal"
+  },
+  {
+    "key": 188,
+    "value": "Shadow"
+  },
+  {
+    "key": 189,
+    "value": "Purified"
+  },
+  {
+    "key": 607,
+    "value": "No Evolve"
+  },
+  {
+    "key": 952,
+    "value": "Clone"
+  },
+  {
+    "key": 953,
+    "value": "Normal"
+  },
+  {
+    "key": 954,
+    "value": "Shadow"
+  },
+  {
+    "key": 955,
+    "value": "Purified"
+  },
+  {
+    "key": 956,
+    "value": "Normal"
+  },
+  {
+    "key": 957,
+    "value": "Shadow"
+  },
+  {
+    "key": 958,
+    "value": "Purified"
+  },
+  {
+    "key": 959,
+    "value": "Normal"
+  },
+  {
+    "key": 960,
+    "value": "Shadow"
+  },
+  {
+    "key": 961,
+    "value": "Purified"
+  },
+  {
+    "key": 616,
+    "value": "Normal"
+  },
+  {
+    "key": 617,
+    "value": "Shadow"
+  },
+  {
+    "key": 618,
+    "value": "Purified"
+  },
+  {
+    "key": 619,
+    "value": "Normal"
+  },
+  {
+    "key": 620,
+    "value": "Shadow"
+  },
+  {
+    "key": 621,
+    "value": "Purified"
+  },
+  {
+    "key": 622,
+    "value": "Normal"
+  },
+  {
+    "key": 623,
+    "value": "Shadow"
+  },
+  {
+    "key": 624,
+    "value": "Purified"
+  },
+  {
+    "key": 962,
+    "value": "Normal"
+  },
+  {
+    "key": 963,
+    "value": "Shadow"
+  },
+  {
+    "key": 964,
+    "value": "Purified"
+  },
+  {
+    "key": 965,
+    "value": "Normal"
+  },
+  {
+    "key": 966,
+    "value": "Shadow"
+  },
+  {
+    "key": 967,
+    "value": "Purified"
+  },
+  {
+    "key": 968,
+    "value": "Normal"
+  },
+  {
+    "key": 969,
+    "value": "Shadow"
+  },
+  {
+    "key": 970,
+    "value": "Purified"
+  },
+  {
+    "key": 45,
+    "value": "Normal"
+  },
+  {
+    "key": 46,
+    "value": "Alolan"
+  },
+  {
+    "key": 153,
+    "value": "Shadow"
+  },
+  {
+    "key": 154,
+    "value": "Purified"
+  },
+  {
+    "key": 47,
+    "value": "Normal"
+  },
+  {
+    "key": 48,
+    "value": "Alolan"
+  },
+  {
+    "key": 155,
+    "value": "Shadow"
+  },
+  {
+    "key": 156,
+    "value": "Purified"
+  },
+  {
+    "key": 609,
+    "value": "No Evolve"
+  },
+  {
+    "key": 971,
+    "value": "Normal"
+  },
+  {
+    "key": 972,
+    "value": "Shadow"
+  },
+  {
+    "key": 973,
+    "value": "Purified"
+  },
+  {
+    "key": 974,
+    "value": "Normal"
+  },
+  {
+    "key": 975,
+    "value": "Shadow"
+  },
+  {
+    "key": 976,
+    "value": "Purified"
+  },
+  {
+    "key": 697,
+    "value": "Normal"
+  },
+  {
+    "key": 698,
+    "value": "Shadow"
+  },
+  {
+    "key": 699,
+    "value": "Purified"
+  },
+  {
+    "key": 700,
+    "value": "Normal"
+  },
+  {
+    "key": 701,
+    "value": "Shadow"
+  },
+  {
+    "key": 702,
+    "value": "Purified"
+  },
+  {
+    "key": 598,
+    "value": "Normal"
+  },
+  {
+    "key": 599,
+    "value": "No Evolve"
+  },
+  {
+    "key": 894,
+    "value": "Fall"
+  },
+  {
+    "key": 901,
+    "value": "VS 2019"
+  },
+  {
+    "key": 949,
+    "value": "Clone"
+  },
+  {
+    "key": 969,
+    "value": "Shadow"
+  },
+  {
+    "key": 970,
+    "value": "Purified"
+  },
+  {
+    "key": 2332,
+    "value": "Costume 2020"
+  },
+  {
+    "key": 49,
+    "value": "Normal"
+  },
+  {
+    "key": 50,
+    "value": "Alolan"
+  },
+  {
+    "key": 969,
+    "value": "Shadow"
+  },
+  {
+    "key": 970,
+    "value": "Purified"
+  },
+  {
+    "key": 51,
+    "value": "Normal"
+  },
+  {
+    "key": 52,
+    "value": "Alolan"
+  },
+  {
+    "key": 673,
+    "value": "Shadow"
+  },
+  {
+    "key": 674,
+    "value": "Purified"
+  },
+  {
+    "key": 53,
+    "value": "Normal"
+  },
+  {
+    "key": 54,
+    "value": "Alolan"
+  },
+  {
+    "key": 675,
+    "value": "Shadow"
+  },
+  {
+    "key": 676,
+    "value": "Purified"
+  },
+  {
+    "key": 776,
+    "value": "Normal"
+  },
+  {
+    "key": 777,
+    "value": "Shadow"
+  },
+  {
+    "key": 778,
+    "value": "Purified"
+  },
+  {
+    "key": 779,
+    "value": "Normal"
+  },
+  {
+    "key": 780,
+    "value": "Shadow"
+  },
+  {
+    "key": 781,
+    "value": "Purified"
+  },
+  {
+    "key": 782,
+    "value": "Normal"
+  },
+  {
+    "key": 783,
+    "value": "Shadow"
+  },
+  {
+    "key": 784,
+    "value": "Purified"
+  },
+  {
+    "key": 785,
+    "value": "Normal"
+  },
+  {
+    "key": 786,
+    "value": "Shadow"
+  },
+  {
+    "key": 787,
+    "value": "Purified"
+  },
+  {
+    "key": 788,
+    "value": "Normal"
+  },
+  {
+    "key": 789,
+    "value": "Shadow"
+  },
+  {
+    "key": 790,
+    "value": "Purified"
+  },
+  {
+    "key": 981,
+    "value": "Normal"
+  },
+  {
+    "key": 982,
+    "value": "Shadow"
+  },
+  {
+    "key": 983,
+    "value": "Purified"
+  },
+  {
+    "key": 984,
+    "value": "Normal"
+  },
+  {
+    "key": 985,
+    "value": "Shadow"
+  },
+  {
+    "key": 986,
+    "value": "Purified"
+  },
+  {
+    "key": 55,
+    "value": "Normal"
+  },
+  {
+    "key": 56,
+    "value": "Alolan"
+  },
+  {
+    "key": 725,
+    "value": "Shadow"
+  },
+  {
+    "key": 726,
+    "value": "Purified"
+  },
+  {
+    "key": 57,
+    "value": "Normal"
+  },
+  {
+    "key": 58,
+    "value": "Alolan"
+  },
+  {
+    "key": 727,
+    "value": "Shadow"
+  },
+  {
+    "key": 728,
+    "value": "Purified"
+  },
+  {
+    "key": 987,
+    "value": "Normal"
+  },
+  {
+    "key": 988,
+    "value": "Shadow"
+  },
+  {
+    "key": 989,
+    "value": "Purified"
+  },
+  {
+    "key": 990,
+    "value": "Normal"
+  },
+  {
+    "key": 991,
+    "value": "Shadow"
+  },
+  {
+    "key": 992,
+    "value": "Purified"
+  },
+  {
+    "key": 157,
+    "value": "Normal"
+  },
+  {
+    "key": 158,
+    "value": "Shadow"
+  },
+  {
+    "key": 159,
+    "value": "Purified"
+  },
+  {
+    "key": 160,
+    "value": "Normal"
+  },
+  {
+    "key": 161,
+    "value": "Shadow"
+  },
+  {
+    "key": 162,
+    "value": "Purified"
+  },
+  {
+    "key": 265,
+    "value": "Normal"
+  },
+  {
+    "key": 266,
+    "value": "Shadow"
+  },
+  {
+    "key": 267,
+    "value": "Purified"
+  },
+  {
+    "key": 268,
+    "value": "Normal"
+  },
+  {
+    "key": 269,
+    "value": "Shadow"
+  },
+  {
+    "key": 270,
+    "value": "Purified"
+  },
+  {
+    "key": 271,
+    "value": "Normal"
+  },
+  {
+    "key": 272,
+    "value": "Shadow"
+  },
+  {
+    "key": 273,
+    "value": "Purified"
+  },
+  {
+    "key": 993,
+    "value": "Normal"
+  },
+  {
+    "key": 994,
+    "value": "Shadow"
+  },
+  {
+    "key": 995,
+    "value": "Purified"
+  },
+  {
+    "key": 996,
+    "value": "Normal"
+  },
+  {
+    "key": 997,
+    "value": "Shadow"
+  },
+  {
+    "key": 998,
+    "value": "Purified"
+  },
+  {
+    "key": 259,
+    "value": "Normal"
+  },
+  {
+    "key": 260,
+    "value": "Shadow"
+  },
+  {
+    "key": 261,
+    "value": "Purified"
+  },
+  {
+    "key": 262,
+    "value": "Normal"
+  },
+  {
+    "key": 263,
+    "value": "Shadow"
+  },
+  {
+    "key": 264,
+    "value": "Purified"
+  },
+  {
+    "key": 59,
+    "value": "Normal"
+  },
+  {
+    "key": 60,
+    "value": "Alolan"
+  },
+  {
+    "key": 842,
+    "value": "Shadow"
+  },
+  {
+    "key": 843,
+    "value": "Purified"
+  },
+  {
+    "key": 61,
+    "value": "Normal"
+  },
+  {
+    "key": 62,
+    "value": "Alolan"
+  },
+  {
+    "key": 844,
+    "value": "Shadow"
+  },
+  {
+    "key": 845,
+    "value": "Purified"
+  },
+  {
+    "key": 63,
+    "value": "Normal"
+  },
+  {
+    "key": 64,
+    "value": "Alolan"
+  },
+  {
+    "key": 709,
+    "value": "Shadow"
+  },
+  {
+    "key": 710,
+    "value": "Purified"
+  },
+  {
+    "key": 2335,
+    "value": "Galarian"
+  },
+  {
+    "key": 65,
+    "value": "Normal"
+  },
+  {
+    "key": 66,
+    "value": "Alolan"
+  },
+  {
+    "key": 711,
+    "value": "Shadow"
+  },
+  {
+    "key": 712,
+    "value": "Purified"
+  },
+  {
+    "key": 286,
+    "value": "Normal"
+  },
+  {
+    "key": 287,
+    "value": "Shadow"
+  },
+  {
+    "key": 288,
+    "value": "Purified"
+  },
+  {
+    "key": 289,
+    "value": "Normal"
+  },
+  {
+    "key": 290,
+    "value": "Shadow"
+  },
+  {
+    "key": 291,
+    "value": "Purified"
+  },
+  {
+    "key": 999,
+    "value": "Normal"
+  },
+  {
+    "key": 1000,
+    "value": "Shadow"
+  },
+  {
+    "key": 1001,
+    "value": "Purified"
+  },
+  {
+    "key": 1002,
+    "value": "Normal"
+  },
+  {
+    "key": 1003,
+    "value": "Shadow"
+  },
+  {
+    "key": 1004,
+    "value": "Purified"
+  },
+  {
+    "key": 280,
+    "value": "Normal"
+  },
+  {
+    "key": 281,
+    "value": "Shadow"
+  },
+  {
+    "key": 282,
+    "value": "Purified"
+  },
+  {
+    "key": 283,
+    "value": "Normal"
+  },
+  {
+    "key": 284,
+    "value": "Shadow"
+  },
+  {
+    "key": 285,
+    "value": "Purified"
+  },
+  {
+    "key": 235,
+    "value": "Normal"
+  },
+  {
+    "key": 236,
+    "value": "Shadow"
+  },
+  {
+    "key": 237,
+    "value": "Purified"
+  },
+  {
+    "key": 238,
+    "value": "Normal"
+  },
+  {
+    "key": 239,
+    "value": "Shadow"
+  },
+  {
+    "key": 240,
+    "value": "Purified"
+  },
+  {
+    "key": 241,
+    "value": "Normal"
+  },
+  {
+    "key": 242,
+    "value": "Shadow"
+  },
+  {
+    "key": 243,
+    "value": "Purified"
+  },
+  {
+    "key": 304,
+    "value": "Normal"
+  },
+  {
+    "key": 305,
+    "value": "Shadow"
+  },
+  {
+    "key": 306,
+    "value": "Purified"
+  },
+  {
+    "key": 307,
+    "value": "Normal"
+  },
+  {
+    "key": 308,
+    "value": "Shadow"
+  },
+  {
+    "key": 309,
+    "value": "Purified"
+  },
+  {
+    "key": 310,
+    "value": "Normal"
+  },
+  {
+    "key": 311,
+    "value": "Shadow"
+  },
+  {
+    "key": 312,
+    "value": "Purified"
+  },
+  {
+    "key": 809,
+    "value": "Normal"
+  },
+  {
+    "key": 810,
+    "value": "Shadow"
+  },
+  {
+    "key": 811,
+    "value": "Purified"
+  },
+  {
+    "key": 812,
+    "value": "Normal"
+  },
+  {
+    "key": 813,
+    "value": "Shadow"
+  },
+  {
+    "key": 814,
+    "value": "Purified"
+  },
+  {
+    "key": 815,
+    "value": "Normal"
+  },
+  {
+    "key": 816,
+    "value": "Shadow"
+  },
+  {
+    "key": 817,
+    "value": "Purified"
+  },
+  {
+    "key": 664,
+    "value": "Normal"
+  },
+  {
+    "key": 665,
+    "value": "Shadow"
+  },
+  {
+    "key": 666,
+    "value": "Purified"
+  },
+  {
+    "key": 667,
+    "value": "Normal"
+  },
+  {
+    "key": 668,
+    "value": "Shadow"
+  },
+  {
+    "key": 669,
+    "value": "Purified"
+  },
+  {
+    "key": 670,
+    "value": "Normal"
+  },
+  {
+    "key": 671,
+    "value": "Shadow"
+  },
+  {
+    "key": 672,
+    "value": "Purified"
+  },
+  {
+    "key": 1005,
+    "value": "Normal"
+  },
+  {
+    "key": 1006,
+    "value": "Shadow"
+  },
+  {
+    "key": 1007,
+    "value": "Purified"
+  },
+  {
+    "key": 1007,
+    "value": "Normal"
+  },
+  {
+    "key": 1008,
+    "value": "Shadow"
+  },
+  {
+    "key": 1009,
+    "value": "Purified"
+  },
+  {
+    "key": 67,
+    "value": "Normal"
+  },
+  {
+    "key": 68,
+    "value": "Alolan"
+  },
+  {
+    "key": 882,
+    "value": "Shadow"
+  },
+  {
+    "key": 883,
+    "value": "Purified"
+  },
+  {
+    "key": 69,
+    "value": "Normal"
+  },
+  {
+    "key": 70,
+    "value": "Alolan"
+  },
+  {
+    "key": 884,
+    "value": "Shadow"
+  },
+  {
+    "key": 885,
+    "value": "Purified"
+  },
+  {
+    "key": 71,
+    "value": "Normal"
+  },
+  {
+    "key": 72,
+    "value": "Alolan"
+  },
+  {
+    "key": 886,
+    "value": "Shadow"
+  },
+  {
+    "key": 887,
+    "value": "Purified"
+  },
+  {
+    "key": 1011,
+    "value": "Normal"
+  },
+  {
+    "key": 1012,
+    "value": "Shadow"
+  },
+  {
+    "key": 1013,
+    "value": "Purified"
+  },
+  {
+    "key": 1014,
+    "value": "Normal"
+  },
+  {
+    "key": 1015,
+    "value": "Shadow"
+  },
+  {
+    "key": 1016,
+    "value": "Purified"
+  },
+  {
+    "key": 1017,
+    "value": "Normal"
+  },
+  {
+    "key": 1018,
+    "value": "Shadow"
+  },
+  {
+    "key": 1019,
+    "value": "Purified"
+  },
+  {
+    "key": 1020,
+    "value": "Normal"
+  },
+  {
+    "key": 1021,
+    "value": "Shadow"
+  },
+  {
+    "key": 1022,
+    "value": "Purified"
+  },
+  {
+    "key": 655,
+    "value": "Normal"
+  },
+  {
+    "key": 656,
+    "value": "Shadow"
+  },
+  {
+    "key": 657,
+    "value": "Purified"
+  },
+  {
+    "key": 658,
+    "value": "Normal"
+  },
+  {
+    "key": 659,
+    "value": "Shadow"
+  },
+  {
+    "key": 660,
+    "value": "Purified"
+  },
+  {
+    "key": 1023,
+    "value": "Normal"
+  },
+  {
+    "key": 1024,
+    "value": "Shadow"
+  },
+  {
+    "key": 1025,
+    "value": "Purified"
+  },
+  {
+    "key": 2335,
+    "value": "Galarian"
+  },
+  {
+    "key": 1026,
+    "value": "Normal"
+  },
+  {
+    "key": 1027,
+    "value": "Shadow"
+  },
+  {
+    "key": 1028,
+    "value": "Purified"
+  },
+  {
+    "key": 1029,
+    "value": "Normal"
+  },
+  {
+    "key": 1030,
+    "value": "Shadow"
+  },
+  {
+    "key": 1031,
+    "value": "Purified"
+  },
+  {
+    "key": 1032,
+    "value": "Normal"
+  },
+  {
+    "key": 1033,
+    "value": "Shadow"
+  },
+  {
+    "key": 1034,
+    "value": "Purified"
+  },
+  {
+    "key": 1035,
+    "value": "Normal"
+  },
+  {
+    "key": 1036,
+    "value": "Shadow"
+  },
+  {
+    "key": 1037,
+    "value": "Purified"
+  },
+  {
+    "key": 73,
+    "value": "Normal"
+  },
+  {
+    "key": 74,
+    "value": "Alolan"
+  },
+  {
+    "key": 220,
+    "value": "Shadow"
+  },
+  {
+    "key": 221,
+    "value": "Purified"
+  },
+  {
+    "key": 75,
+    "value": "Normal"
+  },
+  {
+    "key": 76,
+    "value": "Alolan"
+  },
+  {
+    "key": 222,
+    "value": "Shadow"
+  },
+  {
+    "key": 223,
+    "value": "Purified"
+  },
+  {
+    "key": 876,
+    "value": "Normal"
+  },
+  {
+    "key": 877,
+    "value": "Shadow"
+  },
+  {
+    "key": 878,
+    "value": "Purified"
+  },
+  {
+    "key": 879,
+    "value": "Normal"
+  },
+  {
+    "key": 880,
+    "value": "Shadow"
+  },
+  {
+    "key": 881,
+    "value": "Purified"
+  },
+  {
+    "key": 1038,
+    "value": "Normal"
+  },
+  {
+    "key": 1039,
+    "value": "Shadow"
+  },
+  {
+    "key": 1040,
+    "value": "Purified"
+  },
+  {
+    "key": 1041,
+    "value": "Normal"
+  },
+  {
+    "key": 1042,
+    "value": "Shadow"
+  },
+  {
+    "key": 1043,
+    "value": "Purified"
+  },
+  {
+    "key": 1044,
+    "value": "Normal"
+  },
+  {
+    "key": 1045,
+    "value": "Shadow"
+  },
+  {
+    "key": 1046,
+    "value": "Purified"
+  },
+  {
+    "key": 902,
+    "value": "Normal"
+  },
+  {
+    "key": 903,
+    "value": "Shadow"
+  },
+  {
+    "key": 904,
+    "value": "Purified"
+  },
+  {
+    "key": 2334,
+    "value": "Costume 2020"
+  },
+  {
+    "key": 214,
+    "value": "Normal"
+  },
+  {
+    "key": 215,
+    "value": "Shadow"
+  },
+  {
+    "key": 216,
+    "value": "Purified"
+  },
+  {
+    "key": 217,
+    "value": "Normal"
+  },
+  {
+    "key": 218,
+    "value": "Shadow"
+  },
+  {
+    "key": 219,
+    "value": "Purified"
+  },
+  {
+    "key": 870,
+    "value": "Normal"
+  },
+  {
+    "key": 871,
+    "value": "Shadow"
+  },
+  {
+    "key": 872,
+    "value": "Purified"
+  },
+  {
+    "key": 873,
+    "value": "Normal"
+  },
+  {
+    "key": 874,
+    "value": "Shadow"
+  },
+  {
+    "key": 875,
+    "value": "Purified"
+  },
+  {
+    "key": 1047,
+    "value": "Normal"
+  },
+  {
+    "key": 1048,
+    "value": "Shadow"
+  },
+  {
+    "key": 1049,
+    "value": "Purified"
+  },
+  {
+    "key": 1050,
+    "value": "Normal"
+  },
+  {
+    "key": 1051,
+    "value": "Shadow"
+  },
+  {
+    "key": 1052,
+    "value": "Purified"
+  },
+  {
+    "key": 729,
+    "value": "Normal"
+  },
+  {
+    "key": 730,
+    "value": "Shadow"
+  },
+  {
+    "key": 731,
+    "value": "Purified"
+  },
+  {
+    "key": 77,
+    "value": "Normal"
+  },
+  {
+    "key": 78,
+    "value": "Alolan"
+  },
+  {
+    "key": 732,
+    "value": "Shadow"
+  },
+  {
+    "key": 733,
+    "value": "Purified"
+  },
+  {
+    "key": 224,
+    "value": "Normal"
+  },
+  {
+    "key": 225,
+    "value": "Shadow"
+  },
+  {
+    "key": 226,
+    "value": "Purified"
+  },
+  {
+    "key": 79,
+    "value": "Normal"
+  },
+  {
+    "key": 80,
+    "value": "Alolan"
+  },
+  {
+    "key": 227,
+    "value": "Shadow"
+  },
+  {
+    "key": 228,
+    "value": "Purified"
+  },
+  {
+    "key": 713,
+    "value": "Normal"
+  },
+  {
+    "key": 714,
+    "value": "Shadow"
+  },
+  {
+    "key": 715,
+    "value": "Purified"
+  },
+  {
+    "key": 277,
+    "value": "Normal"
+  },
+  {
+    "key": 278,
+    "value": "Shadow"
+  },
+  {
+    "key": 279,
+    "value": "Purified"
+  },
+  {
+    "key": 1053,
+    "value": "Normal"
+  },
+  {
+    "key": 1054,
+    "value": "Shadow"
+  },
+  {
+    "key": 1055,
+    "value": "Purified"
+  },
+  {
+    "key": 703,
+    "value": "Normal"
+  },
+  {
+    "key": 704,
+    "value": "Shadow"
+  },
+  {
+    "key": 705,
+    "value": "Purified"
+  },
+  {
+    "key": 706,
+    "value": "Normal"
+  },
+  {
+    "key": 707,
+    "value": "Shadow"
+  },
+  {
+    "key": 708,
+    "value": "Purified"
+  },
+  {
+    "key": 944,
+    "value": "Galarian"
+  },
+  {
+    "key": 846,
+    "value": "Normal"
+  },
+  {
+    "key": 847,
+    "value": "Shadow"
+  },
+  {
+    "key": 848,
+    "value": "Purified"
+  },
+  {
+    "key": 849,
+    "value": "Normal"
+  },
+  {
+    "key": 850,
+    "value": "Shadow"
+  },
+  {
+    "key": 851,
+    "value": "Purified"
+  },
+  {
+    "key": 1056,
+    "value": "Normal"
+  },
+  {
+    "key": 1057,
+    "value": "Shadow"
+  },
+  {
+    "key": 1058,
+    "value": "Purified"
+  },
+  {
+    "key": 1059,
+    "value": "Normal"
+  },
+  {
+    "key": 1060,
+    "value": "Shadow"
+  },
+  {
+    "key": 1061,
+    "value": "Purified"
+  },
+  {
+    "key": 839,
+    "value": "Normal"
+  },
+  {
+    "key": 840,
+    "value": "Shadow"
+  },
+  {
+    "key": 841,
+    "value": "Purified"
+  },
+  {
+    "key": 1062,
+    "value": "Normal"
+  },
+  {
+    "key": 1063,
+    "value": "Shadow"
+  },
+  {
+    "key": 1064,
+    "value": "Purified"
+  },
+  {
+    "key": 1065,
+    "value": "Normal"
+  },
+  {
+    "key": 1066,
+    "value": "Shadow"
+  },
+  {
+    "key": 1067,
+    "value": "Purified"
+  },
+  {
+    "key": 1068,
+    "value": "Normal"
+  },
+  {
+    "key": 1069,
+    "value": "Shadow"
+  },
+  {
+    "key": 1070,
+    "value": "Purified"
+  },
+  {
+    "key": 1071,
+    "value": "Normal"
+  },
+  {
+    "key": 1072,
+    "value": "Shadow"
+  },
+  {
+    "key": 1073,
+    "value": "Purified"
+  },
+  {
+    "key": 1074,
+    "value": "Normal"
+  },
+  {
+    "key": 1075,
+    "value": "Shadow"
+  },
+  {
+    "key": 1076,
+    "value": "Purified"
+  },
+  {
+    "key": 1077,
+    "value": "Normal"
+  },
+  {
+    "key": 1078,
+    "value": "Shadow"
+  },
+  {
+    "key": 1079,
+    "value": "Purified"
+  },
+  {
+    "key": 1080,
+    "value": "Normal"
+  },
+  {
+    "key": 1081,
+    "value": "Shadow"
+  },
+  {
+    "key": 1082,
+    "value": "Purified"
+  },
+  {
+    "key": 247,
+    "value": "Normal"
+  },
+  {
+    "key": 248,
+    "value": "Shadow"
+  },
+  {
+    "key": 249,
+    "value": "Purified"
+  },
+  {
+    "key": 1083,
+    "value": "Normal"
+  },
+  {
+    "key": 1084,
+    "value": "Shadow"
+  },
+  {
+    "key": 1085,
+    "value": "Purified"
+  },
+  {
+    "key": 640,
+    "value": "Normal"
+  },
+  {
+    "key": 641,
+    "value": "Shadow"
+  },
+  {
+    "key": 642,
+    "value": "Purified"
+  },
+  {
+    "key": 634,
+    "value": "Normal"
+  },
+  {
+    "key": 635,
+    "value": "Shadow"
+  },
+  {
+    "key": 636,
+    "value": "Purified"
+  },
+  {
+    "key": 898,
+    "value": "Normal"
+  },
+  {
+    "key": 899,
+    "value": "Shadow"
+  },
+  {
+    "key": 900,
+    "value": "Purified"
+  },
+  {
+    "key": 1086,
+    "value": "Normal"
+  },
+  {
+    "key": 1087,
+    "value": "Shadow"
+  },
+  {
+    "key": 1088,
+    "value": "Purified"
+  },
+  {
+    "key": 253,
+    "value": "Normal"
+  },
+  {
+    "key": 254,
+    "value": "Shadow"
+  },
+  {
+    "key": 255,
+    "value": "Purified"
+  },
+  {
+    "key": 256,
+    "value": "Normal"
+  },
+  {
+    "key": 257,
+    "value": "Shadow"
+  },
+  {
+    "key": 258,
+    "value": "Purified"
+  },
+  {
+    "key": 322,
+    "value": "Normal"
+  },
+  {
+    "key": 323,
+    "value": "Shadow"
+  },
+  {
+    "key": 324,
+    "value": "Purified"
+  },
+  {
+    "key": 1089,
+    "value": "Normal"
+  },
+  {
+    "key": 1090,
+    "value": "Shadow"
+  },
+  {
+    "key": 1091,
+    "value": "Purified"
+  },
+  {
+    "key": 1092,
+    "value": "Normal"
+  },
+  {
+    "key": 1093,
+    "value": "Shadow"
+  },
+  {
+    "key": 1094,
+    "value": "Purified"
+  },
+  {
+    "key": 1095,
+    "value": "Normal"
+  },
+  {
+    "key": 1096,
+    "value": "Shadow"
+  },
+  {
+    "key": 1097,
+    "value": "Purified"
+  },
+  {
+    "key": 1098,
+    "value": "Normal"
+  },
+  {
+    "key": 1099,
+    "value": "Shadow"
+  },
+  {
+    "key": 1100,
+    "value": "Purified"
+  },
+  {
+    "key": 1101,
+    "value": "Normal"
+  },
+  {
+    "key": 1102,
+    "value": "Shadow"
+  },
+  {
+    "key": 1103,
+    "value": "Purified"
+  },
+  {
+    "key": 677,
+    "value": "Normal"
+  },
+  {
+    "key": 678,
+    "value": "Shadow"
+  },
+  {
+    "key": 679,
+    "value": "Purified"
+  },
+  {
+    "key": 740,
+    "value": "Normal"
+  },
+  {
+    "key": 741,
+    "value": "Shadow"
+  },
+  {
+    "key": 742,
+    "value": "Purified"
+  },
+  {
+    "key": 743,
+    "value": "Normal"
+  },
+  {
+    "key": 744,
+    "value": "Shadow"
+  },
+  {
+    "key": 745,
+    "value": "Purified"
+  },
+  {
+    "key": 1104,
+    "value": "Normal"
+  },
+  {
+    "key": 1105,
+    "value": "Shadow"
+  },
+  {
+    "key": 1106,
+    "value": "Purified"
+  },
+  {
+    "key": 1107,
+    "value": "Normal"
+  },
+  {
+    "key": 1108,
+    "value": "Shadow"
+  },
+  {
+    "key": 1109,
+    "value": "Purified"
+  },
+  {
+    "key": 1110,
+    "value": "Normal"
+  },
+  {
+    "key": 1111,
+    "value": "Shadow"
+  },
+  {
+    "key": 1112,
+    "value": "Purified"
+  },
+  {
+    "key": 199,
+    "value": "Normal"
+  },
+  {
+    "key": 200,
+    "value": "Shadow"
+  },
+  {
+    "key": 201,
+    "value": "Purified"
+  },
+  {
+    "key": 716,
+    "value": "Normal"
+  },
+  {
+    "key": 717,
+    "value": "Shadow"
+  },
+  {
+    "key": 718,
+    "value": "Purified"
+  },
+  {
+    "key": 773,
+    "value": "Normal"
+  },
+  {
+    "key": 774,
+    "value": "Shadow"
+  },
+  {
+    "key": 775,
+    "value": "Purified"
+  },
+  {
+    "key": 836,
+    "value": "Normal"
+  },
+  {
+    "key": 837,
+    "value": "Shadow"
+  },
+  {
+    "key": 838,
+    "value": "Purified"
+  },
+  {
+    "key": 190,
+    "value": "Normal"
+  },
+  {
+    "key": 191,
+    "value": "Shadow"
+  },
+  {
+    "key": 192,
+    "value": "Purified"
+  },
+  {
+    "key": 193,
+    "value": "Normal"
+  },
+  {
+    "key": 194,
+    "value": "Shadow"
+  },
+  {
+    "key": 195,
+    "value": "Purified"
+  },
+  {
+    "key": 196,
+    "value": "Normal"
+  },
+  {
+    "key": 197,
+    "value": "Shadow"
+  },
+  {
+    "key": 198,
+    "value": "Purified"
+  },
+  {
+    "key": 2333,
+    "value": "Costume 2020"
+  },
+  {
+    "key": 135,
+    "value": "Normal"
+  },
+  {
+    "key": 133,
+    "value": "Armored"
+  },
+  {
+    "key": 1113,
+    "value": "Shadow"
+  },
+  {
+    "key": 1114,
+    "value": "Purified"
+  },
+  {
+    "key": 1115,
+    "value": "Normal"
+  },
+  {
+    "key": 1116,
+    "value": "Shadow"
+  },
+  {
+    "key": 1117,
+    "value": "Purified"
+  },
+  {
+    "key": 1118,
+    "value": "Normal"
+  },
+  {
+    "key": 1119,
+    "value": "Shadow"
+  },
+  {
+    "key": 1120,
+    "value": "Purified"
+  },
+  {
+    "key": 1121,
+    "value": "Normal"
+  },
+  {
+    "key": 1122,
+    "value": "Shadow"
+  },
+  {
+    "key": 1123,
+    "value": "Purified"
+  },
+  {
+    "key": 1124,
+    "value": "Normal"
+  },
+  {
+    "key": 1125,
+    "value": "Shadow"
+  },
+  {
+    "key": 1126,
+    "value": "Purified"
+  },
+  {
+    "key": 1127,
+    "value": "Normal"
+  },
+  {
+    "key": 1128,
+    "value": "Shadow"
+  },
+  {
+    "key": 1129,
+    "value": "Purified"
+  },
+  {
+    "key": 1130,
+    "value": "Normal"
+  },
+  {
+    "key": 1131,
+    "value": "Shadow"
+  },
+  {
+    "key": 1132,
+    "value": "Purified"
+  },
+  {
+    "key": 1133,
+    "value": "Normal"
+  },
+  {
+    "key": 1134,
+    "value": "Shadow"
+  },
+  {
+    "key": 1135,
+    "value": "Purified"
+  },
+  {
+    "key": 1136,
+    "value": "Normal"
+  },
+  {
+    "key": 1137,
+    "value": "Shadow"
+  },
+  {
+    "key": 1138,
+    "value": "Purified"
+  },
+  {
+    "key": 1139,
+    "value": "Normal"
+  },
+  {
+    "key": 1140,
+    "value": "Shadow"
+  },
+  {
+    "key": 1141,
+    "value": "Purified"
+  },
+  {
+    "key": 1142,
+    "value": "Normal"
+  },
+  {
+    "key": 1143,
+    "value": "Shadow"
+  },
+  {
+    "key": 1144,
+    "value": "Purified"
+  },
+  {
+    "key": 1145,
+    "value": "Normal"
+  },
+  {
+    "key": 1146,
+    "value": "Shadow"
+  },
+  {
+    "key": 1147,
+    "value": "Purified"
+  },
+  {
+    "key": 1148,
+    "value": "Normal"
+  },
+  {
+    "key": 1149,
+    "value": "Shadow"
+  },
+  {
+    "key": 1150,
+    "value": "Purified"
+  },
+  {
+    "key": 1151,
+    "value": "Normal"
+  },
+  {
+    "key": 1152,
+    "value": "Shadow"
+  },
+  {
+    "key": 1153,
+    "value": "Purified"
+  },
+  {
+    "key": 1154,
+    "value": "Normal"
+  },
+  {
+    "key": 1155,
+    "value": "Shadow"
+  },
+  {
+    "key": 1156,
+    "value": "Purified"
+  },
+  {
+    "key": 1157,
+    "value": "Normal"
+  },
+  {
+    "key": 1158,
+    "value": "Shadow"
+  },
+  {
+    "key": 1159,
+    "value": "Purified"
+  },
+  {
+    "key": 1160,
+    "value": "Normal"
+  },
+  {
+    "key": 1161,
+    "value": "Shadow"
+  },
+  {
+    "key": 1162,
+    "value": "Purified"
+  },
+  {
+    "key": 1163,
+    "value": "Normal"
+  },
+  {
+    "key": 1164,
+    "value": "Shadow"
+  },
+  {
+    "key": 1165,
+    "value": "Purified"
+  },
+  {
+    "key": 1166,
+    "value": "Normal"
+  },
+  {
+    "key": 1167,
+    "value": "Shadow"
+  },
+  {
+    "key": 1168,
+    "value": "Purified"
+  },
+  {
+    "key": 202,
+    "value": "Normal"
+  },
+  {
+    "key": 203,
+    "value": "Shadow"
+  },
+  {
+    "key": 204,
+    "value": "Purified"
+  },
+  {
+    "key": 1169,
+    "value": "Normal"
+  },
+  {
+    "key": 1170,
+    "value": "Shadow"
+  },
+  {
+    "key": 1171,
+    "value": "Purified"
+  },
+  {
+    "key": 1172,
+    "value": "Normal"
+  },
+  {
+    "key": 1173,
+    "value": "Shadow"
+  },
+  {
+    "key": 1174,
+    "value": "Purified"
+  },
+  {
+    "key": 1175,
+    "value": "Normal"
+  },
+  {
+    "key": 1176,
+    "value": "Shadow"
+  },
+  {
+    "key": 1177,
+    "value": "Purified"
+  },
+  {
+    "key": 1178,
+    "value": "Normal"
+  },
+  {
+    "key": 1179,
+    "value": "Shadow"
+  },
+  {
+    "key": 1180,
+    "value": "Purified"
+  },
+  {
+    "key": 1181,
+    "value": "Normal"
+  },
+  {
+    "key": 1182,
+    "value": "Shadow"
+  },
+  {
+    "key": 1183,
+    "value": "Purified"
+  },
+  {
+    "key": 1184,
+    "value": "Normal"
+  },
+  {
+    "key": 1185,
+    "value": "Shadow"
+  },
+  {
+    "key": 1186,
+    "value": "Purified"
+  },
+  {
+    "key": 1187,
+    "value": "Normal"
+  },
+  {
+    "key": 1188,
+    "value": "Shadow"
+  },
+  {
+    "key": 1189,
+    "value": "Purified"
+  },
+  {
+    "key": 1190,
+    "value": "Normal"
+  },
+  {
+    "key": 1191,
+    "value": "Shadow"
+  },
+  {
+    "key": 1192,
+    "value": "Purified"
+  },
+  {
+    "key": 1193,
+    "value": "Normal"
+  },
+  {
+    "key": 1194,
+    "value": "Shadow"
+  },
+  {
+    "key": 1195,
+    "value": "Purified"
+  },
+  {
+    "key": 646,
+    "value": "Normal"
+  },
+  {
+    "key": 647,
+    "value": "Shadow"
+  },
+  {
+    "key": 648,
+    "value": "Purified"
+  },
+  {
+    "key": 649,
+    "value": "Normal"
+  },
+  {
+    "key": 650,
+    "value": "Shadow"
+  },
+  {
+    "key": 651,
+    "value": "Purified"
+  },
+  {
+    "key": 652,
+    "value": "Normal"
+  },
+  {
+    "key": 653,
+    "value": "Shadow"
+  },
+  {
+    "key": 654,
+    "value": "Purified"
+  },
+  {
+    "key": 274,
+    "value": "Normal"
+  },
+  {
+    "key": 275,
+    "value": "Shadow"
+  },
+  {
+    "key": 276,
+    "value": "Purified"
+  },
+  {
+    "key": 1196,
+    "value": "Normal"
+  },
+  {
+    "key": 1197,
+    "value": "Shadow"
+  },
+  {
+    "key": 1198,
+    "value": "Purified"
+  },
+  {
+    "key": 1199,
+    "value": "Normal"
+  },
+  {
+    "key": 1200,
+    "value": "Shadow"
+  },
+  {
+    "key": 1201,
+    "value": "Purified"
+  },
+  {
+    "key": 1202,
+    "value": "Normal"
+  },
+  {
+    "key": 1203,
+    "value": "Shadow"
+  },
+  {
+    "key": 1204,
+    "value": "Purified"
+  },
+  {
+    "key": 244,
+    "value": "Normal"
+  },
+  {
+    "key": 245,
+    "value": "Shadow"
+  },
+  {
+    "key": 246,
+    "value": "Purified"
+  },
+  {
+    "key": 1205,
+    "value": "Normal"
+  },
+  {
+    "key": 1206,
+    "value": "Shadow"
+  },
+  {
+    "key": 1207,
+    "value": "Purified"
+  },
+  {
+    "key": 1208,
+    "value": "Normal"
+  },
+  {
+    "key": 1209,
+    "value": "Shadow"
+  },
+  {
+    "key": 1210,
+    "value": "Purified"
+  },
+  {
+    "key": 1211,
+    "value": "Normal"
+  },
+  {
+    "key": 1212,
+    "value": "Shadow"
+  },
+  {
+    "key": 1213,
+    "value": "Purified"
+  },
+  {
+    "key": 1214,
+    "value": "Normal"
+  },
+  {
+    "key": 1215,
+    "value": "Shadow"
+  },
+  {
+    "key": 1216,
+    "value": "Purified"
+  },
+  {
+    "key": 1217,
+    "value": "Normal"
+  },
+  {
+    "key": 1218,
+    "value": "Shadow"
+  },
+  {
+    "key": 1219,
+    "value": "Purified"
+  },
+  {
+    "key": 1220,
+    "value": "Normal"
+  },
+  {
+    "key": 1221,
+    "value": "Shadow"
+  },
+  {
+    "key": 1222,
+    "value": "Purified"
+  },
+  {
+    "key": 1223,
+    "value": "Normal"
+  },
+  {
+    "key": 1224,
+    "value": "Shadow"
+  },
+  {
+    "key": 1225,
+    "value": "Purified"
+  },
+  {
+    "key": 1226,
+    "value": "Normal"
+  },
+  {
+    "key": 1227,
+    "value": "Shadow"
+  },
+  {
+    "key": 1228,
+    "value": "Purified"
+  },
+  {
+    "key": 1229,
+    "value": "Normal"
+  },
+  {
+    "key": 1230,
+    "value": "Shadow"
+  },
+  {
+    "key": 1231,
+    "value": "Purified"
+  },
+  {
+    "key": 1232,
+    "value": "Normal"
+  },
+  {
+    "key": 1233,
+    "value": "Shadow"
+  },
+  {
+    "key": 1234,
+    "value": "Purified"
+  },
+  {
+    "key": 1235,
+    "value": "Normal"
+  },
+  {
+    "key": 1236,
+    "value": "Shadow"
+  },
+  {
+    "key": 1237,
+    "value": "Purified"
+  },
+  {
+    "key": 855,
+    "value": "Normal"
+  },
+  {
+    "key": 856,
+    "value": "Shadow"
+  },
+  {
+    "key": 857,
+    "value": "Purified"
+  },
+  {
+    "key": 1238,
+    "value": "Normal"
+  },
+  {
+    "key": 1239,
+    "value": "Shadow"
+  },
+  {
+    "key": 1240,
+    "value": "Purified"
+  },
+  {
+    "key": 719,
+    "value": "Normal"
+  },
+  {
+    "key": 720,
+    "value": "Shadow"
+  },
+  {
+    "key": 721,
+    "value": "Purified"
+  },
+  {
+    "key": 1,
+    "value": "a"
+  },
+  {
+    "key": 2,
+    "value": "b"
+  },
+  {
+    "key": 3,
+    "value": "c"
+  },
+  {
+    "key": 4,
+    "value": "d"
+  },
+  {
+    "key": 5,
+    "value": "e"
+  },
+  {
+    "key": 6,
+    "value": "f"
+  },
+  {
+    "key": 7,
+    "value": "g"
+  },
+  {
+    "key": 8,
+    "value": "h"
+  },
+  {
+    "key": 9,
+    "value": "i"
+  },
+  {
+    "key": 10,
+    "value": "j"
+  },
+  {
+    "key": 11,
+    "value": "k"
+  },
+  {
+    "key": 12,
+    "value": "l"
+  },
+  {
+    "key": 13,
+    "value": "m"
+  },
+  {
+    "key": 14,
+    "value": "n"
+  },
+  {
+    "key": 15,
+    "value": "o"
+  },
+  {
+    "key": 16,
+    "value": "p"
+  },
+  {
+    "key": 17,
+    "value": "q"
+  },
+  {
+    "key": 18,
+    "value": "r"
+  },
+  {
+    "key": 19,
+    "value": "s"
+  },
+  {
+    "key": 20,
+    "value": "t"
+  },
+  {
+    "key": 21,
+    "value": "u"
+  },
+  {
+    "key": 22,
+    "value": "v"
+  },
+  {
+    "key": 23,
+    "value": "w"
+  },
+  {
+    "key": 24,
+    "value": "x"
+  },
+  {
+    "key": 25,
+    "value": "y"
+  },
+  {
+    "key": 26,
+    "value": "z"
+  },
+  {
+    "key": 27,
+    "value": "!"
+  },
+  {
+    "key": 28,
+    "value": "?"
+  },
+  {
+    "key": 602,
+    "value": "Normal"
+  },
+  {
+    "key": 603,
+    "value": "No Evolve"
+  },
+  {
+    "key": 686,
+    "value": "Shadow"
+  },
+  {
+    "key": 687,
+    "value": "Purified"
+  },
+  {
+    "key": 1241,
+    "value": "Normal"
+  },
+  {
+    "key": 1242,
+    "value": "Shadow"
+  },
+  {
+    "key": 1243,
+    "value": "Purified"
+  },
+  {
+    "key": 1244,
+    "value": "Normal"
+  },
+  {
+    "key": 1245,
+    "value": "Shadow"
+  },
+  {
+    "key": 1246,
+    "value": "Purified"
+  },
+  {
+    "key": 1247,
+    "value": "Normal"
+  },
+  {
+    "key": 1248,
+    "value": "Shadow"
+  },
+  {
+    "key": 1249,
+    "value": "Purified"
+  },
+  {
+    "key": 1250,
+    "value": "Normal"
+  },
+  {
+    "key": 1251,
+    "value": "Shadow"
+  },
+  {
+    "key": 1252,
+    "value": "Purified"
+  },
+  {
+    "key": 803,
+    "value": "Normal"
+  },
+  {
+    "key": 804,
+    "value": "Shadow"
+  },
+  {
+    "key": 805,
+    "value": "Purified"
+  },
+  {
+    "key": 905,
+    "value": "Normal"
+  },
+  {
+    "key": 906,
+    "value": "Shadow"
+  },
+  {
+    "key": 907,
+    "value": "Purified"
+  },
+  {
+    "key": 1253,
+    "value": "Normal"
+  },
+  {
+    "key": 1254,
+    "value": "Shadow"
+  },
+  {
+    "key": 1255,
+    "value": "Purified"
+  },
+  {
+    "key": 1256,
+    "value": "Normal"
+  },
+  {
+    "key": 1257,
+    "value": "Shadow"
+  },
+  {
+    "key": 1258,
+    "value": "Purified"
+  },
+  {
+    "key": 1259,
+    "value": "Normal"
+  },
+  {
+    "key": 1260,
+    "value": "Shadow"
+  },
+  {
+    "key": 1261,
+    "value": "Purified"
+  },
+  {
+    "key": 250,
+    "value": "Normal"
+  },
+  {
+    "key": 251,
+    "value": "Shadow"
+  },
+  {
+    "key": 252,
+    "value": "Purified"
+  },
+  {
+    "key": 827,
+    "value": "Normal"
+  },
+  {
+    "key": 828,
+    "value": "Shadow"
+  },
+  {
+    "key": 829,
+    "value": "Purified"
+  },
+  {
+    "key": 1262,
+    "value": "Normal"
+  },
+  {
+    "key": 1263,
+    "value": "Shadow"
+  },
+  {
+    "key": 1264,
+    "value": "Purified"
+  },
+  {
+    "key": 797,
+    "value": "Normal"
+  },
+  {
+    "key": 798,
+    "value": "Shadow"
+  },
+  {
+    "key": 799,
+    "value": "Purified"
+  },
+  {
+    "key": 1265,
+    "value": "Normal"
+  },
+  {
+    "key": 1266,
+    "value": "Shadow"
+  },
+  {
+    "key": 1267,
+    "value": "Purified"
+  },
+  {
+    "key": 1268,
+    "value": "Normal"
+  },
+  {
+    "key": 1269,
+    "value": "Shadow"
+  },
+  {
+    "key": 1270,
+    "value": "Purified"
+  },
+  {
+    "key": 1271,
+    "value": "Normal"
+  },
+  {
+    "key": 1272,
+    "value": "Shadow"
+  },
+  {
+    "key": 1273,
+    "value": "Purified"
+  },
+  {
+    "key": 1274,
+    "value": "Normal"
+  },
+  {
+    "key": 1275,
+    "value": "Shadow"
+  },
+  {
+    "key": 1276,
+    "value": "Purified"
+  },
+  {
+    "key": 1277,
+    "value": "Normal"
+  },
+  {
+    "key": 1278,
+    "value": "Shadow"
+  },
+  {
+    "key": 1279,
+    "value": "Purified"
+  },
+  {
+    "key": 1280,
+    "value": "Normal"
+  },
+  {
+    "key": 1281,
+    "value": "Shadow"
+  },
+  {
+    "key": 1282,
+    "value": "Purified"
+  },
+  {
+    "key": 1283,
+    "value": "Normal"
+  },
+  {
+    "key": 1284,
+    "value": "Shadow"
+  },
+  {
+    "key": 1285,
+    "value": "Purified"
+  },
+  {
+    "key": 1286,
+    "value": "Normal"
+  },
+  {
+    "key": 1287,
+    "value": "Shadow"
+  },
+  {
+    "key": 1288,
+    "value": "Purified"
+  },
+  {
+    "key": 1289,
+    "value": "Normal"
+  },
+  {
+    "key": 1290,
+    "value": "Shadow"
+  },
+  {
+    "key": 1291,
+    "value": "Purified"
+  },
+  {
+    "key": 938,
+    "value": "Normal"
+  },
+  {
+    "key": 939,
+    "value": "Shadow"
+  },
+  {
+    "key": 940,
+    "value": "Purified"
+  },
+  {
+    "key": 1292,
+    "value": "Normal"
+  },
+  {
+    "key": 1293,
+    "value": "Shadow"
+  },
+  {
+    "key": 1294,
+    "value": "Purified"
+  },
+  {
+    "key": 1295,
+    "value": "Normal"
+  },
+  {
+    "key": 1296,
+    "value": "Shadow"
+  },
+  {
+    "key": 1297,
+    "value": "Purified"
+  },
+  {
+    "key": 229,
+    "value": "Normal"
+  },
+  {
+    "key": 230,
+    "value": "Shadow"
+  },
+  {
+    "key": 231,
+    "value": "Purified"
+  },
+  {
+    "key": 232,
+    "value": "Normal"
+  },
+  {
+    "key": 233,
+    "value": "Shadow"
+  },
+  {
+    "key": 234,
+    "value": "Purified"
+  },
+  {
+    "key": 1298,
+    "value": "Normal"
+  },
+  {
+    "key": 1299,
+    "value": "Shadow"
+  },
+  {
+    "key": 1300,
+    "value": "Purified"
+  },
+  {
+    "key": 1301,
+    "value": "Normal"
+  },
+  {
+    "key": 1302,
+    "value": "Shadow"
+  },
+  {
+    "key": 1303,
+    "value": "Purified"
+  },
+  {
+    "key": 1304,
+    "value": "Normal"
+  },
+  {
+    "key": 1305,
+    "value": "Shadow"
+  },
+  {
+    "key": 1306,
+    "value": "Purified"
+  },
+  {
+    "key": 680,
+    "value": "Normal"
+  },
+  {
+    "key": 681,
+    "value": "Shadow"
+  },
+  {
+    "key": 682,
+    "value": "Purified"
+  },
+  {
+    "key": 941,
+    "value": "Normal"
+  },
+  {
+    "key": 942,
+    "value": "Shadow"
+  },
+  {
+    "key": 943,
+    "value": "Purified"
+  },
+  {
+    "key": 1307,
+    "value": "Normal"
+  },
+  {
+    "key": 1308,
+    "value": "Shadow"
+  },
+  {
+    "key": 1309,
+    "value": "Purified"
+  },
+  {
+    "key": 1310,
+    "value": "Normal"
+  },
+  {
+    "key": 1311,
+    "value": "Shadow"
+  },
+  {
+    "key": 1312,
+    "value": "Purified"
+  },
+  {
+    "key": 1313,
+    "value": "Normal"
+  },
+  {
+    "key": 1314,
+    "value": "Shadow"
+  },
+  {
+    "key": 1315,
+    "value": "Purified"
+  },
+  {
+    "key": 1316,
+    "value": "Normal"
+  },
+  {
+    "key": 1317,
+    "value": "Shadow"
+  },
+  {
+    "key": 1318,
+    "value": "Purified"
+  },
+  {
+    "key": 1319,
+    "value": "Normal"
+  },
+  {
+    "key": 1320,
+    "value": "Shadow"
+  },
+  {
+    "key": 1321,
+    "value": "Purified"
+  },
+  {
+    "key": 1322,
+    "value": "Normal"
+  },
+  {
+    "key": 1323,
+    "value": "Shadow"
+  },
+  {
+    "key": 1324,
+    "value": "Purified"
+  },
+  {
+    "key": 1325,
+    "value": "Normal"
+  },
+  {
+    "key": 1326,
+    "value": "Shadow"
+  },
+  {
+    "key": 1327,
+    "value": "Purified"
+  },
+  {
+    "key": 1328,
+    "value": "Normal"
+  },
+  {
+    "key": 1329,
+    "value": "Shadow"
+  },
+  {
+    "key": 1330,
+    "value": "Purified"
+  },
+  {
+    "key": 1331,
+    "value": "Normal"
+  },
+  {
+    "key": 1332,
+    "value": "Shadow"
+  },
+  {
+    "key": 1333,
+    "value": "Purified"
+  },
+  {
+    "key": 1334,
+    "value": "Normal"
+  },
+  {
+    "key": 1335,
+    "value": "Shadow"
+  },
+  {
+    "key": 1336,
+    "value": "Purified"
+  },
+  {
+    "key": 1337,
+    "value": "Normal"
+  },
+  {
+    "key": 1338,
+    "value": "Shadow"
+  },
+  {
+    "key": 1339,
+    "value": "Purified"
+  },
+  {
+    "key": 313,
+    "value": "Normal"
+  },
+  {
+    "key": 314,
+    "value": "Shadow"
+  },
+  {
+    "key": 315,
+    "value": "Purified"
+  },
+  {
+    "key": 316,
+    "value": "Normal"
+  },
+  {
+    "key": 317,
+    "value": "Shadow"
+  },
+  {
+    "key": 318,
+    "value": "Purified"
+  },
+  {
+    "key": 319,
+    "value": "Normal"
+  },
+  {
+    "key": 320,
+    "value": "Shadow"
+  },
+  {
+    "key": 321,
+    "value": "Purified"
+  },
+  {
+    "key": 1340,
+    "value": "Normal"
+  },
+  {
+    "key": 1341,
+    "value": "Shadow"
+  },
+  {
+    "key": 1342,
+    "value": "Purified"
+  },
+  {
+    "key": 1343,
+    "value": "Normal"
+  },
+  {
+    "key": 1344,
+    "value": "Shadow"
+  },
+  {
+    "key": 1345,
+    "value": "Purified"
+  },
+  {
+    "key": 1346,
+    "value": "Normal"
+  },
+  {
+    "key": 1347,
+    "value": "Shadow"
+  },
+  {
+    "key": 1348,
+    "value": "Purified"
+  },
+  {
+    "key": 1349,
+    "value": "Normal"
+  },
+  {
+    "key": 1350,
+    "value": "Shadow"
+  },
+  {
+    "key": 1351,
+    "value": "Purified"
+  },
+  {
+    "key": 1352,
+    "value": "Normal"
+  },
+  {
+    "key": 1353,
+    "value": "Shadow"
+  },
+  {
+    "key": 1354,
+    "value": "Purified"
+  },
+  {
+    "key": 1355,
+    "value": "Normal"
+  },
+  {
+    "key": 1356,
+    "value": "Shadow"
+  },
+  {
+    "key": 1357,
+    "value": "Purified"
+  },
+  {
+    "key": 1358,
+    "value": "Normal"
+  },
+  {
+    "key": 1359,
+    "value": "Shadow"
+  },
+  {
+    "key": 1360,
+    "value": "Purified"
+  },
+  {
+    "key": 1361,
+    "value": "Normal"
+  },
+  {
+    "key": 1362,
+    "value": "Shadow"
+  },
+  {
+    "key": 1363,
+    "value": "Purified"
+  },
+  {
+    "key": 1364,
+    "value": "Normal"
+  },
+  {
+    "key": 1365,
+    "value": "Shadow"
+  },
+  {
+    "key": 1366,
+    "value": "Purified"
+  },
+  {
+    "key": 205,
+    "value": "Normal"
+  },
+  {
+    "key": 206,
+    "value": "Shadow"
+  },
+  {
+    "key": 207,
+    "value": "Purified"
+  },
+  {
+    "key": 208,
+    "value": "Normal"
+  },
+  {
+    "key": 209,
+    "value": "Shadow"
+  },
+  {
+    "key": 210,
+    "value": "Purified"
+  },
+  {
+    "key": 211,
+    "value": "Normal"
+  },
+  {
+    "key": 212,
+    "value": "Shadow"
+  },
+  {
+    "key": 213,
+    "value": "Purified"
+  },
+  {
+    "key": 1367,
+    "value": "Normal"
+  },
+  {
+    "key": 1368,
+    "value": "Shadow"
+  },
+  {
+    "key": 1369,
+    "value": "Purified"
+  },
+  {
+    "key": 1370,
+    "value": "Normal"
+  },
+  {
+    "key": 1371,
+    "value": "Shadow"
+  },
+  {
+    "key": 1372,
+    "value": "Purified"
+  },
+  {
+    "key": 945,
+    "value": "Normal"
+  },
+  {
+    "key": 946,
+    "value": "Galarian"
+  },
+  {
+    "key": 1373,
+    "value": "Shadow"
+  },
+  {
+    "key": 1374,
+    "value": "Purified"
+  },
+  {
+    "key": 947,
+    "value": "Normal"
+  },
+  {
+    "key": 948,
+    "value": "Galarian"
+  },
+  {
+    "key": 1375,
+    "value": "Shadow"
+  },
+  {
+    "key": 1376,
+    "value": "Purified"
+  },
+  {
+    "key": 600,
+    "value": "Normal"
+  },
+  {
+    "key": 601,
+    "value": "No Evolve"
+  },
+  {
+    "key": 1377,
+    "value": "Shadow"
+  },
+  {
+    "key": 1378,
+    "value": "Purified"
+  },
+  {
+    "key": 1379,
+    "value": "Normal"
+  },
+  {
+    "key": 1380,
+    "value": "Shadow"
+  },
+  {
+    "key": 1381,
+    "value": "Purified"
+  },
+  {
+    "key": 1379,
+    "value": "Normal"
+  },
+  {
+    "key": 1380,
+    "value": "Shadow"
+  },
+  {
+    "key": 1381,
+    "value": "Purified"
+  },
+  {
+    "key": 1385,
+    "value": "Normal"
+  },
+  {
+    "key": 1386,
+    "value": "Shadow"
+  },
+  {
+    "key": 1387,
+    "value": "Purified"
+  },
+  {
+    "key": 1388,
+    "value": "Normal"
+  },
+  {
+    "key": 1389,
+    "value": "Shadow"
+  },
+  {
+    "key": 1390,
+    "value": "Purified"
+  },
+  {
+    "key": 1391,
+    "value": "Normal"
+  },
+  {
+    "key": 1392,
+    "value": "Shadow"
+  },
+  {
+    "key": 1393,
+    "value": "Purified"
+  },
+  {
+    "key": 1394,
+    "value": "Normal"
+  },
+  {
+    "key": 1395,
+    "value": "Shadow"
+  },
+  {
+    "key": 1396,
+    "value": "Purified"
+  },
+  {
+    "key": 1397,
+    "value": "Normal"
+  },
+  {
+    "key": 1398,
+    "value": "Shadow"
+  },
+  {
+    "key": 1399,
+    "value": "Purified"
+  },
+  {
+    "key": 625,
+    "value": "Normal"
+  },
+  {
+    "key": 626,
+    "value": "Shadow"
+  },
+  {
+    "key": 627,
+    "value": "Purified"
+  },
+  {
+    "key": 628,
+    "value": "Normal"
+  },
+  {
+    "key": 629,
+    "value": "Shadow"
+  },
+  {
+    "key": 630,
+    "value": "Purified"
+  },
+  {
+    "key": 631,
+    "value": "Normal"
+  },
+  {
+    "key": 632,
+    "value": "Shadow"
+  },
+  {
+    "key": 633,
+    "value": "Purified"
+  },
+  {
+    "key": 1400,
+    "value": "Normal"
+  },
+  {
+    "key": 1401,
+    "value": "Shadow"
+  },
+  {
+    "key": 1402,
+    "value": "Purified"
+  },
+  {
+    "key": 1403,
+    "value": "Normal"
+  },
+  {
+    "key": 1404,
+    "value": "Shadow"
+  },
+  {
+    "key": 1405,
+    "value": "Purified"
+  },
+  {
+    "key": 1406,
+    "value": "Normal"
+  },
+  {
+    "key": 1407,
+    "value": "Shadow"
+  },
+  {
+    "key": 1408,
+    "value": "Purified"
+  },
+  {
+    "key": 1409,
+    "value": "Normal"
+  },
+  {
+    "key": 1410,
+    "value": "Shadow"
+  },
+  {
+    "key": 1411,
+    "value": "Purified"
+  },
+  {
+    "key": 292,
+    "value": "Normal"
+  },
+  {
+    "key": 293,
+    "value": "Shadow"
+  },
+  {
+    "key": 294,
+    "value": "Purified"
+  },
+  {
+    "key": 295,
+    "value": "Normal"
+  },
+  {
+    "key": 296,
+    "value": "Shadow"
+  },
+  {
+    "key": 297,
+    "value": "Purified"
+  },
+  {
+    "key": 298,
+    "value": "Normal"
+  },
+  {
+    "key": 299,
+    "value": "Shadow"
+  },
+  {
+    "key": 300,
+    "value": "Purified"
+  },
+  {
+    "key": 1412,
+    "value": "Normal"
+  },
+  {
+    "key": 1413,
+    "value": "Shadow"
+  },
+  {
+    "key": 1414,
+    "value": "Purified"
+  },
+  {
+    "key": 1415,
+    "value": "Normal"
+  },
+  {
+    "key": 1416,
+    "value": "Shadow"
+  },
+  {
+    "key": 1417,
+    "value": "Purified"
+  },
+  {
+    "key": 1418,
+    "value": "Normal"
+  },
+  {
+    "key": 1419,
+    "value": "Shadow"
+  },
+  {
+    "key": 1420,
+    "value": "Purified"
+  },
+  {
+    "key": 1421,
+    "value": "Normal"
+  },
+  {
+    "key": 1422,
+    "value": "Shadow"
+  },
+  {
+    "key": 1423,
+    "value": "Purified"
+  },
+  {
+    "key": 1424,
+    "value": "Normal"
+  },
+  {
+    "key": 1425,
+    "value": "Shadow"
+  },
+  {
+    "key": 1426,
+    "value": "Purified"
+  },
+  {
+    "key": 1427,
+    "value": "Normal"
+  },
+  {
+    "key": 1428,
+    "value": "Shadow"
+  },
+  {
+    "key": 1429,
+    "value": "Purified"
+  },
+  {
+    "key": 1430,
+    "value": "Normal"
+  },
+  {
+    "key": 1431,
+    "value": "Shadow"
+  },
+  {
+    "key": 1432,
+    "value": "Purified"
+  },
+  {
+    "key": 1433,
+    "value": "Normal"
+  },
+  {
+    "key": 1434,
+    "value": "Shadow"
+  },
+  {
+    "key": 1435,
+    "value": "Purified"
+  },
+  {
+    "key": 1436,
+    "value": "Normal"
+  },
+  {
+    "key": 1437,
+    "value": "Shadow"
+  },
+  {
+    "key": 1438,
+    "value": "Purified"
+  },
+  {
+    "key": 1439,
+    "value": "Normal"
+  },
+  {
+    "key": 1440,
+    "value": "Shadow"
+  },
+  {
+    "key": 1441,
+    "value": "Purified"
+  },
+  {
+    "key": 1442,
+    "value": "Normal"
+  },
+  {
+    "key": 1443,
+    "value": "Shadow"
+  },
+  {
+    "key": 1444,
+    "value": "Purified"
+  },
+  {
+    "key": 1445,
+    "value": "Normal"
+  },
+  {
+    "key": 1446,
+    "value": "Shadow"
+  },
+  {
+    "key": 1447,
+    "value": "Purified"
+  },
+  {
+    "key": 1448,
+    "value": "Normal"
+  },
+  {
+    "key": 1449,
+    "value": "Shadow"
+  },
+  {
+    "key": 1450,
+    "value": "Purified"
+  },
+  {
+    "key": 1451,
+    "value": "Normal"
+  },
+  {
+    "key": 1452,
+    "value": "Shadow"
+  },
+  {
+    "key": 1453,
+    "value": "Purified"
+  },
+  {
+    "key": 1454,
+    "value": "Normal"
+  },
+  {
+    "key": 1455,
+    "value": "Shadow"
+  },
+  {
+    "key": 1456,
+    "value": "Purified"
+  },
+  {
+    "key": 1457,
+    "value": "Normal"
+  },
+  {
+    "key": 1458,
+    "value": "Shadow"
+  },
+  {
+    "key": 1459,
+    "value": "Purified"
+  },
+  {
+    "key": 1460,
+    "value": "Normal"
+  },
+  {
+    "key": 1461,
+    "value": "Shadow"
+  },
+  {
+    "key": 1462,
+    "value": "Purified"
+  },
+  {
+    "key": 1463,
+    "value": "Normal"
+  },
+  {
+    "key": 1464,
+    "value": "Shadow"
+  },
+  {
+    "key": 1465,
+    "value": "Purified"
+  },
+  {
+    "key": 1466,
+    "value": "Normal"
+  },
+  {
+    "key": 1467,
+    "value": "Shadow"
+  },
+  {
+    "key": 1468,
+    "value": "Purified"
+  },
+  {
+    "key": 923,
+    "value": "Normal"
+  },
+  {
+    "key": 924,
+    "value": "Shadow"
+  },
+  {
+    "key": 925,
+    "value": "Purified"
+  },
+  {
+    "key": 833,
+    "value": "Normal"
+  },
+  {
+    "key": 834,
+    "value": "Shadow"
+  },
+  {
+    "key": 835,
+    "value": "Purified"
+  },
+  {
+    "key": 1469,
+    "value": "Normal"
+  },
+  {
+    "key": 1470,
+    "value": "Shadow"
+  },
+  {
+    "key": 1471,
+    "value": "Purified"
+  },
+  {
+    "key": 1472,
+    "value": "Normal"
+  },
+  {
+    "key": 1473,
+    "value": "Shadow"
+  },
+  {
+    "key": 1474,
+    "value": "Purified"
+  },
+  {
+    "key": 1475,
+    "value": "Normal"
+  },
+  {
+    "key": 1476,
+    "value": "Shadow"
+  },
+  {
+    "key": 1477,
+    "value": "Purified"
+  },
+  {
+    "key": 1478,
+    "value": "Normal"
+  },
+  {
+    "key": 1479,
+    "value": "Shadow"
+  },
+  {
+    "key": 1480,
+    "value": "Purified"
+  },
+  {
+    "key": 1481,
+    "value": "Normal"
+  },
+  {
+    "key": 1482,
+    "value": "Shadow"
+  },
+  {
+    "key": 1483,
+    "value": "Purified"
+  },
+  {
+    "key": 1484,
+    "value": "Normal"
+  },
+  {
+    "key": 1485,
+    "value": "Shadow"
+  },
+  {
+    "key": 1486,
+    "value": "Purified"
+  },
+  {
+    "key": 1487,
+    "value": "Normal"
+  },
+  {
+    "key": 1488,
+    "value": "Shadow"
+  },
+  {
+    "key": 1489,
+    "value": "Purified"
+  },
+  {
+    "key": 1490,
+    "value": "Normal"
+  },
+  {
+    "key": 1491,
+    "value": "Shadow"
+  },
+  {
+    "key": 1492,
+    "value": "Purified"
+  },
+  {
+    "key": 1493,
+    "value": "Normal"
+  },
+  {
+    "key": 1494,
+    "value": "Shadow"
+  },
+  {
+    "key": 1495,
+    "value": "Purified"
+  },
+  {
+    "key": 1496,
+    "value": "Normal"
+  },
+  {
+    "key": 1497,
+    "value": "Shadow"
+  },
+  {
+    "key": 1498,
+    "value": "Purified"
+  },
+  {
+    "key": 1499,
+    "value": "Normal"
+  },
+  {
+    "key": 1500,
+    "value": "Shadow"
+  },
+  {
+    "key": 1501,
+    "value": "Purified"
+  },
+  {
+    "key": 1502,
+    "value": "Normal"
+  },
+  {
+    "key": 1503,
+    "value": "Shadow"
+  },
+  {
+    "key": 1504,
+    "value": "Purified"
+  },
+  {
+    "key": 1505,
+    "value": "Normal"
+  },
+  {
+    "key": 1506,
+    "value": "Shadow"
+  },
+  {
+    "key": 1507,
+    "value": "Purified"
+  },
+  {
+    "key": 1508,
+    "value": "Normal"
+  },
+  {
+    "key": 1509,
+    "value": "Shadow"
+  },
+  {
+    "key": 1510,
+    "value": "Purified"
+  },
+  {
+    "key": 734,
+    "value": "Normal"
+  },
+  {
+    "key": 735,
+    "value": "Shadow"
+  },
+  {
+    "key": 736,
+    "value": "Purified"
+  },
+  {
+    "key": 737,
+    "value": "Normal"
+  },
+  {
+    "key": 738,
+    "value": "Shadow"
+  },
+  {
+    "key": 739,
+    "value": "Purified"
+  },
+  {
+    "key": 1511,
+    "value": "Normal"
+  },
+  {
+    "key": 1512,
+    "value": "Shadow"
+  },
+  {
+    "key": 1513,
+    "value": "Purified"
+  },
+  {
+    "key": 1514,
+    "value": "Normal"
+  },
+  {
+    "key": 1515,
+    "value": "Shadow"
+  },
+  {
+    "key": 1516,
+    "value": "Purified"
+  },
+  {
+    "key": 1517,
+    "value": "Normal"
+  },
+  {
+    "key": 1518,
+    "value": "Shadow"
+  },
+  {
+    "key": 1518,
+    "value": "Purified"
+  },
+  {
+    "key": 1520,
+    "value": "Normal"
+  },
+  {
+    "key": 1521,
+    "value": "Shadow"
+  },
+  {
+    "key": 1522,
+    "value": "Purified"
+  },
+  {
+    "key": 1523,
+    "value": "Normal"
+  },
+  {
+    "key": 1524,
+    "value": "Shadow"
+  },
+  {
+    "key": 1525,
+    "value": "Purified"
+  },
+  {
+    "key": 1526,
+    "value": "Normal"
+  },
+  {
+    "key": 1527,
+    "value": "Shadow"
+  },
+  {
+    "key": 1528,
+    "value": "Purified"
+  },
+  {
+    "key": 1529,
+    "value": "Normal"
+  },
+  {
+    "key": 1530,
+    "value": "Shadow"
+  },
+  {
+    "key": 1531,
+    "value": "Purified"
+  },
+  {
+    "key": 37,
+    "value": "1"
+  },
+  {
+    "key": 38,
+    "value": "2"
+  },
+  {
+    "key": 39,
+    "value": "3"
+  },
+  {
+    "key": 40,
+    "value": "4"
+  },
+  {
+    "key": 41,
+    "value": "5"
+  },
+  {
+    "key": 42,
+    "value": "6"
+  },
+  {
+    "key": 43,
+    "value": "7"
+  },
+  {
+    "key": 44,
+    "value": "8"
+  },
+  {
+    "key": 122,
+    "value": "9"
+  },
+  {
+    "key": 123,
+    "value": "10"
+  },
+  {
+    "key": 124,
+    "value": "11"
+  },
+  {
+    "key": 125,
+    "value": "12"
+  },
+  {
+    "key": 126,
+    "value": "13"
+  },
+  {
+    "key": 127,
+    "value": "14"
+  },
+  {
+    "key": 128,
+    "value": "15"
+  },
+  {
+    "key": 129,
+    "value": "16"
+  },
+  {
+    "key": 130,
+    "value": "17"
+  },
+  {
+    "key": 131,
+    "value": "18"
+  },
+  {
+    "key": 132,
+    "value": "19"
+  },
+  {
+    "key": 746,
+    "value": "Normal"
+  },
+  {
+    "key": 747,
+    "value": "Shadow"
+  },
+  {
+    "key": 748,
+    "value": "Purified"
+  },
+  {
+    "key": 749,
+    "value": "Normal"
+  },
+  {
+    "key": 750,
+    "value": "Shadow"
+  },
+  {
+    "key": 751,
+    "value": "Purified"
+  },
+  {
+    "key": 752,
+    "value": "Normal"
+  },
+  {
+    "key": 753,
+    "value": "Shadow"
+  },
+  {
+    "key": 754,
+    "value": "Purified"
+  },
+  {
+    "key": 610,
+    "value": "Normal"
+  },
+  {
+    "key": 611,
+    "value": "Shadow"
+  },
+  {
+    "key": 612,
+    "value": "Purified"
+  },
+  {
+    "key": 613,
+    "value": "Normal"
+  },
+  {
+    "key": 614,
+    "value": "Shadow"
+  },
+  {
+    "key": 615,
+    "value": "Purified"
+  },
+  {
+    "key": 1532,
+    "value": "Normal"
+  },
+  {
+    "key": 1533,
+    "value": "Shadow"
+  },
+  {
+    "key": 1534,
+    "value": "Purified"
+  },
+  {
+    "key": 1535,
+    "value": "Normal"
+  },
+  {
+    "key": 1536,
+    "value": "Shadow"
+  },
+  {
+    "key": 1537,
+    "value": "Purified"
+  },
+  {
+    "key": 1538,
+    "value": "Normal"
+  },
+  {
+    "key": 1539,
+    "value": "Shadow"
+  },
+  {
+    "key": 1540,
+    "value": "Purified"
+  },
+  {
+    "key": 1541,
+    "value": "Normal"
+  },
+  {
+    "key": 1542,
+    "value": "Shadow"
+  },
+  {
+    "key": 1543,
+    "value": "Purified"
+  },
+  {
+    "key": 1544,
+    "value": "Normal"
+  },
+  {
+    "key": 1545,
+    "value": "Shadow"
+  },
+  {
+    "key": 1546,
+    "value": "Purified"
+  },
+  {
+    "key": 1547,
+    "value": "Normal"
+  },
+  {
+    "key": 1548,
+    "value": "Shadow"
+  },
+  {
+    "key": 1549,
+    "value": "Purified"
+  },
+  {
+    "key": 1550,
+    "value": "Normal"
+  },
+  {
+    "key": 1551,
+    "value": "Shadow"
+  },
+  {
+    "key": 1552,
+    "value": "Purified"
+  },
+  {
+    "key": 1553,
+    "value": "Normal"
+  },
+  {
+    "key": 1554,
+    "value": "Shadow"
+  },
+  {
+    "key": 1555,
+    "value": "Purified"
+  },
+  {
+    "key": 1556,
+    "value": "Normal"
+  },
+  {
+    "key": 1557,
+    "value": "Shadow"
+  },
+  {
+    "key": 1558,
+    "value": "Purified"
+  },
+  {
+    "key": 1559,
+    "value": "Normal"
+  },
+  {
+    "key": 1560,
+    "value": "Shadow"
+  },
+  {
+    "key": 1561,
+    "value": "Purified"
+  },
+  {
+    "key": 1562,
+    "value": "Normal"
+  },
+  {
+    "key": 1563,
+    "value": "Shadow"
+  },
+  {
+    "key": 1564,
+    "value": "Purified"
+  },
+  {
+    "key": 1565,
+    "value": "Normal"
+  },
+  {
+    "key": 1566,
+    "value": "Shadow"
+  },
+  {
+    "key": 1567,
+    "value": "Purified"
+  },
+  {
+    "key": 1568,
+    "value": "Normal"
+  },
+  {
+    "key": 1569,
+    "value": "Shadow"
+  },
+  {
+    "key": 1570,
+    "value": "Purified"
+  },
+  {
+    "key": 1571,
+    "value": "Normal"
+  },
+  {
+    "key": 1572,
+    "value": "Shadow"
+  },
+  {
+    "key": 1573,
+    "value": "Purified"
+  },
+  {
+    "key": 1574,
+    "value": "Normal"
+  },
+  {
+    "key": 1575,
+    "value": "Shadow"
+  },
+  {
+    "key": 1576,
+    "value": "Purified"
+  },
+  {
+    "key": 1577,
+    "value": "Normal"
+  },
+  {
+    "key": 1578,
+    "value": "Shadow"
+  },
+  {
+    "key": 1579,
+    "value": "Purified"
+  },
+  {
+    "key": 1580,
+    "value": "Normal"
+  },
+  {
+    "key": 1581,
+    "value": "Shadow"
+  },
+  {
+    "key": 1582,
+    "value": "Purified"
+  },
+  {
+    "key": 1583,
+    "value": "Normal"
+  },
+  {
+    "key": 1584,
+    "value": "Shadow"
+  },
+  {
+    "key": 1585,
+    "value": "Purified"
+  },
+  {
+    "key": 29,
+    "value": "Normal"
+  },
+  {
+    "key": 30,
+    "value": "Sunny"
+  },
+  {
+    "key": 31,
+    "value": "Rainy"
+  },
+  {
+    "key": 32,
+    "value": "Snowy"
+  },
+  {
+    "key": 1586,
+    "value": "Normal"
+  },
+  {
+    "key": 1587,
+    "value": "Shadow"
+  },
+  {
+    "key": 1588,
+    "value": "Purified"
+  },
+  {
+    "key": 908,
+    "value": "Normal"
+  },
+  {
+    "key": 909,
+    "value": "Shadow"
+  },
+  {
+    "key": 910,
+    "value": "Purified"
+  },
+  {
+    "key": 911,
+    "value": "Normal"
+  },
+  {
+    "key": 912,
+    "value": "Shadow"
+  },
+  {
+    "key": 913,
+    "value": "Purified"
+  },
+  {
+    "key": 914,
+    "value": "Normal"
+  },
+  {
+    "key": 915,
+    "value": "Shadow"
+  },
+  {
+    "key": 916,
+    "value": "Purified"
+  },
+  {
+    "key": 917,
+    "value": "Normal"
+  },
+  {
+    "key": 918,
+    "value": "Shadow"
+  },
+  {
+    "key": 919,
+    "value": "Purified"
+  },
+  {
+    "key": 1589,
+    "value": "Normal"
+  },
+  {
+    "key": 1590,
+    "value": "Shadow"
+  },
+  {
+    "key": 1591,
+    "value": "Purified"
+  },
+  {
+    "key": 1592,
+    "value": "Normal"
+  },
+  {
+    "key": 1593,
+    "value": "Shadow"
+  },
+  {
+    "key": 1594,
+    "value": "Purified"
+  },
+  {
+    "key": 830,
+    "value": "Normal"
+  },
+  {
+    "key": 831,
+    "value": "Shadow"
+  },
+  {
+    "key": 832,
+    "value": "Purified"
+  },
+  {
+    "key": 1595,
+    "value": "Normal"
+  },
+  {
+    "key": 1596,
+    "value": "Shadow"
+  },
+  {
+    "key": 1597,
+    "value": "Purified"
+  },
+  {
+    "key": 926,
+    "value": "Normal"
+  },
+  {
+    "key": 927,
+    "value": "Shadow"
+  },
+  {
+    "key": 928,
+    "value": "Purified"
+  },
+  {
+    "key": 929,
+    "value": "Normal"
+  },
+  {
+    "key": 930,
+    "value": "Shadow"
+  },
+  {
+    "key": 931,
+    "value": "Purified"
+  },
+  {
+    "key": 1598,
+    "value": "Normal"
+  },
+  {
+    "key": 1599,
+    "value": "Shadow"
+  },
+  {
+    "key": 1600,
+    "value": "Purified"
+  },
+  {
+    "key": 1601,
+    "value": "Normal"
+  },
+  {
+    "key": 1602,
+    "value": "Shadow"
+  },
+  {
+    "key": 1603,
+    "value": "Purified"
+  },
+  {
+    "key": 1604,
+    "value": "Normal"
+  },
+  {
+    "key": 1605,
+    "value": "Shadow"
+  },
+  {
+    "key": 1606,
+    "value": "Purified"
+  },
+  {
+    "key": 1607,
+    "value": "Normal"
+  },
+  {
+    "key": 1608,
+    "value": "Shadow"
+  },
+  {
+    "key": 1609,
+    "value": "Purified"
+  },
+  {
+    "key": 1610,
+    "value": "Normal"
+  },
+  {
+    "key": 1611,
+    "value": "Shadow"
+  },
+  {
+    "key": 1612,
+    "value": "Purified"
+  },
+  {
+    "key": 1613,
+    "value": "Normal"
+  },
+  {
+    "key": 1614,
+    "value": "Shadow"
+  },
+  {
+    "key": 1615,
+    "value": "Purified"
+  },
+  {
+    "key": 1616,
+    "value": "Normal"
+  },
+  {
+    "key": 1617,
+    "value": "Shadow"
+  },
+  {
+    "key": 1618,
+    "value": "Purified"
+  },
+  {
+    "key": 1619,
+    "value": "Normal"
+  },
+  {
+    "key": 1620,
+    "value": "Shadow"
+  },
+  {
+    "key": 1621,
+    "value": "Purified"
+  },
+  {
+    "key": 755,
+    "value": "Normal"
+  },
+  {
+    "key": 756,
+    "value": "Shadow"
+  },
+  {
+    "key": 757,
+    "value": "Purified"
+  },
+  {
+    "key": 758,
+    "value": "Normal"
+  },
+  {
+    "key": 759,
+    "value": "Shadow"
+  },
+  {
+    "key": 760,
+    "value": "Purified"
+  },
+  {
+    "key": 761,
+    "value": "Normal"
+  },
+  {
+    "key": 762,
+    "value": "Shadow"
+  },
+  {
+    "key": 763,
+    "value": "Purified"
+  },
+  {
+    "key": 764,
+    "value": "Normal"
+  },
+  {
+    "key": 765,
+    "value": "Shadow"
+  },
+  {
+    "key": 766,
+    "value": "Purified"
+  },
+  {
+    "key": 767,
+    "value": "Normal"
+  },
+  {
+    "key": 768,
+    "value": "Shadow"
+  },
+  {
+    "key": 769,
+    "value": "Purified"
+  },
+  {
+    "key": 770,
+    "value": "Normal"
+  },
+  {
+    "key": 771,
+    "value": "Shadow"
+  },
+  {
+    "key": 772,
+    "value": "Purified"
+  },
+  {
+    "key": 1622,
+    "value": "Normal"
+  },
+  {
+    "key": 1623,
+    "value": "Shadow"
+  },
+  {
+    "key": 1624,
+    "value": "Purified"
+  },
+  {
+    "key": 1625,
+    "value": "Normal"
+  },
+  {
+    "key": 1626,
+    "value": "Shadow"
+  },
+  {
+    "key": 1627,
+    "value": "Purified"
+  },
+  {
+    "key": 1628,
+    "value": "Normal"
+  },
+  {
+    "key": 1629,
+    "value": "Shadow"
+  },
+  {
+    "key": 1630,
+    "value": "Purified"
+  },
+  {
+    "key": 1631,
+    "value": "Normal"
+  },
+  {
+    "key": 1632,
+    "value": "Shadow"
+  },
+  {
+    "key": 1633,
+    "value": "Purified"
+  },
+  {
+    "key": 1634,
+    "value": "Normal"
+  },
+  {
+    "key": 1635,
+    "value": "Shadow"
+  },
+  {
+    "key": 1636,
+    "value": "Purified"
+  },
+  {
+    "key": 1637,
+    "value": "Normal"
+  },
+  {
+    "key": 1638,
+    "value": "Shadow"
+  },
+  {
+    "key": 1639,
+    "value": "Purified"
+  },
+  {
+    "key": 1640,
+    "value": "Normal"
+  },
+  {
+    "key": 1641,
+    "value": "Shadow"
+  },
+  {
+    "key": 1642,
+    "value": "Purified"
+  },
+  {
+    "key": 1643,
+    "value": "Normal"
+  },
+  {
+    "key": 1644,
+    "value": "Shadow"
+  },
+  {
+    "key": 1645,
+    "value": "Purified"
+  },
+  {
+    "key": 1646,
+    "value": "Normal"
+  },
+  {
+    "key": 1647,
+    "value": "Shadow"
+  },
+  {
+    "key": 1648,
+    "value": "Purified"
+  },
+  {
+    "key": 33,
+    "value": "Normal"
+  },
+  {
+    "key": 34,
+    "value": "Attack"
+  },
+  {
+    "key": 35,
+    "value": "Defence"
+  },
+  {
+    "key": 36,
+    "value": "Speed"
+  },
+  {
+    "key": 688,
+    "value": "Normal"
+  },
+  {
+    "key": 689,
+    "value": "Shadow"
+  },
+  {
+    "key": 690,
+    "value": "Purified"
+  },
+  {
+    "key": 691,
+    "value": "Normal"
+  },
+  {
+    "key": 692,
+    "value": "Shadow"
+  },
+  {
+    "key": 693,
+    "value": "Purified"
+  },
+  {
+    "key": 694,
+    "value": "Normal"
+  },
+  {
+    "key": 695,
+    "value": "Shadow"
+  },
+  {
+    "key": 696,
+    "value": "Purified"
+  },
+  {
+    "key": 818,
+    "value": "Normal"
+  },
+  {
+    "key": 819,
+    "value": "Shadow"
+  },
+  {
+    "key": 820,
+    "value": "Purified"
+  },
+  {
+    "key": 821,
+    "value": "Normal"
+  },
+  {
+    "key": 822,
+    "value": "Shadow"
+  },
+  {
+    "key": 823,
+    "value": "Purified"
+  },
+  {
+    "key": 824,
+    "value": "Normal"
+  },
+  {
+    "key": 825,
+    "value": "Shadow"
+  },
+  {
+    "key": 826,
+    "value": "Purified"
+  },
+  {
+    "key": 1649,
+    "value": "Normal"
+  },
+  {
+    "key": 1650,
+    "value": "Shadow"
+  },
+  {
+    "key": 1651,
+    "value": "Purified"
+  },
+  {
+    "key": 1652,
+    "value": "Normal"
+  },
+  {
+    "key": 1653,
+    "value": "Shadow"
+  },
+  {
+    "key": 1654,
+    "value": "Purified"
+  },
+  {
+    "key": 1655,
+    "value": "Normal"
+  },
+  {
+    "key": 1656,
+    "value": "Shadow"
+  },
+  {
+    "key": 1657,
+    "value": "Purified"
+  },
+  {
+    "key": 1658,
+    "value": "Normal"
+  },
+  {
+    "key": 1659,
+    "value": "Shadow"
+  },
+  {
+    "key": 1660,
+    "value": "Purified"
+  },
+  {
+    "key": 1661,
+    "value": "Normal"
+  },
+  {
+    "key": 1662,
+    "value": "Shadow"
+  },
+  {
+    "key": 1663,
+    "value": "Purified"
+  },
+  {
+    "key": 1664,
+    "value": "Normal"
+  },
+  {
+    "key": 1665,
+    "value": "Shadow"
+  },
+  {
+    "key": 1666,
+    "value": "Purified"
+  },
+  {
+    "key": 1667,
+    "value": "Normal"
+  },
+  {
+    "key": 1668,
+    "value": "Shadow"
+  },
+  {
+    "key": 1669,
+    "value": "Purified"
+  },
+  {
+    "key": 1670,
+    "value": "Normal"
+  },
+  {
+    "key": 1671,
+    "value": "Shadow"
+  },
+  {
+    "key": 1672,
+    "value": "Purified"
+  },
+  {
+    "key": 1673,
+    "value": "Normal"
+  },
+  {
+    "key": 1674,
+    "value": "Shadow"
+  },
+  {
+    "key": 1675,
+    "value": "Purified"
+  },
+  {
+    "key": 1676,
+    "value": "Normal"
+  },
+  {
+    "key": 1677,
+    "value": "Shadow"
+  },
+  {
+    "key": 1678,
+    "value": "Purified"
+  },
+  {
+    "key": 1679,
+    "value": "Normal"
+  },
+  {
+    "key": 1680,
+    "value": "Shadow"
+  },
+  {
+    "key": 1681,
+    "value": "Purified"
+  },
+  {
+    "key": 1682,
+    "value": "Normal"
+  },
+  {
+    "key": 1683,
+    "value": "Shadow"
+  },
+  {
+    "key": 1684,
+    "value": "Purified"
+  },
+  {
+    "key": 1685,
+    "value": "Normal"
+  },
+  {
+    "key": 1686,
+    "value": "Shadow"
+  },
+  {
+    "key": 1687,
+    "value": "Purified"
+  },
+  {
+    "key": 1688,
+    "value": "Normal"
+  },
+  {
+    "key": 1689,
+    "value": "Shadow"
+  },
+  {
+    "key": 1690,
+    "value": "Purified"
+  },
+  {
+    "key": 1691,
+    "value": "Normal"
+  },
+  {
+    "key": 1692,
+    "value": "Shadow"
+  },
+  {
+    "key": 1693,
+    "value": "Purified"
+  },
+  {
+    "key": 1694,
+    "value": "Normal"
+  },
+  {
+    "key": 1695,
+    "value": "Shadow"
+  },
+  {
+    "key": 1696,
+    "value": "Purified"
+  },
+  {
+    "key": 1697,
+    "value": "Normal"
+  },
+  {
+    "key": 1698,
+    "value": "Shadow"
+  },
+  {
+    "key": 1699,
+    "value": "Purified"
+  },
+  {
+    "key": 1700,
+    "value": "Normal"
+  },
+  {
+    "key": 1701,
+    "value": "Shadow"
+  },
+  {
+    "key": 1702,
+    "value": "Purified"
+  },
+  {
+    "key": 1703,
+    "value": "Normal"
+  },
+  {
+    "key": 1704,
+    "value": "Shadow"
+  },
+  {
+    "key": 1705,
+    "value": "Purified"
+  },
+  {
+    "key": 118,
+    "value": "Plant"
+  },
+  {
+    "key": 119,
+    "value": "Sandy"
+  },
+  {
+    "key": 120,
+    "value": "Trash"
+  },
+  {
+    "key": 1706,
+    "value": "Normal"
+  },
+  {
+    "key": 1707,
+    "value": "Shadow"
+  },
+  {
+    "key": 1708,
+    "value": "Purified"
+  },
+  {
+    "key": 87,
+    "value": "Plant"
+  },
+  {
+    "key": 88,
+    "value": "Sandy"
+  },
+  {
+    "key": 89,
+    "value": "Trash"
+  },
+  {
+    "key": 1709,
+    "value": "Normal"
+  },
+  {
+    "key": 1710,
+    "value": "Shadow"
+  },
+  {
+    "key": 1711,
+    "value": "Purified"
+  },
+  {
+    "key": 1712,
+    "value": "Normal"
+  },
+  {
+    "key": 1713,
+    "value": "Shadow"
+  },
+  {
+    "key": 1714,
+    "value": "Purified"
+  },
+  {
+    "key": 1715,
+    "value": "Normal"
+  },
+  {
+    "key": 1716,
+    "value": "Shadow"
+  },
+  {
+    "key": 1717,
+    "value": "Purified"
+  },
+  {
+    "key": 1718,
+    "value": "Normal"
+  },
+  {
+    "key": 1719,
+    "value": "Shadow"
+  },
+  {
+    "key": 1720,
+    "value": "Purified"
+  },
+  {
+    "key": 1721,
+    "value": "Normal"
+  },
+  {
+    "key": 1722,
+    "value": "Shadow"
+  },
+  {
+    "key": 1723,
+    "value": "Purified"
+  },
+  {
+    "key": 1724,
+    "value": "Normal"
+  },
+  {
+    "key": 1725,
+    "value": "Shadow"
+  },
+  {
+    "key": 1726,
+    "value": "Purified"
+  },
+  {
+    "key": 1727,
+    "value": "Normal"
+  },
+  {
+    "key": 1728,
+    "value": "Shadow"
+  },
+  {
+    "key": 1729,
+    "value": "Purified"
+  },
+  {
+    "key": 1730,
+    "value": "Normal"
+  },
+  {
+    "key": 1731,
+    "value": "Shadow"
+  },
+  {
+    "key": 1732,
+    "value": "Purified"
+  },
+  {
+    "key": 94,
+    "value": "Overcast"
+  },
+  {
+    "key": 95,
+    "value": "Sunny"
+  },
+  {
+    "key": 1733,
+    "value": "Normal"
+  },
+  {
+    "key": 1734,
+    "value": "Shadow"
+  },
+  {
+    "key": 1735,
+    "value": "Purified"
+  },
+  {
+    "key": 96,
+    "value": "West Sea"
+  },
+  {
+    "key": 97,
+    "value": "East Sea"
+  },
+  {
+    "key": 1736,
+    "value": "Normal"
+  },
+  {
+    "key": 1737,
+    "value": "Shadow"
+  },
+  {
+    "key": 1738,
+    "value": "Purified"
+  },
+  {
+    "key": 98,
+    "value": "West Sea"
+  },
+  {
+    "key": 99,
+    "value": "East Sea"
+  },
+  {
+    "key": 1739,
+    "value": "Normal"
+  },
+  {
+    "key": 1740,
+    "value": "Shadow"
+  },
+  {
+    "key": 1741,
+    "value": "Purified"
+  },
+  {
+    "key": 1742,
+    "value": "Normal"
+  },
+  {
+    "key": 1743,
+    "value": "Shadow"
+  },
+  {
+    "key": 1744,
+    "value": "Purified"
+  },
+  {
+    "key": 1745,
+    "value": "Normal"
+  },
+  {
+    "key": 1746,
+    "value": "Shadow"
+  },
+  {
+    "key": 1747,
+    "value": "Purified"
+  },
+  {
+    "key": 1748,
+    "value": "Normal"
+  },
+  {
+    "key": 1749,
+    "value": "Shadow"
+  },
+  {
+    "key": 1750,
+    "value": "Purified"
+  },
+  {
+    "key": 1751,
+    "value": "Normal"
+  },
+  {
+    "key": 1752,
+    "value": "Shadow"
+  },
+  {
+    "key": 1753,
+    "value": "Purified"
+  },
+  {
+    "key": 1754,
+    "value": "Normal"
+  },
+  {
+    "key": 1755,
+    "value": "Shadow"
+  },
+  {
+    "key": 1756,
+    "value": "Purified"
+  },
+  {
+    "key": 722,
+    "value": "Normal"
+  },
+  {
+    "key": 723,
+    "value": "Shadow"
+  },
+  {
+    "key": 724,
+    "value": "Purified"
+  },
+  {
+    "key": 858,
+    "value": "Normal"
+  },
+  {
+    "key": 859,
+    "value": "Shadow"
+  },
+  {
+    "key": 860,
+    "value": "Purified"
+  },
+  {
+    "key": 1757,
+    "value": "Normal"
+  },
+  {
+    "key": 1758,
+    "value": "Shadow"
+  },
+  {
+    "key": 1759,
+    "value": "Purified"
+  },
+  {
+    "key": 1760,
+    "value": "Normal"
+  },
+  {
+    "key": 1761,
+    "value": "Shadow"
+  },
+  {
+    "key": 1762,
+    "value": "Purified"
+  },
+  {
+    "key": 1763,
+    "value": "Normal"
+  },
+  {
+    "key": 1764,
+    "value": "Shadow"
+  },
+  {
+    "key": 1765,
+    "value": "Purified"
+  },
+  {
+    "key": 791,
+    "value": "Normal"
+  },
+  {
+    "key": 792,
+    "value": "Shadow"
+  },
+  {
+    "key": 793,
+    "value": "Purified"
+  },
+  {
+    "key": 794,
+    "value": "Normal"
+  },
+  {
+    "key": 795,
+    "value": "Shadow"
+  },
+  {
+    "key": 796,
+    "value": "Purified"
+  },
+  {
+    "key": 1766,
+    "value": "Normal"
+  },
+  {
+    "key": 1767,
+    "value": "Shadow"
+  },
+  {
+    "key": 1768,
+    "value": "Purified"
+  },
+  {
+    "key": 1769,
+    "value": "Normal"
+  },
+  {
+    "key": 1770,
+    "value": "Shadow"
+  },
+  {
+    "key": 1771,
+    "value": "Purified"
+  },
+  {
+    "key": 1772,
+    "value": "Normal"
+  },
+  {
+    "key": 1773,
+    "value": "Shadow"
+  },
+  {
+    "key": 1774,
+    "value": "Purified"
+  },
+  {
+    "key": 1775,
+    "value": "Normal"
+  },
+  {
+    "key": 1776,
+    "value": "Shadow"
+  },
+  {
+    "key": 1777,
+    "value": "Purified"
+  },
+  {
+    "key": 1778,
+    "value": "Normal"
+  },
+  {
+    "key": 1779,
+    "value": "Shadow"
+  },
+  {
+    "key": 1780,
+    "value": "Purified"
+  },
+  {
+    "key": 1781,
+    "value": "Normal"
+  },
+  {
+    "key": 1782,
+    "value": "Shadow"
+  },
+  {
+    "key": 1783,
+    "value": "Purified"
+  },
+  {
+    "key": 1784,
+    "value": "Normal"
+  },
+  {
+    "key": 1785,
+    "value": "Shadow"
+  },
+  {
+    "key": 1786,
+    "value": "Purified"
+  },
+  {
+    "key": 861,
+    "value": "Normal"
+  },
+  {
+    "key": 862,
+    "value": "Shadow"
+  },
+  {
+    "key": 863,
+    "value": "Purified"
+  },
+  {
+    "key": 864,
+    "value": "Normal"
+  },
+  {
+    "key": 865,
+    "value": "Shadow"
+  },
+  {
+    "key": 866,
+    "value": "Purified"
+  },
+  {
+    "key": 867,
+    "value": "Normal"
+  },
+  {
+    "key": 868,
+    "value": "Shadow"
+  },
+  {
+    "key": 869,
+    "value": "Purified"
+  },
+  {
+    "key": 1787,
+    "value": "Normal"
+  },
+  {
+    "key": 1788,
+    "value": "Shadow"
+  },
+  {
+    "key": 1789,
+    "value": "Purified"
+  },
+  {
+    "key": 1790,
+    "value": "Normal"
+  },
+  {
+    "key": 1791,
+    "value": "Shadow"
+  },
+  {
+    "key": 1792,
+    "value": "Purified"
+  },
+  {
+    "key": 1793,
+    "value": "Normal"
+  },
+  {
+    "key": 1794,
+    "value": "Shadow"
+  },
+  {
+    "key": 1795,
+    "value": "Purified"
+  },
+  {
+    "key": 888,
+    "value": "Normal"
+  },
+  {
+    "key": 889,
+    "value": "Shadow"
+  },
+  {
+    "key": 890,
+    "value": "Purified"
+  },
+  {
+    "key": 891,
+    "value": "Normal"
+  },
+  {
+    "key": 892,
+    "value": "Shadow"
+  },
+  {
+    "key": 893,
+    "value": "Purified"
+  },
+  {
+    "key": 1796,
+    "value": "Normal"
+  },
+  {
+    "key": 1797,
+    "value": "Shadow"
+  },
+  {
+    "key": 1798,
+    "value": "Purified"
+  },
+  {
+    "key": 1799,
+    "value": "Normal"
+  },
+  {
+    "key": 1800,
+    "value": "Shadow"
+  },
+  {
+    "key": 1801,
+    "value": "Purified"
+  },
+  {
+    "key": 1802,
+    "value": "Normal"
+  },
+  {
+    "key": 1803,
+    "value": "Shadow"
+  },
+  {
+    "key": 1804,
+    "value": "Purified"
+  },
+  {
+    "key": 1805,
+    "value": "Normal"
+  },
+  {
+    "key": 1806,
+    "value": "Shadow"
+  },
+  {
+    "key": 1807,
+    "value": "Purified"
+  },
+  {
+    "key": 1808,
+    "value": "Normal"
+  },
+  {
+    "key": 1809,
+    "value": "Shadow"
+  },
+  {
+    "key": 1810,
+    "value": "Purified"
+  },
+  {
+    "key": 1811,
+    "value": "Normal"
+  },
+  {
+    "key": 1812,
+    "value": "Shadow"
+  },
+  {
+    "key": 1813,
+    "value": "Purified"
+  },
+  {
+    "key": 1814,
+    "value": "Normal"
+  },
+  {
+    "key": 1815,
+    "value": "Shadow"
+  },
+  {
+    "key": 1816,
+    "value": "Purified"
+  },
+  {
+    "key": 1817,
+    "value": "Normal"
+  },
+  {
+    "key": 1818,
+    "value": "Shadow"
+  },
+  {
+    "key": 1819,
+    "value": "Purified"
+  },
+  {
+    "key": 932,
+    "value": "Normal"
+  },
+  {
+    "key": 933,
+    "value": "Shadow"
+  },
+  {
+    "key": 934,
+    "value": "Purified"
+  },
+  {
+    "key": 935,
+    "value": "Normal"
+  },
+  {
+    "key": 936,
+    "value": "Shadow"
+  },
+  {
+    "key": 937,
+    "value": "Purified"
+  },
+  {
+    "key": 800,
+    "value": "Normal"
+  },
+  {
+    "key": 801,
+    "value": "Shadow"
+  },
+  {
+    "key": 802,
+    "value": "Purified"
+  },
+  {
+    "key": 661,
+    "value": "Normal"
+  },
+  {
+    "key": 662,
+    "value": "Shadow"
+  },
+  {
+    "key": 663,
+    "value": "Purified"
+  },
+  {
+    "key": 1820,
+    "value": "Normal"
+  },
+  {
+    "key": 1821,
+    "value": "Shadow"
+  },
+  {
+    "key": 1822,
+    "value": "Purified"
+  },
+  {
+    "key": 852,
+    "value": "Normal"
+  },
+  {
+    "key": 853,
+    "value": "Shadow"
+  },
+  {
+    "key": 854,
+    "value": "Purified"
+  },
+  {
+    "key": 1823,
+    "value": "Normal"
+  },
+  {
+    "key": 1824,
+    "value": "Shadow"
+  },
+  {
+    "key": 1825,
+    "value": "Purified"
+  },
+  {
+    "key": 643,
+    "value": "Normal"
+  },
+  {
+    "key": 644,
+    "value": "Shadow"
+  },
+  {
+    "key": 645,
+    "value": "Purified"
+  },
+  {
+    "key": 637,
+    "value": "Normal"
+  },
+  {
+    "key": 638,
+    "value": "Shadow"
+  },
+  {
+    "key": 639,
+    "value": "Purified"
+  },
+  {
+    "key": 1826,
+    "value": "Normal"
+  },
+  {
+    "key": 1827,
+    "value": "Shadow"
+  },
+  {
+    "key": 1828,
+    "value": "Purified"
+  },
+  {
+    "key": 1829,
+    "value": "Normal"
+  },
+  {
+    "key": 1830,
+    "value": "Shadow"
+  },
+  {
+    "key": 1831,
+    "value": "Purified"
+  },
+  {
+    "key": 1832,
+    "value": "Normal"
+  },
+  {
+    "key": 1833,
+    "value": "Shadow"
+  },
+  {
+    "key": 1834,
+    "value": "Purified"
+  },
+  {
+    "key": 1835,
+    "value": "Normal"
+  },
+  {
+    "key": 1836,
+    "value": "Shadow"
+  },
+  {
+    "key": 1837,
+    "value": "Purified"
+  },
+  {
+    "key": 806,
+    "value": "Normal"
+  },
+  {
+    "key": 807,
+    "value": "Shadow"
+  },
+  {
+    "key": 808,
+    "value": "Purified"
+  },
+  {
+    "key": 1838,
+    "value": "Normal"
+  },
+  {
+    "key": 1839,
+    "value": "Shadow"
+  },
+  {
+    "key": 1840,
+    "value": "Purified"
+  },
+  {
+    "key": 683,
+    "value": "Normal"
+  },
+  {
+    "key": 684,
+    "value": "Shadow"
+  },
+  {
+    "key": 685,
+    "value": "Purified"
+  },
+  {
+    "key": 301,
+    "value": "Normal"
+  },
+  {
+    "key": 302,
+    "value": "Shadow"
+  },
+  {
+    "key": 303,
+    "value": "Purified"
+  },
+  {
+    "key": 1841,
+    "value": "Normal"
+  },
+  {
+    "key": 1842,
+    "value": "Shadow"
+  },
+  {
+    "key": 1843,
+    "value": "Purified"
+  },
+  {
+    "key": 920,
+    "value": "Normal"
+  },
+  {
+    "key": 921,
+    "value": "Shadow"
+  },
+  {
+    "key": 922,
+    "value": "Purified"
+  },
+  {
+    "key": 1844,
+    "value": "Normal"
+  },
+  {
+    "key": 1845,
+    "value": "Shadow"
+  },
+  {
+    "key": 1846,
+    "value": "Purified"
+  },
+  {
+    "key": 82,
+    "value": "Normal"
+  },
+  {
+    "key": 83,
+    "value": "Frost"
+  },
+  {
+    "key": 84,
+    "value": "Fan"
+  },
+  {
+    "key": 85,
+    "value": "Mow"
+  },
+  {
+    "key": 86,
+    "value": "Wash"
+  },
+  {
+    "key": 87,
+    "value": "Heat"
+  },
+  {
+    "key": 1847,
+    "value": "Normal"
+  },
+  {
+    "key": 1848,
+    "value": "Shadow"
+  },
+  {
+    "key": 1849,
+    "value": "Purified"
+  },
+  {
+    "key": 1850,
+    "value": "Normal"
+  },
+  {
+    "key": 1851,
+    "value": "Shadow"
+  },
+  {
+    "key": 1852,
+    "value": "Purified"
+  },
+  {
+    "key": 1853,
+    "value": "Normal"
+  },
+  {
+    "key": 1854,
+    "value": "Shadow"
+  },
+  {
+    "key": 1855,
+    "value": "Purified"
+  },
+  {
+    "key": 1856,
+    "value": "Normal"
+  },
+  {
+    "key": 1857,
+    "value": "Shadow"
+  },
+  {
+    "key": 1858,
+    "value": "Purified"
+  },
+  {
+    "key": 1859,
+    "value": "Normal"
+  },
+  {
+    "key": 1860,
+    "value": "Shadow"
+  },
+  {
+    "key": 1861,
+    "value": "Purified"
+  },
+  {
+    "key": 1862,
+    "value": "Normal"
+  },
+  {
+    "key": 1863,
+    "value": "Shadow"
+  },
+  {
+    "key": 1864,
+    "value": "Purified"
+  },
+  {
+    "key": 1865,
+    "value": "Normal"
+  },
+  {
+    "key": 1866,
+    "value": "Shadow"
+  },
+  {
+    "key": 1867,
+    "value": "Purified"
+  },
+  {
+    "key": 90,
+    "value": "Altered"
+  },
+  {
+    "key": 91,
+    "value": "Origin"
+  },
+  {
+    "key": 1868,
+    "value": "Normal"
+  },
+  {
+    "key": 1869,
+    "value": "Shadow"
+  },
+  {
+    "key": 1870,
+    "value": "Purified"
+  },
+  {
+    "key": 1871,
+    "value": "Normal"
+  },
+  {
+    "key": 1872,
+    "value": "Shadow"
+  },
+  {
+    "key": 1873,
+    "value": "Purified"
+  },
+  {
+    "key": 1874,
+    "value": "Normal"
+  },
+  {
+    "key": 1875,
+    "value": "Shadow"
+  },
+  {
+    "key": 1876,
+    "value": "Purified"
+  },
+  {
+    "key": 1877,
+    "value": "Normal"
+  },
+  {
+    "key": 1878,
+    "value": "Shadow"
+  },
+  {
+    "key": 1879,
+    "value": "Purified"
+  },
+  {
+    "key": 1880,
+    "value": "Normal"
+  },
+  {
+    "key": 1881,
+    "value": "Shadow"
+  },
+  {
+    "key": 1882,
+    "value": "Purified"
+  },
+  {
+    "key": 92,
+    "value": "Sky"
+  },
+  {
+    "key": 93,
+    "value": "Land"
+  },
+  {
+    "key": 1883,
+    "value": "Normal"
+  },
+  {
+    "key": 1884,
+    "value": "Shadow"
+  },
+  {
+    "key": 1885,
+    "value": "Purified"
+  },
+  {
+    "key": 100,
+    "value": "Normal"
+  },
+  {
+    "key": 101,
+    "value": "Fighting"
+  },
+  {
+    "key": 102,
+    "value": "Flying"
+  },
+  {
+    "key": 103,
+    "value": "Poison"
+  },
+  {
+    "key": 104,
+    "value": "Ground"
+  },
+  {
+    "key": 105,
+    "value": "Rock"
+  },
+  {
+    "key": 106,
+    "value": "Bug"
+  },
+  {
+    "key": 107,
+    "value": "Ghost"
+  },
+  {
+    "key": 108,
+    "value": "Steel"
+  },
+  {
+    "key": 109,
+    "value": "Fire"
+  },
+  {
+    "key": 110,
+    "value": "Water"
+  },
+  {
+    "key": 111,
+    "value": "Grass"
+  },
+  {
+    "key": 112,
+    "value": "Electric"
+  },
+  {
+    "key": 113,
+    "value": "Psychic"
+  },
+  {
+    "key": 114,
+    "value": "Ice"
+  },
+  {
+    "key": 115,
+    "value": "Dragon"
+  },
+  {
+    "key": 116,
+    "value": "Dark"
+  },
+  {
+    "key": 117,
+    "value": "Fairy"
+  },
+  {
+    "key": 1886,
+    "value": "Normal"
+  },
+  {
+    "key": 1887,
+    "value": "Shadow"
+  },
+  {
+    "key": 1888,
+    "value": "Purified"
+  },
+  {
+    "key": 1889,
+    "value": "Normal"
+  },
+  {
+    "key": 1890,
+    "value": "Shadow"
+  },
+  {
+    "key": 1891,
+    "value": "Purified"
+  },
+  {
+    "key": 1892,
+    "value": "Normal"
+  },
+  {
+    "key": 1893,
+    "value": "Shadow"
+  },
+  {
+    "key": 1894,
+    "value": "Purified"
+  },
+  {
+    "key": 1895,
+    "value": "Normal"
+  },
+  {
+    "key": 1896,
+    "value": "Shadow"
+  },
+  {
+    "key": 1897,
+    "value": "Purified"
+  },
+  {
+    "key": 1898,
+    "value": "Normal"
+  },
+  {
+    "key": 1899,
+    "value": "Shadow"
+  },
+  {
+    "key": 1900,
+    "value": "Purified"
+  },
+  {
+    "key": 1901,
+    "value": "Normal"
+  },
+  {
+    "key": 1902,
+    "value": "Shadow"
+  },
+  {
+    "key": 1903,
+    "value": "Purified"
+  },
+  {
+    "key": 1904,
+    "value": "Normal"
+  },
+  {
+    "key": 1905,
+    "value": "Shadow"
+  },
+  {
+    "key": 1906,
+    "value": "Purified"
+  },
+  {
+    "key": 1907,
+    "value": "Normal"
+  },
+  {
+    "key": 1908,
+    "value": "Shadow"
+  },
+  {
+    "key": 1909,
+    "value": "Purified"
+  },
+  {
+    "key": 1910,
+    "value": "Normal"
+  },
+  {
+    "key": 1911,
+    "value": "Shadow"
+  },
+  {
+    "key": 1912,
+    "value": "Purified"
+  },
+  {
+    "key": 1913,
+    "value": "Normal"
+  },
+  {
+    "key": 1914,
+    "value": "Shadow"
+  },
+  {
+    "key": 1915,
+    "value": "Purified"
+  },
+  {
+    "key": 1916,
+    "value": "Normal"
+  },
+  {
+    "key": 1917,
+    "value": "Shadow"
+  },
+  {
+    "key": 1918,
+    "value": "Purified"
+  },
+  {
+    "key": 1919,
+    "value": "Normal"
+  },
+  {
+    "key": 1920,
+    "value": "Shadow"
+  },
+  {
+    "key": 1921,
+    "value": "Purified"
+  },
+  {
+    "key": 1922,
+    "value": "Normal"
+  },
+  {
+    "key": 1923,
+    "value": "Shadow"
+  },
+  {
+    "key": 1924,
+    "value": "Purified"
+  },
+  {
+    "key": 1925,
+    "value": "Normal"
+  },
+  {
+    "key": 1926,
+    "value": "Shadow"
+  },
+  {
+    "key": 1927,
+    "value": "Purified"
+  },
+  {
+    "key": 1928,
+    "value": "Normal"
+  },
+  {
+    "key": 1929,
+    "value": "Shadow"
+  },
+  {
+    "key": 1930,
+    "value": "Purified"
+  },
+  {
+    "key": 1931,
+    "value": "Normal"
+  },
+  {
+    "key": 1932,
+    "value": "Shadow"
+  },
+  {
+    "key": 1933,
+    "value": "Purified"
+  },
+  {
+    "key": 1934,
+    "value": "Normal"
+  },
+  {
+    "key": 1935,
+    "value": "Shadow"
+  },
+  {
+    "key": 1936,
+    "value": "Purified"
+  },
+  {
+    "key": 1937,
+    "value": "Normal"
+  },
+  {
+    "key": 1938,
+    "value": "Shadow"
+  },
+  {
+    "key": 1939,
+    "value": "Purified"
+  },
+  {
+    "key": 1940,
+    "value": "Normal"
+  },
+  {
+    "key": 1941,
+    "value": "Shadow"
+  },
+  {
+    "key": 1942,
+    "value": "Purified"
+  },
+  {
+    "key": 1943,
+    "value": "Normal"
+  },
+  {
+    "key": 1944,
+    "value": "Shadow"
+  },
+  {
+    "key": 1945,
+    "value": "Purified"
+  },
+  {
+    "key": 1946,
+    "value": "Normal"
+  },
+  {
+    "key": 1947,
+    "value": "Shadow"
+  },
+  {
+    "key": 1948,
+    "value": "Purified"
+  },
+  {
+    "key": 1949,
+    "value": "Normal"
+  },
+  {
+    "key": 1950,
+    "value": "Shadow"
+  },
+  {
+    "key": 1951,
+    "value": "Purified"
+  },
+  {
+    "key": 1952,
+    "value": "Normal"
+  },
+  {
+    "key": 1953,
+    "value": "Shadow"
+  },
+  {
+    "key": 1954,
+    "value": "Purified"
+  },
+  {
+    "key": 1955,
+    "value": "Normal"
+  },
+  {
+    "key": 1956,
+    "value": "Shadow"
+  },
+  {
+    "key": 1957,
+    "value": "Purified"
+  },
+  {
+    "key": 1958,
+    "value": "Normal"
+  },
+  {
+    "key": 1959,
+    "value": "Shadow"
+  },
+  {
+    "key": 1960,
+    "value": "Purified"
+  },
+  {
+    "key": 1961,
+    "value": "Normal"
+  },
+  {
+    "key": 1962,
+    "value": "Shadow"
+  },
+  {
+    "key": 1963,
+    "value": "Purified"
+  },
+  {
+    "key": 1964,
+    "value": "Normal"
+  },
+  {
+    "key": 1965,
+    "value": "Shadow"
+  },
+  {
+    "key": 1966,
+    "value": "Purified"
+  },
+  {
+    "key": 1967,
+    "value": "Normal"
+  },
+  {
+    "key": 1968,
+    "value": "Shadow"
+  },
+  {
+    "key": 1969,
+    "value": "Purified"
+  },
+  {
+    "key": 1970,
+    "value": "Normal"
+  },
+  {
+    "key": 1971,
+    "value": "Shadow"
+  },
+  {
+    "key": 1972,
+    "value": "Purified"
+  },
+  {
+    "key": 1973,
+    "value": "Normal"
+  },
+  {
+    "key": 1974,
+    "value": "Shadow"
+  },
+  {
+    "key": 1975,
+    "value": "Purified"
+  },
+  {
+    "key": 1976,
+    "value": "Normal"
+  },
+  {
+    "key": 1977,
+    "value": "Shadow"
+  },
+  {
+    "key": 1978,
+    "value": "Purified"
+  },
+  {
+    "key": 1979,
+    "value": "Normal"
+  },
+  {
+    "key": 1980,
+    "value": "Shadow"
+  },
+  {
+    "key": 1981,
+    "value": "Purified"
+  },
+  {
+    "key": 1982,
+    "value": "Normal"
+  },
+  {
+    "key": 1983,
+    "value": "Shadow"
+  },
+  {
+    "key": 1984,
+    "value": "Purified"
+  },
+  {
+    "key": 1985,
+    "value": "Normal"
+  },
+  {
+    "key": 1986,
+    "value": "Shadow"
+  },
+  {
+    "key": 1987,
+    "value": "Purified"
+  },
+  {
+    "key": 1988,
+    "value": "Normal"
+  },
+  {
+    "key": 1989,
+    "value": "Shadow"
+  },
+  {
+    "key": 1990,
+    "value": "Purified"
+  },
+  {
+    "key": 1991,
+    "value": "Normal"
+  },
+  {
+    "key": 1992,
+    "value": "Shadow"
+  },
+  {
+    "key": 1993,
+    "value": "Purified"
+  },
+  {
+    "key": 1994,
+    "value": "Normal"
+  },
+  {
+    "key": 1995,
+    "value": "Shadow"
+  },
+  {
+    "key": 1996,
+    "value": "Purified"
+  },
+  {
+    "key": 1997,
+    "value": "Normal"
+  },
+  {
+    "key": 1998,
+    "value": "Shadow"
+  },
+  {
+    "key": 1999,
+    "value": "Purified"
+  },
+  {
+    "key": 2000,
+    "value": "Normal"
+  },
+  {
+    "key": 2001,
+    "value": "Shadow"
+  },
+  {
+    "key": 2002,
+    "value": "Purified"
+  },
+  {
+    "key": 2003,
+    "value": "Normal"
+  },
+  {
+    "key": 2004,
+    "value": "Shadow"
+  },
+  {
+    "key": 2005,
+    "value": "Purified"
+  },
+  {
+    "key": 2006,
+    "value": "Normal"
+  },
+  {
+    "key": 2007,
+    "value": "Shadow"
+  },
+  {
+    "key": 2008,
+    "value": "Purified"
+  },
+  {
+    "key": 2009,
+    "value": "Normal"
+  },
+  {
+    "key": 2010,
+    "value": "Shadow"
+  },
+  {
+    "key": 2011,
+    "value": "Purified"
+  },
+  {
+    "key": 2012,
+    "value": "Normal"
+  },
+  {
+    "key": 2013,
+    "value": "Shadow"
+  },
+  {
+    "key": 2014,
+    "value": "Purified"
+  },
+  {
+    "key": 2015,
+    "value": "Normal"
+  },
+  {
+    "key": 2016,
+    "value": "Shadow"
+  },
+  {
+    "key": 2017,
+    "value": "Purified"
+  },
+  {
+    "key": 2018,
+    "value": "Normal"
+  },
+  {
+    "key": 2019,
+    "value": "Shadow"
+  },
+  {
+    "key": 2020,
+    "value": "Purified"
+  },
+  {
+    "key": 2021,
+    "value": "Normal"
+  },
+  {
+    "key": 2022,
+    "value": "Shadow"
+  },
+  {
+    "key": 2023,
+    "value": "Purified"
+  },
+  {
+    "key": 2024,
+    "value": "Normal"
+  },
+  {
+    "key": 2025,
+    "value": "Shadow"
+  },
+  {
+    "key": 2026,
+    "value": "Purified"
+  },
+  {
+    "key": 2027,
+    "value": "Normal"
+  },
+  {
+    "key": 2028,
+    "value": "Shadow"
+  },
+  {
+    "key": 2029,
+    "value": "Purified"
+  },
+  {
+    "key": 2030,
+    "value": "Normal"
+  },
+  {
+    "key": 2031,
+    "value": "Shadow"
+  },
+  {
+    "key": 2032,
+    "value": "Purified"
+  },
+  {
+    "key": 2033,
+    "value": "Normal"
+  },
+  {
+    "key": 2034,
+    "value": "Shadow"
+  },
+  {
+    "key": 2035,
+    "value": "Purified"
+  },
+  {
+    "key": 2036,
+    "value": "Normal"
+  },
+  {
+    "key": 2037,
+    "value": "Shadow"
+  },
+  {
+    "key": 2038,
+    "value": "Purified"
+  },
+  {
+    "key": 2039,
+    "value": "Normal"
+  },
+  {
+    "key": 2040,
+    "value": "Shadow"
+  },
+  {
+    "key": 2041,
+    "value": "Purified"
+  },
+  {
+    "key": 2042,
+    "value": "Normal"
+  },
+  {
+    "key": 2043,
+    "value": "Shadow"
+  },
+  {
+    "key": 2044,
+    "value": "Purified"
+  },
+  {
+    "key": 2045,
+    "value": "Normal"
+  },
+  {
+    "key": 2046,
+    "value": "Shadow"
+  },
+  {
+    "key": 2047,
+    "value": "Purified"
+  },
+  {
+    "key": 2048,
+    "value": "Normal"
+  },
+  {
+    "key": 2049,
+    "value": "Shadow"
+  },
+  {
+    "key": 2050,
+    "value": "Purified"
+  },
+  {
+    "key": 2051,
+    "value": "Normal"
+  },
+  {
+    "key": 2052,
+    "value": "Shadow"
+  },
+  {
+    "key": 2053,
+    "value": "Purified"
+  },
+  {
+    "key": 136,
+    "value": "Red Striped"
+  },
+  {
+    "key": 137,
+    "value": "Blue Striped"
+  },
+  {
+    "key": 2054,
+    "value": "Normal"
+  },
+  {
+    "key": 2055,
+    "value": "Shadow"
+  },
+  {
+    "key": 2056,
+    "value": "Purified"
+  },
+  {
+    "key": 2057,
+    "value": "Normal"
+  },
+  {
+    "key": 2058,
+    "value": "Shadow"
+  },
+  {
+    "key": 2059,
+    "value": "Purified"
+  },
+  {
+    "key": 2060,
+    "value": "Normal"
+  },
+  {
+    "key": 2061,
+    "value": "Shadow"
+  },
+  {
+    "key": 2062,
+    "value": "Purified"
+  },
+  {
+    "key": 2063,
+    "value": "Normal"
+  },
+  {
+    "key": 2064,
+    "value": "Shadow"
+  },
+  {
+    "key": 2065,
+    "value": "Purified"
+  },
+  {
+    "key": 2341,
+    "value": "Galarian"
+  },
+  {
+    "key": 138,
+    "value": "Standard"
+  },
+  {
+    "key": 139,
+    "value": "Zen"
+  },
+  {
+    "key": 2342,
+    "value": "Galarian Standard"
+  },
+  {
+    "key": 2343,
+    "value": "Galarian Zen"
+  },
+  {
+    "key": 2066,
+    "value": "Normal"
+  },
+  {
+    "key": 2067,
+    "value": "Shadow"
+  },
+  {
+    "key": 2068,
+    "value": "Purified"
+  },
+  {
+    "key": 2069,
+    "value": "Normal"
+  },
+  {
+    "key": 2070,
+    "value": "Shadow"
+  },
+  {
+    "key": 2071,
+    "value": "Purified"
+  },
+  {
+    "key": 2072,
+    "value": "Normal"
+  },
+  {
+    "key": 2073,
+    "value": "Shadow"
+  },
+  {
+    "key": 2074,
+    "value": "Purified"
+  },
+  {
+    "key": 2075,
+    "value": "Normal"
+  },
+  {
+    "key": 2076,
+    "value": "Shadow"
+  },
+  {
+    "key": 2077,
+    "value": "Purified"
+  },
+  {
+    "key": 2078,
+    "value": "Normal"
+  },
+  {
+    "key": 2079,
+    "value": "Shadow"
+  },
+  {
+    "key": 2080,
+    "value": "Purified"
+  },
+  {
+    "key": 2081,
+    "value": "Normal"
+  },
+  {
+    "key": 2082,
+    "value": "Shadow"
+  },
+  {
+    "key": 2083,
+    "value": "Purified"
+  },
+  {
+    "key": 2084,
+    "value": "Normal"
+  },
+  {
+    "key": 2085,
+    "value": "Shadow"
+  },
+  {
+    "key": 2086,
+    "value": "Purified"
+  },
+  {
+    "key": 2087,
+    "value": "Normal"
+  },
+  {
+    "key": 2088,
+    "value": "Shadow"
+  },
+  {
+    "key": 2089,
+    "value": "Purified"
+  },
+  {
+    "key": 2090,
+    "value": "Normal"
+  },
+  {
+    "key": 2091,
+    "value": "Shadow"
+  },
+  {
+    "key": 2092,
+    "value": "Purified"
+  },
+  {
+    "key": 2093,
+    "value": "Normal"
+  },
+  {
+    "key": 2094,
+    "value": "Shadow"
+  },
+  {
+    "key": 2095,
+    "value": "Purified"
+  },
+  {
+    "key": 2096,
+    "value": "Normal"
+  },
+  {
+    "key": 2097,
+    "value": "Shadow"
+  },
+  {
+    "key": 2098,
+    "value": "Purified"
+  },
+  {
+    "key": 2099,
+    "value": "Normal"
+  },
+  {
+    "key": 2100,
+    "value": "Shadow"
+  },
+  {
+    "key": 2101,
+    "value": "Purified"
+  },
+  {
+    "key": 2102,
+    "value": "Normal"
+  },
+  {
+    "key": 2103,
+    "value": "Shadow"
+  },
+  {
+    "key": 2104,
+    "value": "Purified"
+  },
+  {
+    "key": 2105,
+    "value": "Normal"
+  },
+  {
+    "key": 2106,
+    "value": "Shadow"
+  },
+  {
+    "key": 2107,
+    "value": "Purified"
+  },
+  {
+    "key": 2108,
+    "value": "Normal"
+  },
+  {
+    "key": 2109,
+    "value": "Shadow"
+  },
+  {
+    "key": 2110,
+    "value": "Purified"
+  },
+  {
+    "key": 2111,
+    "value": "Normal"
+  },
+  {
+    "key": 2112,
+    "value": "Shadow"
+  },
+  {
+    "key": 2113,
+    "value": "Purified"
+  },
+  {
+    "key": 2114,
+    "value": "Normal"
+  },
+  {
+    "key": 2115,
+    "value": "Shadow"
+  },
+  {
+    "key": 2116,
+    "value": "Purified"
+  },
+  {
+    "key": 2117,
+    "value": "Normal"
+  },
+  {
+    "key": 2118,
+    "value": "Shadow"
+  },
+  {
+    "key": 2119,
+    "value": "Purified"
+  },
+  {
+    "key": 2120,
+    "value": "Normal"
+  },
+  {
+    "key": 2121,
+    "value": "Shadow"
+  },
+  {
+    "key": 2122,
+    "value": "Purified"
+  },
+  {
+    "key": 2123,
+    "value": "Normal"
+  },
+  {
+    "key": 2124,
+    "value": "Shadow"
+  },
+  {
+    "key": 2125,
+    "value": "Purified"
+  },
+  {
+    "key": 2126,
+    "value": "Normal"
+  },
+  {
+    "key": 2127,
+    "value": "Shadow"
+  },
+  {
+    "key": 2128,
+    "value": "Purified"
+  },
+  {
+    "key": 2129,
+    "value": "Normal"
+  },
+  {
+    "key": 2130,
+    "value": "Shadow"
+  },
+  {
+    "key": 2131,
+    "value": "Purified"
+  },
+  {
+    "key": 2132,
+    "value": "Normal"
+  },
+  {
+    "key": 2133,
+    "value": "Shadow"
+  },
+  {
+    "key": 2134,
+    "value": "Purified"
+  },
+  {
+    "key": 2135,
+    "value": "Normal"
+  },
+  {
+    "key": 2136,
+    "value": "Shadow"
+  },
+  {
+    "key": 2137,
+    "value": "Purified"
+  },
+  {
+    "key": 2138,
+    "value": "Normal"
+  },
+  {
+    "key": 2139,
+    "value": "Shadow"
+  },
+  {
+    "key": 2140,
+    "value": "Purified"
+  },
+  {
+    "key": 2141,
+    "value": "Normal"
+  },
+  {
+    "key": 2142,
+    "value": "Shadow"
+  },
+  {
+    "key": 2143,
+    "value": "Purified"
+  },
+  {
+    "key": 2144,
+    "value": "Normal"
+  },
+  {
+    "key": 2145,
+    "value": "Shadow"
+  },
+  {
+    "key": 2146,
+    "value": "Purified"
+  },
+  {
+    "key": 2147,
+    "value": "Normal"
+  },
+  {
+    "key": 2148,
+    "value": "Shadow"
+  },
+  {
+    "key": 2149,
+    "value": "Purified"
+  },
+  {
+    "key": 2150,
+    "value": "Normal"
+  },
+  {
+    "key": 2151,
+    "value": "Shadow"
+  },
+  {
+    "key": 2152,
+    "value": "Purified"
+  },
+  {
+    "key": 585,
+    "value": "Spring"
+  },
+  {
+    "key": 586,
+    "value": "Summer"
+  },
+  {
+    "key": 587,
+    "value": "Autumn"
+  },
+  {
+    "key": 588,
+    "value": "Winter"
+  },
+  {
+    "key": 589,
+    "value": "Spring"
+  },
+  {
+    "key": 590,
+    "value": "Summer"
+  },
+  {
+    "key": 591,
+    "value": "Autumn"
+  },
+  {
+    "key": 592,
+    "value": "Winter"
+  },
+  {
+    "key": 2153,
+    "value": "Normal"
+  },
+  {
+    "key": 2154,
+    "value": "Shadow"
+  },
+  {
+    "key": 2155,
+    "value": "Purified"
+  },
+  {
+    "key": 2156,
+    "value": "Normal"
+  },
+  {
+    "key": 2157,
+    "value": "Shadow"
+  },
+  {
+    "key": 2158,
+    "value": "Purified"
+  },
+  {
+    "key": 2159,
+    "value": "Normal"
+  },
+  {
+    "key": 2160,
+    "value": "Shadow"
+  },
+  {
+    "key": 2161,
+    "value": "Purified"
+  },
+  {
+    "key": 2162,
+    "value": "Normal"
+  },
+  {
+    "key": 2163,
+    "value": "Shadow"
+  },
+  {
+    "key": 2164,
+    "value": "Purified"
+  },
+  {
+    "key": 2165,
+    "value": "Normal"
+  },
+  {
+    "key": 2166,
+    "value": "Shadow"
+  },
+  {
+    "key": 2167,
+    "value": "Purified"
+  },
+  {
+    "key": 2168,
+    "value": "Normal"
+  },
+  {
+    "key": 2169,
+    "value": "Shadow"
+  },
+  {
+    "key": 2170,
+    "value": "Purified"
+  },
+  {
+    "key": 2330,
+    "value": "Female"
+  },
+  {
+    "key": 2171,
+    "value": "Normal"
+  },
+  {
+    "key": 2172,
+    "value": "Shadow"
+  },
+  {
+    "key": 2173,
+    "value": "Purified"
+  },
+  {
+    "key": 2331,
+    "value": "Female"
+  },
+  {
+    "key": 2174,
+    "value": "Normal"
+  },
+  {
+    "key": 2175,
+    "value": "Shadow"
+  },
+  {
+    "key": 2176,
+    "value": "Purified"
+  },
+  {
+    "key": 2177,
+    "value": "Normal"
+  },
+  {
+    "key": 2178,
+    "value": "Shadow"
+  },
+  {
+    "key": 2179,
+    "value": "Purified"
+  },
+  {
+    "key": 2180,
+    "value": "Normal"
+  },
+  {
+    "key": 2181,
+    "value": "Shadow"
+  },
+  {
+    "key": 2182,
+    "value": "Purified"
+  },
+  {
+    "key": 2183,
+    "value": "Normal"
+  },
+  {
+    "key": 2184,
+    "value": "Shadow"
+  },
+  {
+    "key": 2185,
+    "value": "Purified"
+  },
+  {
+    "key": 2186,
+    "value": "Normal"
+  },
+  {
+    "key": 2187,
+    "value": "Shadow"
+  },
+  {
+    "key": 2188,
+    "value": "Purified"
+  },
+  {
+    "key": 2189,
+    "value": "Normal"
+  },
+  {
+    "key": 2190,
+    "value": "Shadow"
+  },
+  {
+    "key": 2191,
+    "value": "Purified"
+  },
+  {
+    "key": 2192,
+    "value": "Normal"
+  },
+  {
+    "key": 2193,
+    "value": "Shadow"
+  },
+  {
+    "key": 2194,
+    "value": "Purified"
+  },
+  {
+    "key": 2195,
+    "value": "Normal"
+  },
+  {
+    "key": 2196,
+    "value": "Shadow"
+  },
+  {
+    "key": 2197,
+    "value": "Purified"
+  },
+  {
+    "key": 2198,
+    "value": "Normal"
+  },
+  {
+    "key": 2199,
+    "value": "Shadow"
+  },
+  {
+    "key": 2200,
+    "value": "Purified"
+  },
+  {
+    "key": 2201,
+    "value": "Normal"
+  },
+  {
+    "key": 2202,
+    "value": "Shadow"
+  },
+  {
+    "key": 2203,
+    "value": "Purified"
+  },
+  {
+    "key": 2204,
+    "value": "Normal"
+  },
+  {
+    "key": 2205,
+    "value": "Shadow"
+  },
+  {
+    "key": 2206,
+    "value": "Purified"
+  },
+  {
+    "key": 2207,
+    "value": "Normal"
+  },
+  {
+    "key": 2208,
+    "value": "Shadow"
+  },
+  {
+    "key": 2209,
+    "value": "Purified"
+  },
+  {
+    "key": 2210,
+    "value": "Normal"
+  },
+  {
+    "key": 2211,
+    "value": "Shadow"
+  },
+  {
+    "key": 2212,
+    "value": "Purified"
+  },
+  {
+    "key": 2213,
+    "value": "Normal"
+  },
+  {
+    "key": 2214,
+    "value": "Shadow"
+  },
+  {
+    "key": 2215,
+    "value": "Purified"
+  },
+  {
+    "key": 2216,
+    "value": "Normal"
+  },
+  {
+    "key": 2217,
+    "value": "Shadow"
+  },
+  {
+    "key": 2218,
+    "value": "Purified"
+  },
+  {
+    "key": 2219,
+    "value": "Normal"
+  },
+  {
+    "key": 2220,
+    "value": "Shadow"
+  },
+  {
+    "key": 2221,
+    "value": "Purified"
+  },
+  {
+    "key": 2222,
+    "value": "Normal"
+  },
+  {
+    "key": 2223,
+    "value": "Shadow"
+  },
+  {
+    "key": 2224,
+    "value": "Purified"
+  },
+  {
+    "key": 2225,
+    "value": "Normal"
+  },
+  {
+    "key": 2226,
+    "value": "Shadow"
+  },
+  {
+    "key": 2227,
+    "value": "Purified"
+  },
+  {
+    "key": 2228,
+    "value": "Normal"
+  },
+  {
+    "key": 2229,
+    "value": "Shadow"
+  },
+  {
+    "key": 2230,
+    "value": "Purified"
+  },
+  {
+    "key": 2231,
+    "value": "Normal"
+  },
+  {
+    "key": 2232,
+    "value": "Shadow"
+  },
+  {
+    "key": 2233,
+    "value": "Purified"
+  },
+  {
+    "key": 2234,
+    "value": "Normal"
+  },
+  {
+    "key": 2235,
+    "value": "Shadow"
+  },
+  {
+    "key": 2236,
+    "value": "Purified"
+  },
+  {
+    "key": 2237,
+    "value": "Normal"
+  },
+  {
+    "key": 2238,
+    "value": "Shadow"
+  },
+  {
+    "key": 2239,
+    "value": "Purified"
+  },
+  {
+    "key": 2240,
+    "value": "Normal"
+  },
+  {
+    "key": 2241,
+    "value": "Shadow"
+  },
+  {
+    "key": 2242,
+    "value": "Purified"
+  },
+  {
+    "key": 2243,
+    "value": "Normal"
+  },
+  {
+    "key": 2244,
+    "value": "Shadow"
+  },
+  {
+    "key": 2245,
+    "value": "Purified"
+  },
+  {
+    "key": 2246,
+    "value": "Normal"
+  },
+  {
+    "key": 2247,
+    "value": "Shadow"
+  },
+  {
+    "key": 2248,
+    "value": "Purified"
+  },
+  {
+    "key": 2345,
+    "value": "Galarian"
+  },
+  {
+    "key": 2249,
+    "value": "Normal"
+  },
+  {
+    "key": 2250,
+    "value": "Shadow"
+  },
+  {
+    "key": 2251,
+    "value": "Purified"
+  },
+  {
+    "key": 2252,
+    "value": "Normal"
+  },
+  {
+    "key": 2253,
+    "value": "Shadow"
+  },
+  {
+    "key": 2254,
+    "value": "Purified"
+  },
+  {
+    "key": 2255,
+    "value": "Normal"
+  },
+  {
+    "key": 2256,
+    "value": "Shadow"
+  },
+  {
+    "key": 2257,
+    "value": "Purified"
+  },
+  {
+    "key": 2258,
+    "value": "Normal"
+  },
+  {
+    "key": 2259,
+    "value": "Shadow"
+  },
+  {
+    "key": 2260,
+    "value": "Purified"
+  },
+  {
+    "key": 2261,
+    "value": "Normal"
+  },
+  {
+    "key": 2262,
+    "value": "Shadow"
+  },
+  {
+    "key": 2263,
+    "value": "Purified"
+  },
+  {
+    "key": 2264,
+    "value": "Normal"
+  },
+  {
+    "key": 2265,
+    "value": "Shadow"
+  },
+  {
+    "key": 2266,
+    "value": "Purified"
+  },
+  {
+    "key": 2267,
+    "value": "Normal"
+  },
+  {
+    "key": 2268,
+    "value": "Shadow"
+  },
+  {
+    "key": 2269,
+    "value": "Purified"
+  },
+  {
+    "key": 2270,
+    "value": "Normal"
+  },
+  {
+    "key": 2271,
+    "value": "Shadow"
+  },
+  {
+    "key": 2272,
+    "value": "Purified"
+  },
+  {
+    "key": 2273,
+    "value": "Normal"
+  },
+  {
+    "key": 2274,
+    "value": "Shadow"
+  },
+  {
+    "key": 2275,
+    "value": "Purified"
+  },
+  {
+    "key": 2276,
+    "value": "Normal"
+  },
+  {
+    "key": 2277,
+    "value": "Shadow"
+  },
+  {
+    "key": 2278,
+    "value": "Purified"
+  },
+  {
+    "key": 2279,
+    "value": "Normal"
+  },
+  {
+    "key": 2280,
+    "value": "Shadow"
+  },
+  {
+    "key": 2281,
+    "value": "Purified"
+  },
+  {
+    "key": 2282,
+    "value": "Normal"
+  },
+  {
+    "key": 2283,
+    "value": "Shadow"
+  },
+  {
+    "key": 2284,
+    "value": "Purified"
+  },
+  {
+    "key": 2285,
+    "value": "Normal"
+  },
+  {
+    "key": 2286,
+    "value": "Shadow"
+  },
+  {
+    "key": 2287,
+    "value": "Purified"
+  },
+  {
+    "key": 2288,
+    "value": "Normal"
+  },
+  {
+    "key": 2289,
+    "value": "Shadow"
+  },
+  {
+    "key": 2290,
+    "value": "Purified"
+  },
+  {
+    "key": 2291,
+    "value": "Normal"
+  },
+  {
+    "key": 2292,
+    "value": "Shadow"
+  },
+  {
+    "key": 2293,
+    "value": "Purified"
+  },
+  {
+    "key": 2294,
+    "value": "Normal"
+  },
+  {
+    "key": 2295,
+    "value": "Shadow"
+  },
+  {
+    "key": 2296,
+    "value": "Purified"
+  },
+  {
+    "key": 2297,
+    "value": "Normal"
+  },
+  {
+    "key": 2298,
+    "value": "Shadow"
+  },
+  {
+    "key": 2299,
+    "value": "Purified"
+  },
+  {
+    "key": 2300,
+    "value": "Normal"
+  },
+  {
+    "key": 2301,
+    "value": "Shadow"
+  },
+  {
+    "key": 2302,
+    "value": "Purified"
+  },
+  {
+    "key": 2303,
+    "value": "Normal"
+  },
+  {
+    "key": 2304,
+    "value": "Shadow"
+  },
+  {
+    "key": 2305,
+    "value": "Purified"
+  },
+  {
+    "key": 2306,
+    "value": "Normal"
+  },
+  {
+    "key": 2307,
+    "value": "Shadow"
+  },
+  {
+    "key": 2308,
+    "value": "Purified"
+  },
+  {
+    "key": 2309,
+    "value": "Normal"
+  },
+  {
+    "key": 2310,
+    "value": "Shadow"
+  },
+  {
+    "key": 2311,
+    "value": "Purified"
+  },
+  {
+    "key": 2312,
+    "value": "Normal"
+  },
+  {
+    "key": 2313,
+    "value": "Shadow"
+  },
+  {
+    "key": 2314,
+    "value": "Purified"
+  },
+  {
+    "key": 140,
+    "value": "Incarnate"
+  },
+  {
+    "key": 141,
+    "value": "Therian"
+  },
+  {
+    "key": 142,
+    "value": "Incarnate"
+  },
+  {
+    "key": 143,
+    "value": "Therian"
+  },
+  {
+    "key": 2315,
+    "value": "Normal"
+  },
+  {
+    "key": 2316,
+    "value": "Shadow"
+  },
+  {
+    "key": 2317,
+    "value": "Purified"
+  },
+  {
+    "key": 2318,
+    "value": "Normal"
+  },
+  {
+    "key": 2319,
+    "value": "Shadow"
+  },
+  {
+    "key": 2320,
+    "value": "Purified"
+  },
+  {
+    "key": 144,
+    "value": "Incarnate"
+  },
+  {
+    "key": 145,
+    "value": "Therian"
+  },
+  {
+    "key": 146,
+    "value": "Normal"
+  },
+  {
+    "key": 147,
+    "value": "Black"
+  },
+  {
+    "key": 148,
+    "value": "White"
+  },
+  {
+    "key": 149,
+    "value": "Ordinary"
+  },
+  {
+    "key": 150,
+    "value": "Resolute"
+  },
+  {
+    "key": 151,
+    "value": "Aria"
+  },
+  {
+    "key": 152,
+    "value": "Pirouette"
+  },
+  {
+    "key": 593,
+    "value": "Normal"
+  },
+  {
+    "key": 594,
+    "value": "Shock"
+  },
+  {
+    "key": 595,
+    "value": "Burn"
+  },
+  {
+    "key": 596,
+    "value": "Chill"
+  },
+  {
+    "key": 597,
+    "value": "Douse"
+  },
+  {
+    "key": 2321,
+    "value": "Normal"
+  },
+  {
+    "key": 2322,
+    "value": "Shadow"
+  },
+  {
+    "key": 2323,
+    "value": "Purified"
+  },
+  {
+    "key": 2324,
+    "value": "Normal"
+  },
+  {
+    "key": 2325,
+    "value": "Shadow"
+  },
+  {
+    "key": 2326,
+    "value": "Purified"
+  },
+  {
+    "key": 2504,
+    "value": "Normal"
+  },
+  {
+    "key": 2505,
+    "value": "Shadow"
+  },
+  {
+    "key": 2506,
+    "value": "Purified"
+  },
+  {
+    "key": 2510,
+    "value": "Normal"
+  },
+  {
+    "key": 2511,
+    "value": "Shadow"
+  },
+  {
+    "key": 2512,
+    "value": "Purified"
   }
-}
+]

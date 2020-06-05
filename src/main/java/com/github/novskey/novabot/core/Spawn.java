@@ -72,19 +72,36 @@ public class Spawn {
     public ArrayList<GeofenceIdentifier> getGeofences() {
         return geofenceIdentifiers;
     }
-    
-    public String getImage(String formatFile) {
-    	return getImage(formatFile, false);
-    }
 
-    public String getImage(String formatFile, boolean minimizeAPIRequests) {
-        if (this.imageUrl == null && !minimizeAPIRequests) {
+    public String getImage(String formatFile, int id, Integer form) {
+    	return getImage(formatFile, id, form, null);
+    }
+    
+    public String getImage(String formatFile, int id, Integer form, Integer raidLevel) {
+        if (this.imageUrl == null) {
+        	/*
             if(novaBot.getConfig().getStaticMapKeys().size() == 0){
                 return "https://raw.githubusercontent.com/novskey/novabot/dev/static/no-api-keys-remaining.png";
             } else {
                 incRequests();
                 return this.imageUrl = "https://maps.googleapis.com/maps/api/staticmap?" + String.format("zoom=%s&size=%sx%s&markers=color:red|%s,%s&key=%s", novaBot.getConfig().getMapZoom(formatFile, formatKey), novaBot.getConfig().getMapWidth(formatFile, formatKey), novaBot.getConfig().getMapHeight(formatFile, formatKey), this.lat, this.lon, getNextKey());
             }
+            */
+        	//Use tileserver.
+        	String tileserverUrl = novaBot.getConfig().getTileserverURL(formatFile, formatKey);
+        	//idstring format: %03d_%02d
+        	String idStr = String.format("%03d_%02d",id,form == null ? 0 : (int)form);
+        	if (tileserverUrl != null){
+        		return this.imageUrl = tileserverUrl + 
+        				String.format("zoom=%s&width=%s&height=%s&id=%s&lat=%s&lon=%s", 
+                		novaBot.getConfig().getMapZoom(formatFile, formatKey), 
+        				novaBot.getConfig().getMapWidth(formatFile, formatKey), 
+        				novaBot.getConfig().getMapHeight(formatFile, formatKey), 
+        				idStr,
+        				this.lat, 
+        				this.lon) + 
+        				(raidLevel != null ? String.format("&raidLevel=%d",raidLevel) : "");
+        	}	
         }
         return this.imageUrl;
     }

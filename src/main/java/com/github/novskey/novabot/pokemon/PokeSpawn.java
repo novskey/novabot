@@ -265,7 +265,7 @@ public class PokeSpawn extends Spawn
             embedBuilder.setDescription(novaBot.getConfig().formatStr(getProperties(), (encountered()) ? novaBot.getConfig().getEncounterBodyFormatting(formatFile) : novaBot.getConfig().getBodyFormatting(formatFile, "pokemon")));
             embedBuilder.setThumbnail(Pokemon.getIcon(this.id,this.formId));
             if (novaBot.getConfig().showMap(formatFile, "pokemon")) {
-            	String image = this.getImage(formatFile, minimizeAPICalls);
+            	String image = this.getImage(formatFile, this.id, this.formId);
                 embedBuilder.setImage(image);
                 if (localLog != null) {
                 	localLog.info(image);
