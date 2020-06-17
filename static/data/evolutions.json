@@ -7833,7 +7833,7 @@
     "dexNumber": 82
   },
   "83": {
-    "evolutionDexNumbers": [],
+    "evolutionDexNumbers": [865],
     "pokemonId": "FARFETCHD",
     "modelScale": 1.13,
     "type": "POKEMON_TYPE_NORMAL",
@@ -60041,5 +60041,10 @@
       0.4
     ],
     "dexNumber": 809
+  },
+  "865": {
+    "evolutionDexNumbers": [],
+    "pokemonId": "SIRFETCHD",
+    "dexNumber": 865
   }
 }

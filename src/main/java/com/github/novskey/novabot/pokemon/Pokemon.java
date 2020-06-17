@@ -545,6 +545,35 @@ public class Pokemon {
     }
 
     public static void main(String[] args) {
+
+    	PokeSpawn gfarfetchd = new PokeSpawn(
+    			83,  //id
+    			0.0,0.0, null, 
+    			2,15,15, //attack, def, sta
+    			0,0,0,0, 
+    			2, //gender 
+    			2338, //galarian form
+    			0, 
+    			3, //level 
+    			null,null,0L,0,false
+    	);
+    	System.out.println(gfarfetchd.getProperties());
+    	System.out.println("Pvp description: " + gfarfetchd.getProperties().get("pvpdescription"));
+    	
+
+    	PokeSpawn mrmime = new PokeSpawn(
+    			122,  //id
+    			0.0,0.0, null, 
+    			0,13,15, //attack, def, sta
+    			0,0,0,0, 
+    			2, //gender 
+    			0, //normal form
+    			0, 
+    			3, //level 
+    			null,null,0L,0,false
+    	);
+    	System.out.println(mrmime.getProperties());
+    	System.out.println("Pvp description: " + mrmime.getProperties().get("pvpdescription"));
     
     	//System.out.println(getPVPRankingDescription(227,1,0,15,14));
     	//System.out.println(getPVPRankingDescription(410,22,12,15,15));
@@ -681,6 +710,11 @@ public class Pokemon {
 			416, //vespiquen
 			282 //gardevoir
 	));
+	//Evolutions of a formed mon without a form
+	private static final Set<Integer> dropFormOnEvolution = new HashSet(Arrays.asList(
+			863, //perrserker
+			865 //sirfetch'd
+	));
     //public static PVPRanking getPVPRankingDescription(int pokemonId, int level, int atkIV, int defIV, int staIV){
     public static PVPRanking getPVPRankingDescription(PokeSpawn poke){
     	//return toRet to break out early
@@ -712,7 +746,7 @@ public class Pokemon {
 		    		System.err.println("WARN: No filter name for ID " + poke.id);
 		    		continue;
 				}
-				if (poke.form != null) {
+				if (poke.form != null && !dropFormOnEvolution.contains(id)) {
 					filterNameAndForm += " (" + poke.form +")";
 				}
 				//System.out.println(filterNameAndForm);

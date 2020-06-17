@@ -4674,5 +4674,11 @@
       "Fire",
       "Water"
     ]
+  },
+  "865": {
+    "name": "Sirfetch'd",
+    "types": [
+      "Fighting"
+    ]
   }
 }
