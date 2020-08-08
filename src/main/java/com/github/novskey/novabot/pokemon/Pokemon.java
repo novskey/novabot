@@ -546,6 +546,20 @@ public class Pokemon {
 
     public static void main(String[] args) {
 
+    	PokeSpawn magikarp = new PokeSpawn(
+    			129,  //id
+    			0.0,0.0, null, 
+    			0,14,15, //attack, def, sta
+    			0,0,0,0, 
+    			2, //gender 
+    			253, //normal form
+    			0, 
+    			3, //level 
+    			null,null,0L,0,false
+    	);
+    	System.out.println(magikarp.getProperties());
+    	System.out.println("Pvp description: " + magikarp.getProperties().get("pvpdescription"));
+
     	PokeSpawn gfarfetchd = new PokeSpawn(
     			83,  //id
     			0.0,0.0, null, 
@@ -755,7 +769,15 @@ public class Pokemon {
 				JsonArray rankPossibilitiesForEvolution = pvpivs.getAsJsonArray(filterNameAndForm);
 				//Important.
 				if (rankPossibilitiesForEvolution == null) {
-					continue;
+					//Handle inconsistent (Normal) form labeling
+					if (poke.form.equals("Normal")) {
+						filterNameAndForm = Pokemon.getFilterName(id);
+						rankPossibilitiesForEvolution = pvpivs.getAsJsonArray(filterNameAndForm);
+					}
+					//Check again given above second chance
+					if (rankPossibilitiesForEvolution == null) {
+						continue;
+					}
 				}
 				//System.out.println(rankPossibilitiesForEvolution);
 				for(JsonElement _rankPossible : rankPossibilitiesForEvolution) {
