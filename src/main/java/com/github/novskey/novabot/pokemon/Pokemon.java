@@ -546,6 +546,20 @@ public class Pokemon {
 
     public static void main(String[] args) {
 
+    	PokeSpawn sewaddle = new PokeSpawn(
+    			540,  //id
+    			0.0,0.0, null, 
+    			2,14,15, //attack, def, sta
+    			0,0,0,0, 
+    			2, //gender 
+    			0, 
+    			0, 
+    			11, //level 
+    			null,null,0L,0,false
+    	);
+    	System.out.println(sewaddle.getProperties());
+    	System.out.println("Pvp description: " + sewaddle.getProperties().get("pvpdescription"));
+
     	PokeSpawn magikarp = new PokeSpawn(
     			129,  //id
     			0.0,0.0, null, 
@@ -770,7 +784,7 @@ public class Pokemon {
 				//Important.
 				if (rankPossibilitiesForEvolution == null) {
 					//Handle inconsistent (Normal) form labeling
-					if (poke.form.equals("Normal")) {
+					if (poke.form == null || poke.form.equals("Normal")) {
 						filterNameAndForm = Pokemon.getFilterName(id);
 						rankPossibilitiesForEvolution = pvpivs.getAsJsonArray(filterNameAndForm);
 					}
