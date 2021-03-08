@@ -545,6 +545,20 @@ public class Pokemon {
     }
 
     public static void main(String[] args) {
+    	
+    	PokeSpawn frillish = new PokeSpawn(
+    			592,  //id
+    			0.0,0.0, null, 
+    			1,14,14, //attack, def, sta
+    			0,0,0,0, 
+    			2, //gender 
+    			2330, //female form
+    			0, 
+    			3, //level 
+    			null,null,0L,0,false
+    	);
+    	System.out.println(frillish.getProperties());
+    	System.out.println("Pvp description: " + frillish.getProperties().get("pvpdescription"));
 
     	PokeSpawn sewaddle = new PokeSpawn(
     			540,  //id
@@ -738,11 +752,16 @@ public class Pokemon {
 			416, //vespiquen
 			282 //gardevoir
 	));
-	//Evolutions of a formed mon without a form
-	private static final Set<Integer> dropFormOnEvolution = new HashSet(Arrays.asList(
+	//Mons where the form is not referenced in the pvpivs.json file
+	//Some are mons that evolved from a formed mon
+	//Some are mons where the forms don't change IVs and pvpivs doesn't distinguish them
+	private static final Set<Integer> dropForm = new HashSet(Arrays.asList(
 			863, //perrserker
-			865 //sirfetch'd
+			865, //sirfetch'd
+			592, //frillish
+			593  //jellicent
 	));
+	//Forms that don't change IVs so we drop the form for convenicnec
     //public static PVPRanking getPVPRankingDescription(int pokemonId, int level, int atkIV, int defIV, int staIV){
     public static PVPRanking getPVPRankingDescription(PokeSpawn poke){
     	//return toRet to break out early
@@ -774,7 +793,7 @@ public class Pokemon {
 		    		System.err.println("WARN: No filter name for ID " + poke.id);
 		    		continue;
 				}
-				if (poke.form != null && !dropFormOnEvolution.contains(id)) {
+				if (poke.form != null && !dropForm.contains(id)) {
 					filterNameAndForm += " (" + poke.form +")";
 				}
 				//System.out.println(filterNameAndForm);
