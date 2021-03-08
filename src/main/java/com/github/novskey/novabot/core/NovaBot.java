@@ -229,6 +229,12 @@ public class NovaBot {
             return;
         }
 
+        Member member = guild.getMember(author);
+        if (member == null) {
+        	novabotLog.debug("Failed to look up discord member " + author + " in guild " + guild);
+        	return;
+        }
+        
         com.github.novskey.novabot.data.User user = dataManager.getUser(author.getId());
 
         if (user == null) {
@@ -564,7 +570,7 @@ public class NovaBot {
             return;
         }
 
-        if (matchingCommand.contains("raid")) {
+		if (matchingCommand.contains("raid")) {
             Raid[] raids = userCommand.buildRaids();
 
             /* Allow adding raid filters for raidbosses that might not be released yet
@@ -591,7 +597,7 @@ public class NovaBot {
 
             switch (matchingCommand) {
                 case "addraidcommand": {
-                    NotificationLimit limit = getConfig().getNotificationLimit(guild.getMember(author));
+                    NotificationLimit limit = getConfig().getNotificationLimit(member);
 
                     boolean isSupporter = isSupporter(author.getId());
 
@@ -750,7 +756,7 @@ public class NovaBot {
 
             switch (matchingCommand) {
                 case "addpokemoncommand": {
-                    NotificationLimit limit = getConfig().getNotificationLimit(guild.getMember(author));
+                    NotificationLimit limit = getConfig().getNotificationLimit(member);
 
                     boolean isSupporter = isSupporter(author.getId());
 
@@ -883,7 +889,7 @@ public class NovaBot {
 
             switch (matchingCommand) {
                 case "loadpresetcommand": {
-                    NotificationLimit limit = getConfig().getNotificationLimit(guild.getMember(author));
+                    NotificationLimit limit = getConfig().getNotificationLimit(member);
 
                     boolean isSupporter = isSupporter(author.getId());
 
