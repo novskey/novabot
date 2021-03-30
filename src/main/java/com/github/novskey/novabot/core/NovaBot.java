@@ -223,7 +223,10 @@ public class NovaBot {
         }
     }
 
-    public void parseMsg(final String msg, final User author, final MessageChannel channel) {
+    public void parseMsg(String _msg, final User author, final MessageChannel channel) {
+    	
+    	//Case insensitive
+    	final String msg = _msg.toLowerCase(); 
 
         if (!msg.startsWith(getLocalString("Prefix"))) {
             return;
