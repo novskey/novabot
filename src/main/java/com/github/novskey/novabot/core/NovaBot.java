@@ -1229,9 +1229,13 @@ public class NovaBot {
 
         timeZones = new TimeZones(this);
 
-        dataManager = new DataManager(this, config.getScannerDbs());
+        try {
+        	dataManager = new DataManager(this, config.getScannerDbs());
 
-        botTokenUses.putAll(dataManager.getTokenUses());
+        	botTokenUses.putAll(dataManager.getTokenUses());
+        } catch (Throwable e) {
+        	e.printStackTrace();
+        }
 
         if (getConfig().isRaidOrganisationEnabled()) {
             lobbyManager = new LobbyManager(this);

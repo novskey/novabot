@@ -561,6 +561,19 @@ public class Config {
         System.out.println(novaBot.getConfig().matchesFilter(novaBot.getConfig().getPokeFilters().get("ultrarare.json"),pokeSpawn,"ultrarare.json"));
         System.out.println(novaBot.getConfig().passesGlobalFilter(pokeSpawn));
 
+    	PokeSpawn frillish = new PokeSpawn(
+    			592,  //id
+    			0.0,0.0, null, 
+    			1,14,14, //attack, def, sta
+    			0,0,0,0, 
+    			2, //gender 
+    			2330, //female form
+    			0, 
+    			3, //level 
+    			null,null,0L,0,false
+    	);
+    	System.out.println(novaBot.getConfig().matchesFilter(novaBot.getConfig().getPokeFilters().get("pvptop20great.json"),frillish,"pvptop20great.json"));
+
         //RaidSpawn raidSpawn = new RaidSpawn("gymname", "gymid", -35, 149, Team.Valor, ZonedDateTime.now(),ZonedDateTime.now(), 0,50012,1,2,5);
         //System.out.println(novaBot.getConfig().matchesFilter(novaBot.getConfig().getRaidFilters().get("raidfilter.json"),raidSpawn));
 
@@ -627,35 +640,41 @@ public class Config {
 
     public boolean matchesFilter(JsonObject filter, PokeSpawn pokeSpawn, String filterName) {
     	//Check for 'PVP' filters
-    	for(String pvpFilterName : new String[]{"PVP", "PVPGreat", "PVPUltra", "PVPTop20", "PVPOptimal"}) {
-	    	JsonElement pvpFilter = searchFilter(filter, pvpFilterName);
-	    	if (pvpFilter != null) {
-	    		String pvpdescription = pokeSpawn.getProperties().get("pvpdescription");
-	    		if (pvpdescription != null && !pvpdescription.equals("")) {
-	    			if (pvpFilterName.equals("PVPGreat") && !pvpdescription.contains("great")) {
-	    				continue;
-	    			}
-	    			if (pvpFilterName.equals("PVPUltra") && !pvpdescription.contains("ultra")) {
-	    				continue;
-	    			}
-	    			if (pvpFilterName.equals("PVPOptimal") && !pvpdescription.contains("Rank 1 ")) {
-	    				continue;
-	    			}
-	    			if (pvpFilterName.equals("PVPTop20")) {
-	    				boolean matches = false;
-		    			for(int i = 1; i <= 20; i++) {
-		    				if (pvpdescription.contains("Rank " + i + " ")) {
-		    					matches = true;
-		    				}
-		    			}
-		    			if (!matches) {
-		    				continue;
-		    			}
-	    			}
-	    			PokeNotificationSender.notificationLog.info(String.format("Spawn %s matches %s filter.", pokeSpawn.getProperties().get("pkmn"), pvpFilterName));
-	                return true;
-	            }
-	    	}
+    	for (String pvpFilterName : filter.keySet()){
+    		if (pvpFilterName.startsWith("PVP")){
+		    	JsonElement pvpFilter = searchFilter(filter, pvpFilterName);
+		    	Integer rankCutoff = null;
+		    	String league = null;
+    			if (pvpFilterName.equals("PVPGreat")) {
+    				league = "great";
+    			} else if (pvpFilterName.equals("PVPUltra")) {
+    				league = "ultra";
+    			} else if (pvpFilterName.equals("PVPOptimal")) {
+    				rankCutoff = 1;
+    			} else if (pvpFilterName.startsWith("PVPTop")) {
+    				String mode = pvpFilterName.substring("PVPTop".length());
+    				if (mode.endsWith("Great")) {
+    					league = "great";
+    					mode = mode.substring(0, mode.length() - "great".length());
+    				} else if (mode.endsWith("Ultra")) {
+    					league = "ultra";
+    					mode = mode.substring(0, mode.length() - "ultra".length());
+    				}
+    				rankCutoff = Integer.parseInt(mode);
+    			}
+    			boolean matches = false;
+    			if ((league == null || league.equals("great")) && pokeSpawn.pvp_great_rank != null) {
+    				matches |= rankCutoff == null || pokeSpawn.pvp_great_rank < rankCutoff;
+    			}
+    			if ((league == null || league.equals("ultra")) && pokeSpawn.pvp_ultra_rank != null) {
+    				matches |= rankCutoff == null || pokeSpawn.pvp_ultra_rank < rankCutoff;
+    			}
+    			if (!matches) {
+    				continue;
+    			}
+    			PokeNotificationSender.notificationLog.info(String.format("Spawn %s matches %s filter.", pokeSpawn.getProperties().get("pkmn"), pvpFilterName));
+                return true;
+    		}
     	}
     	
     	JsonElement pokeFilter = searchFilter(filter, UtilityFunctions.capitaliseFirst(Pokemon.getFilterName(pokeSpawn.getFilterId())));
